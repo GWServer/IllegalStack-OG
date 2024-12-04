@@ -1,1 +1,1 @@
-rootProject.name = "IllegalStack"
+rootProject.name = "IllegalStack-OG"

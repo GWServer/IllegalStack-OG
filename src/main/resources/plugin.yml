@@ -1,5 +1,5 @@
 main: main.java.me.dniym.IllegalStack
-name: IllegalStack
+name: IllegalStack-OG
 version: "${version}"
 api-version: 1.13
 folia-supported: true
