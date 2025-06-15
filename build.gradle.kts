@@ -1,7 +1,6 @@
 plugins {
     java
     `java-library`
-
     idea
     eclipse
 }
@@ -50,7 +49,6 @@ dependencies {
     }
     compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.1.217") { isTransitive = false }
     compileOnly("fr.minuskube.inv:smart-invs:1.2.7")
-    //compileOnly("com.github.CraftingStore.MinecraftPlugin:core:master-e366d322f8-1")
     compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0")
 }
 
@@ -68,8 +66,12 @@ tasks.compileJava.configure {
 
 version = "2.9.12a"
 
+val pluginVersion = version.toString()
+
 tasks.named<Copy>("processResources") {
+    inputs.property("version", pluginVersion)
     filesMatching("plugin.yml") {
-        expand("version" to project.version)
+        expand(mapOf("version" to pluginVersion))
     }
 }
+
