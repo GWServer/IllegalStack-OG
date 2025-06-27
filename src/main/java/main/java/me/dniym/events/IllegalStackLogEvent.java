@@ -15,7 +15,6 @@ public class IllegalStackLogEvent extends Event implements Cancellable {
     public IllegalStackLogEvent(String message, Protections prot) {
         this.setMessage(message);
         this.setProtection(prot);
-
     }
 
     public static HandlerList getHandlerList() {
@@ -52,5 +51,4 @@ public class IllegalStackLogEvent extends Event implements Cancellable {
     public void setProtection(Protections protection) {
         this.protection = protection;
     }
-
 }

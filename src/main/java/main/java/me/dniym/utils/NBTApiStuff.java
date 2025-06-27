@@ -1,6 +1,5 @@
 package main.java.me.dniym.utils;
 
-
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTEntity;
@@ -23,17 +22,17 @@ public class NBTApiStuff {
     private static final Logger LOGGER = LogManager.getLogger("IllegalStack/" + NBTApiStuff.class.getSimpleName());
 
     public static ItemStack checkTimestampLegacy(ItemStack item) {
-        //Old backwards compatible version
+        // Old backwards compatible version
         NBTItem nbti = new NBTItem(item);
 
         if (System.currentTimeMillis() >= nbti.getLong("TimeStamp")) {
             nbti.removeKey("TimeStamp");
             nbti.setLong("TimeStamp", System.currentTimeMillis() + 4500L);
         } else {
-            //looped item?
-            return null;  //return null if the item is looping
+            // looped item?
+            return null; // return null if the item is looping
         }
-        return nbti.getItem();  //return the item with an updated timestamp.
+        return nbti.getItem(); // return the item with an updated timestamp.
     }
 
     public static ItemStack addNBTTagLegacy(ItemStack item, String value) {
@@ -73,8 +72,8 @@ public class NBTApiStuff {
             }
         }
 
-        //for(NBTListCompound s:nbtent.getCompoundList("Gossips"))
-        //for(String s:nbtent.getKeys())
+        // for(NBTListCompound s:nbtent.getCompoundList("Gossips"))
+        // for(String s:nbtent.getKeys())
     }
 
     public static boolean hasNbtTagLegacy(ItemStack item, String tag) {
@@ -83,24 +82,24 @@ public class NBTApiStuff {
     }
 
     public static int isBadShulkerLegacy(ItemStack is) {
-		/*	
-		NBTItem nbti2 = new NBTItem(is);
-		for(String key:nbti2.getKeys())
-		{
-			
-			NBTCompoundList nbtList = nbti2.getCompoundList(key);
-			
-			if(nbti2.getType(key) == NBTType.NBTTagList)
-			{
-				NBTTagList nestedList = nbti2.getObject(key,  NBTTagList.class);
-				if(nestedList != null) {
+        /*
+        NBTItem nbti2 = new NBTItem(is);
+        for(String key:nbti2.getKeys())
+        {
 
-				} else {
-					nbti2.removeKey(key);
-				}
-			}
-		}
-		*/
+        	NBTCompoundList nbtList = nbti2.getCompoundList(key);
+
+        	if(nbti2.getType(key) == NBTType.NBTTagList)
+        	{
+        		NBTTagList nestedList = nbti2.getObject(key,  NBTTagList.class);
+        		if(nestedList != null) {
+
+        		} else {
+        			nbti2.removeKey(key);
+        		}
+        	}
+        }
+        */
 
         if (is.getType().name().contains("SHULKER_BOX")) {
             NBTItem nbti = new NBTItem(is);
@@ -137,12 +136,9 @@ public class NBTApiStuff {
             slot = "leggings";
         }
 
-
         if (!slot.isEmpty()) {
             fListener.getLog().append2(Msg.CustomAttribsRemoved2.getValue(p, is, slot));
         }
-
-
     }
 
     public static boolean hasBadCustomDataLegacy(ItemStack is) {
@@ -154,7 +150,6 @@ public class NBTApiStuff {
         NBTCompoundList itemTag = nbti.getCompoundList("AttributeModifiers");
 
         return (itemTag != null && itemTag.size() > 0);
-
     }
 
     public static boolean checkForBadCustomDataLegacy(ItemStack is, Object obj) {
@@ -168,22 +163,21 @@ public class NBTApiStuff {
             itemTag.clear();
             nbti.setObject("AttributeModifiers", itemTag);
 
-
             StringBuilder attribs = new StringBuilder();
             attribs.append("Custom Attribute Data");
-            fListener.getLog().append(Msg.CustomAttribsRemoved3.getValue(is, obj, attribs), Protections.RemoveCustomAttributes);
+            fListener
+                    .getLog()
+                    .append(Msg.CustomAttribsRemoved3.getValue(is, obj, attribs), Protections.RemoveCustomAttributes);
 
             if (obj instanceof Player) {
                 ((Player) obj).getInventory().remove(is);
             } else {
                 LOGGER.error(
                         "The object type: {} is not accounted for in the legacy NBT Api check.. Please report this to dNiym at the IllegalStack discord or via spigot!",
-                        obj.toString()
-                );
+                        obj.toString());
             }
 
             return true;
-
         }
         return false;
     }
@@ -215,8 +209,5 @@ public class NBTApiStuff {
     public static void isProCosmeticsLegacy(ItemStack is) {
         NBTItem nbti = new NBTItem(is);
         nbti.hasKey("PROCOSMETICS");
-
-
     }
-
 }

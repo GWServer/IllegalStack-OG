@@ -1,7 +1,6 @@
 package main.java.me.dniym.enums;
 
 public enum ServerVersion {
-
     v1_8_R1,
     v1_8_R2,
     v1_8_R3,
@@ -37,7 +36,6 @@ public enum ServerVersion {
     public boolean serverVersionGreaterThanOrEqual(ServerVersion version) {
         return this.ordinal() >= version.ordinal();
     }
-
 
     public boolean serverVersionGreaterThan(ServerVersion version1, ServerVersion version2) {
         return version1.ordinal() > version2.ordinal();

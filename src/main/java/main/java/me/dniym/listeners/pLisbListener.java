@@ -4,6 +4,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import java.util.HashMap;
+import java.util.UUID;
 import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
@@ -19,9 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 public class pLisbListener {
 
     private static final Logger LOGGER = LogManager.getLogger("IllegalStack/" + pLisbListener.class.getSimpleName());
@@ -30,110 +29,125 @@ public class pLisbListener {
     int debug = 0;
     HashMap<UUID, Long> messageDelay = new HashMap<>();
 
-
     public pLisbListener(IllegalStack illegalStack) {
         plugin = illegalStack;
 
-        //ProtocolLibrary.getProtocolManager().addPacketListener(new BookCrashExploitCheck(plugin));
+        // ProtocolLibrary.getProtocolManager().addPacketListener(new BookCrashExploitCheck(plugin));
         if (Protections.BlockBadItemsFromCreativeTab.isEnabled()) {
-        	ProtocolLibrary.getProtocolManager().addPacketListener(
-            		new PacketAdapter(PacketAdapter.params(plugin, PacketType.Play.Client.SET_CREATIVE_SLOT).optionAsync()) {
-                    //new PacketAdapter(plugin, PacketType.Play.Client.SET_CREATIVE_SLOT) {
-                        @Override
-                        public void onPacketReceiving(PacketEvent event) {
-                            if (!Protections.BlockBadItemsFromCreativeTab.isEnabled() || event.getPlayer().isOp() || event
-                                    .getPlayer()
-                                    .hasPermission("illegalstack.admin")) {
-                                return;
-                            }
-                            try {
-                                ItemStack stack = event.getPacket().getItemModifier().readSafely(0);
-                                if (stack != null && stack.hasItemMeta()) {
-                                    stack = new ItemStack(Material.AIR);
-                                    final Player player = event.getPlayer();
-                                    Scheduler.runTaskLater(plugin, player::updateInventory, 5L, player);
-                                    event.setCancelled(true);
-                                    Msg.StaffMsgCreativeBlock.getValue(event.getPlayer().getName());
+            ProtocolLibrary.getProtocolManager()
+                    .addPacketListener(
+                            new PacketAdapter(PacketAdapter.params(plugin, PacketType.Play.Client.SET_CREATIVE_SLOT)
+                                    .optionAsync()) {
+                                // new PacketAdapter(plugin, PacketType.Play.Client.SET_CREATIVE_SLOT) {
+                                @Override
+                                public void onPacketReceiving(PacketEvent event) {
+                                    if (!Protections.BlockBadItemsFromCreativeTab.isEnabled()
+                                            || event.getPlayer().isOp()
+                                            || event.getPlayer().hasPermission("illegalstack.admin")) {
+                                        return;
+                                    }
+                                    try {
+                                        ItemStack stack = event.getPacket()
+                                                .getItemModifier()
+                                                .readSafely(0);
+                                        if (stack != null && stack.hasItemMeta()) {
+                                            stack = new ItemStack(Material.AIR);
+                                            final Player player = event.getPlayer();
+                                            Scheduler.runTaskLater(plugin, player::updateInventory, 5L, player);
+                                            event.setCancelled(true);
+                                            Msg.StaffMsgCreativeBlock.getValue(
+                                                    event.getPlayer().getName());
+                                        }
+                                    } catch (IndexOutOfBoundsException ex) {
+                                        LOGGER.error(
+                                                "An error receiving a SET_CREATIVE_SLOT packet has occurred, you are probably using paper and have BlockBadItemsFromCreativeTab turned on.   This setting is needed very rarely, and ONLY if you have regular non-op players with access to /gmc.");
+                                    }
                                 }
-                            } catch (IndexOutOfBoundsException ex) {
-                                LOGGER.error(
-                                        "An error receiving a SET_CREATIVE_SLOT packet has occurred, you are probably using paper and have BlockBadItemsFromCreativeTab turned on.   This setting is needed very rarely, and ONLY if you have regular non-op players with access to /gmc.");
-                            }
-                        }
-                    });
+                            });
         }
 
         if (Protections.DisableChestsOnMobs.isEnabled()) {
-    
-        	
-       		ProtocolLibrary.getProtocolManager().addPacketListener(
-       				new PacketAdapter(PacketAdapter.params(plugin, PacketType.Play.Client.USE_ENTITY).optionAsync()) {
-       					
-       					/*
-       					 * Must use optionAsync here... if optionSync is used it breaks player damage, eg no crits, no sweeping edge...
-       					 * 
-       					 * new PacketAdapter(PacketAdapter.params().plugin(plugin).optionSync().types(PacketType.Play.Client.USE_ENTITY)) {
-       					 * 
-       					 */
-       					
-       					
 
-                        @Override
-                        public void onPacketReceiving(PacketEvent event) {
+            ProtocolLibrary.getProtocolManager()
+                    .addPacketListener(
+                            new PacketAdapter(PacketAdapter.params(plugin, PacketType.Play.Client.USE_ENTITY)
+                                    .optionAsync()) {
 
-                            if (event.getPacket().getIntegers().read(0) <= 0) {
-                                return;
-                            }
+                                /*
+                                 * Must use optionAsync here... if optionSync is used it breaks player damage, eg no crits, no sweeping edge...
+                                 *
+                                 * new PacketAdapter(PacketAdapter.params().plugin(plugin).optionSync().types(PacketType.Play.Client.USE_ENTITY)) {
+                                 *
+                                 */
 
-                            if (IllegalStack.hasChestedAnimals() && Protections.DisableChestsOnMobs.isEnabled()) {
-                                    Entity entity;
-                                    try {
-                                        entity = event
-                                                .getPacket()
-                                                .getEntityModifier(event.getPlayer().getWorld())
-                                                .read(0);
-                                    } catch (RuntimeException ex) {
-                                   //     LOGGER.error("Async Packet - Couldn't get an entity from id: ", ex);
+                                @Override
+                                public void onPacketReceiving(PacketEvent event) {
+
+                                    if (event.getPacket().getIntegers().read(0) <= 0) {
                                         return;
                                     }
-                                
-                                    Scheduler.runTaskLater(this.plugin, () -> {
-                                        if (entity instanceof Horse && ((Horse) entity).isTamed()) {
-                                            ItemStack is = event.getPlayer().getInventory().getItemInHand();
-                                            if (!fListener.is18() && (is == null || is.getType() != Material.CHEST)) {
-                                                is = event.getPlayer().getInventory().getItemInOffHand();
-                                            }
-                                            if (is == null || is.getType() != Material.CHEST) {
-                                                return;
-                                            }
-                                            exploitMessage(event.getPlayer(), entity);
-                                            event.setCancelled(true);
-                                            fTimer.getPunish().put(event.getPlayer(), entity);
+
+                                    if (IllegalStack.hasChestedAnimals()
+                                            && Protections.DisableChestsOnMobs.isEnabled()) {
+                                        Entity entity;
+                                        try {
+                                            entity = event.getPacket()
+                                                    .getEntityModifier(
+                                                            event.getPlayer().getWorld())
+                                                    .read(0);
+                                        } catch (RuntimeException ex) {
+                                            //     LOGGER.error("Async Packet - Couldn't get an entity from id: ", ex);
                                             return;
                                         }
 
-                                        if (entity instanceof ChestedHorse && ((ChestedHorse) entity).isTamed()) {
-                                            ItemStack is = event.getPlayer().getInventory().getItemInMainHand();
-                                            if (is == null || is.getType() != Material.CHEST) {
-                                                is = event.getPlayer().getInventory().getItemInOffHand();
-                                            }
-                                            if (is == null || is.getType() != Material.CHEST) {
-                                                return;
-                                            }
-                                            exploitMessage(event.getPlayer(), entity);
-                                            event.setCancelled(true);
+                                        Scheduler.runTaskLater(
+                                                this.plugin,
+                                                () -> {
+                                                    if (entity instanceof Horse && ((Horse) entity).isTamed()) {
+                                                        ItemStack is = event.getPlayer()
+                                                                .getInventory()
+                                                                .getItemInHand();
+                                                        if (!fListener.is18()
+                                                                && (is == null || is.getType() != Material.CHEST)) {
+                                                            is = event.getPlayer()
+                                                                    .getInventory()
+                                                                    .getItemInOffHand();
+                                                        }
+                                                        if (is == null || is.getType() != Material.CHEST) {
+                                                            return;
+                                                        }
+                                                        exploitMessage(event.getPlayer(), entity);
+                                                        event.setCancelled(true);
+                                                        fTimer.getPunish().put(event.getPlayer(), entity);
+                                                        return;
+                                                    }
 
-                                            ((ChestedHorse) entity).setCarryingChest(true);
-                                            ((ChestedHorse) entity).setCarryingChest(false);
-                                            fTimer.getPunish().put(event.getPlayer(), entity);
-                                        }
-                                    }, 1, entity);
-                                    
+                                                    if (entity instanceof ChestedHorse
+                                                            && ((ChestedHorse) entity).isTamed()) {
+                                                        ItemStack is = event.getPlayer()
+                                                                .getInventory()
+                                                                .getItemInMainHand();
+                                                        if (is == null || is.getType() != Material.CHEST) {
+                                                            is = event.getPlayer()
+                                                                    .getInventory()
+                                                                    .getItemInOffHand();
+                                                        }
+                                                        if (is == null || is.getType() != Material.CHEST) {
+                                                            return;
+                                                        }
+                                                        exploitMessage(event.getPlayer(), entity);
+                                                        event.setCancelled(true);
 
-                            }
-
-                        }
-                    });
+                                                        ((ChestedHorse) entity).setCarryingChest(true);
+                                                        ((ChestedHorse) entity).setCarryingChest(false);
+                                                        fTimer.getPunish().put(event.getPlayer(), entity);
+                                                    }
+                                                },
+                                                1,
+                                                entity);
+                                    }
+                                }
+                            });
         }
     }
 
@@ -148,5 +162,4 @@ public class pLisbListener {
             messageDelay.put(p.getUniqueId(), System.currentTimeMillis() + 2000L);
         }
     }
-
 }

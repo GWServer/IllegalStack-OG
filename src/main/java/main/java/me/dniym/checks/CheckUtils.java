@@ -1,6 +1,6 @@
 package main.java.me.dniym.checks;
 
-
+import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.actions.IllegalStackAction;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
@@ -16,24 +16,23 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
-import main.java.me.dniym.IllegalStack;
-
 public class CheckUtils {
 
     public static boolean CheckEntireContainer(Container container) {
         boolean added = false;
         for (ItemStack itemStack : container.getInventory()) {
-            if (itemStack != null && IllegalStack.hasShulkers() && itemStack.getType().name().contains("SHULKER_BOX")) {
+            if (itemStack != null
+                    && IllegalStack.hasShulkers()
+                    && itemStack.getType().name().contains("SHULKER_BOX")) {
                 int tagSize = NBTStuff.isBadShulker(itemStack);
-                if (tagSize > 0 && IllegalStackAction.isCompleted(
-                        Protections.DestroyInvalidShulkers,
-                        itemStack,
-                        container.getInventory()
-                )) {
-                    fListener.getLog().append(
-                            Msg.StaffBadShulkerRemoved.getValue(container.getLocation(), tagSize),
-                            Protections.DestroyInvalidShulkers
-                    );
+                if (tagSize > 0
+                        && IllegalStackAction.isCompleted(
+                                Protections.DestroyInvalidShulkers, itemStack, container.getInventory())) {
+                    fListener
+                            .getLog()
+                            .append(
+                                    Msg.StaffBadShulkerRemoved.getValue(container.getLocation(), tagSize),
+                                    Protections.DestroyInvalidShulkers);
                     itemStack.setType(Material.AIR);
                     return true;
                 } else {
@@ -43,21 +42,24 @@ public class CheckUtils {
                         if (im.getBlockState() instanceof ShulkerBox) {
                             BlockState shulk = im.getBlockState();
                             ShulkerBox shulker = (ShulkerBox) shulk;
-                            Inventory inv = Bukkit.createInventory(null, shulker.getInventory().getSize(), "IScontainerCheck");
+                            Inventory inv = Bukkit.createInventory(
+                                    null, shulker.getInventory().getSize(), "IScontainerCheck");
                             for (ItemStack itemStack1 : shulker.getInventory().getContents()) {
                                 if (itemStack1 == null) {
                                     continue;
                                 }
                                 tagSize = NBTStuff.isBadShulker(itemStack1);
-                                if (tagSize > 0 && IllegalStackAction.isCompleted(
-                                        Protections.DestroyInvalidShulkers,
-                                        itemStack1,
-                                        shulker.getInventory()
-                                )) {
-                                    fListener.getLog().append(
-                                            Msg.StaffBadShulkerRemoved.getValue(container.getLocation(), tagSize),
-                                            Protections.DestroyInvalidShulkers
-                                    );
+                                if (tagSize > 0
+                                        && IllegalStackAction.isCompleted(
+                                                Protections.DestroyInvalidShulkers,
+                                                itemStack1,
+                                                shulker.getInventory())) {
+                                    fListener
+                                            .getLog()
+                                            .append(
+                                                    Msg.StaffBadShulkerRemoved.getValue(
+                                                            container.getLocation(), tagSize),
+                                                    Protections.DestroyInvalidShulkers);
                                     itemStack1.setType(Material.AIR);
                                     remove = true;
                                 }
@@ -78,19 +80,22 @@ public class CheckUtils {
                                 }
                             }
                             if (added) {
-                                Scheduler.runTaskLater(IllegalStack.getPlugin(), () -> {
-                                    shulker.getInventory().setContents(inv.getContents());
-                                    im.setBlockState(shulker);
-                                    itemStack.setItemMeta(im);
-                                }, 4, shulker.getLocation());
+                                Scheduler.runTaskLater(
+                                        IllegalStack.getPlugin(),
+                                        () -> {
+                                            shulker.getInventory().setContents(inv.getContents());
+                                            im.setBlockState(shulker);
+                                            itemStack.setItemMeta(im);
+                                        },
+                                        4,
+                                        shulker.getLocation());
                                 return true;
-                                //shulk.update(true);
-                                //shulk.setBlockData(shulker.getBlockData());
-                                //im.setBlockState(shulk);
+                                // shulk.update(true);
+                                // shulk.setBlockData(shulker.getBlockData());
+                                // im.setBlockState(shulk);
 
                             }
                         }
-
                     }
                 }
             }
@@ -121,7 +126,6 @@ public class CheckUtils {
             } else if (OverstackedItemCheck.CheckContainer(is, inv)) {
                 return true;
             }
-
         }
 
         if (!fListener.is18() && IllegalStack.hasStorage()) {
@@ -134,5 +138,4 @@ public class CheckUtils {
 
         return false;
     }
-
 }

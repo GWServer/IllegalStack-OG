@@ -8,6 +8,7 @@
  */
 package main.java.me.dniym.utils;
 
+import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -20,14 +21,13 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-
 public class GuiObject implements InventoryHolder, Listener {
 
     private final Inventory inv;
 
     public GuiObject() {
-        // Create a new inventory, with "this" owner for comparison with other inventories, a size of nine, called example
+        // Create a new inventory, with "this" owner for comparison with other inventories, a size of nine, called
+        // example
         inv = Bukkit.createInventory(this, 9, "Example");
 
         // Put the items into the inventory
@@ -42,17 +42,9 @@ public class GuiObject implements InventoryHolder, Listener {
     // You can call this whenever you want to put the items in or use your existing gui code
     public void initializeItems() {
         inv.addItem(createGuiItem(
-                Material.DIAMOND_SWORD,
-                "Example Sword",
-                "�aFirst line of the lore",
-                "�bSecond line of the lore"
-        ));
+                Material.DIAMOND_SWORD, "Example Sword", "�aFirst line of the lore", "�bSecond line of the lore"));
         inv.addItem(createGuiItem(
-                Material.IRON_HELMET,
-                "�bExample Helmet",
-                "�aFirst line of the lore",
-                "�bSecond line of the lore"
-        ));
+                Material.IRON_HELMET, "�bExample Helmet", "�aFirst line of the lore", "�bSecond line of the lore"));
     }
 
     // Nice little method to create a gui item with a custom name, and description
@@ -93,5 +85,4 @@ public class GuiObject implements InventoryHolder, Listener {
         // Using slots click is a best option for your inventory click's
         p.sendMessage("You clicked at slot " + e.getRawSlot());
     }
-
 }

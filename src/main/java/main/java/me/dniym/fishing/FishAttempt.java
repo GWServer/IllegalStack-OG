@@ -1,13 +1,12 @@
 package main.java.me.dniym.fishing;
 
-import org.bukkit.Location;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.Location;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Player;
 
 public class FishAttempt {
 
@@ -113,5 +112,4 @@ public class FishAttempt {
         }
         return false;
     }
-
 }

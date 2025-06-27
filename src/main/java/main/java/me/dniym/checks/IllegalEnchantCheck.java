@@ -1,5 +1,6 @@
 package main.java.me.dniym.checks;
 
+import java.util.HashSet;
 import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
@@ -12,8 +13,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.HashSet;
 
 public class IllegalEnchantCheck {
 
@@ -33,17 +32,13 @@ public class IllegalEnchantCheck {
 
         boolean invalid = false;
         for (ItemStack itemStack : inv.getStorageContents()) {
-            if (itemStack != null && itemStack.getType() != Material.AIR && (invalid = isIllegallyEnchanted(
-                    itemStack,
-                    inv,
-                    true
-            ))) {
-                fListener.getLog().append2(Msg.GenericItemRemoval.getValue(
-                        itemStack,
-                        Protections.FixIllegalEnchantmentLevels,
-                        player,
-                        "Crafting Inventory"
-                ));
+            if (itemStack != null
+                    && itemStack.getType() != Material.AIR
+                    && (invalid = isIllegallyEnchanted(itemStack, inv, true))) {
+                fListener
+                        .getLog()
+                        .append2(Msg.GenericItemRemoval.getValue(
+                                itemStack, Protections.FixIllegalEnchantmentLevels, player, "Crafting Inventory"));
             }
         }
 
@@ -60,8 +55,9 @@ public class IllegalEnchantCheck {
             return false;
         }
 
-        if (Protections.FixIllegalEnchantmentLevels.isEnabled(obj) && !itemStack.getEnchantments().isEmpty()) {
-            if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) {//world list isnt empty
+        if (Protections.FixIllegalEnchantmentLevels.isEnabled(obj)
+                && !itemStack.getEnchantments().isEmpty()) {
+            if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) { // world list isnt empty
                 Location loc = null;
 
                 if (obj instanceof Inventory) {
@@ -72,9 +68,9 @@ public class IllegalEnchantCheck {
                     loc = ((Container) obj).getLocation();
                 }
 
-                if (loc != null && !Protections.OnlyFunctionInWorlds.getTxtSet().contains(loc
-                        .getWorld()
-                        .getName())) //isnt in a checked world
+                if (loc != null
+                        && !Protections.OnlyFunctionInWorlds.getTxtSet()
+                                .contains(loc.getWorld().getName())) // isnt in a checked world
                 {
                     return false;
                 }
@@ -88,9 +84,9 @@ public class IllegalEnchantCheck {
                         continue;
                     }
 
-                    if (IllegalStack.isEpicRename() && ((enchantment == Enchantment.LURE || enchantment == Enchantment.ARROW_INFINITE) && itemStack
-                            .getEnchantmentLevel(
-                                    enchantment) == 4341)) {
+                    if (IllegalStack.isEpicRename()
+                            && ((enchantment == Enchantment.LURE || enchantment == Enchantment.ARROW_INFINITE)
+                                    && itemStack.getEnchantmentLevel(enchantment) == 4341)) {
                         continue;
                     }
                     if (Protections.EnchantedItemWhitelist.isWhitelisted(itemStack)) {
@@ -98,22 +94,28 @@ public class IllegalEnchantCheck {
                     }
 
                     if (Protections.CustomEnchantOverride.isAllowedEnchant(
-                            enchantment,
-                            itemStack.getEnchantmentLevel(enchantment)
-                    )) {
+                            enchantment, itemStack.getEnchantmentLevel(enchantment))) {
                         continue;
                     }
 
                     if (Protections.DestroyIllegallyEnchantedItemsInstead.isEnabled(obj)) {
                         if (!silent) {
-                            fListener.getLog().append(Msg.DestroyedEnchantedItem.getValue(obj, itemStack, enchantment), Protections.DestroyIllegallyEnchantedItemsInstead);
+                            fListener
+                                    .getLog()
+                                    .append(
+                                            Msg.DestroyedEnchantedItem.getValue(obj, itemStack, enchantment),
+                                            Protections.DestroyIllegallyEnchantedItemsInstead);
                         }
                         itemStack.setType(Material.AIR);
                         return true;
                     }
                     if (enchantment.canEnchantItem(itemStack)) {
                         if (!silent) {
-                            fListener.getLog().append(Msg.IllegalEnchantLevel.getValue(obj, itemStack, enchantment), Protections.FixIllegalEnchantmentLevels);
+                            fListener
+                                    .getLog()
+                                    .append(
+                                            Msg.IllegalEnchantLevel.getValue(obj, itemStack, enchantment),
+                                            Protections.FixIllegalEnchantmentLevels);
                         }
                     } else {
                         if (!silent) {
@@ -145,5 +147,4 @@ public class IllegalEnchantCheck {
 
         return false;
     }
-
 }

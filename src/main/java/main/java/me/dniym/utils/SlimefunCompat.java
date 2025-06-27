@@ -3,11 +3,9 @@ package main.java.me.dniym.utils;
 import de.tr7zw.nbtapi.NBTItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import main.java.me.dniym.IllegalStack;
-
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 
 public class SlimefunCompat {
 
@@ -25,9 +23,9 @@ public class SlimefunCompat {
             SlimefunItem sfi = SlimefunItem.getByItem(is);
             if (sfi != null) {
                 ItemStack sfiBase = sfi.getItem();
-                //base Slimefun item does not have this enchantment.
+                // base Slimefun item does not have this enchantment.
                 return sfiBase.containsEnchantment(en);
-                //otherwise it is a slimefun item and it does contain the enchantment.
+                // otherwise it is a slimefun item and it does contain the enchantment.
             }
         }
 
@@ -43,5 +41,4 @@ public class SlimefunCompat {
         }
         return false;
     }
-
 }
