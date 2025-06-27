@@ -4,7 +4,6 @@ import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
 import main.java.me.dniym.utils.NBTStuff;
-
 import main.java.me.dniym.utils.Scheduler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,12 +21,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ProtectionListener implements Listener {
 
     IllegalStack plugin;
-    private static final Logger LOGGER = LogManager.getLogger("IllegalStack/" + ProtectionListener.class.getSimpleName());
+    private static final Logger LOGGER =
+            LogManager.getLogger("IllegalStack/" + ProtectionListener.class.getSimpleName());
+
     public ProtectionListener(IllegalStack illegalStack) {
         this.plugin = illegalStack;
     }
 
-    
     @EventHandler
     public void onPlayerSwapHandItemsEvent(PlayerSwapHandItemsEvent e) {
 
@@ -44,7 +44,6 @@ public class ProtectionListener implements Listener {
         }
     }
 
-
     @EventHandler
     public void onElytraFlight(EntityToggleGlideEvent e) {
         if (Protections.PreventInfiniteElytraFlight.isEnabled() && e.isGliding() && e.getEntity() instanceof Player) {
@@ -54,13 +53,16 @@ public class ProtectionListener implements Listener {
                 p.setGliding(false);
                 e.setCancelled(true);
             }
-            Scheduler.runTaskLater(this.plugin, () -> {
-                if (p.getLocation().getBlockY() > 255 && p.isGliding()) {
-                    fListener.getLog().append2(Msg.GlideAboveMaxBuild.getValue(p, ""));
-                    p.setGliding(false);
-                }
-            }, 3250, p);
-
+            Scheduler.runTaskLater(
+                    this.plugin,
+                    () -> {
+                        if (p.getLocation().getBlockY() > 255 && p.isGliding()) {
+                            fListener.getLog().append2(Msg.GlideAboveMaxBuild.getValue(p, ""));
+                            p.setGliding(false);
+                        }
+                    },
+                    3250,
+                    p);
         }
     }
 
@@ -82,7 +84,10 @@ public class ProtectionListener implements Listener {
             if (NBTStuff.hasNbtTag("IllegalStack", is, "NoRepair", Protections.BlockRepairsInstead)) {
                 e.setResult(new ItemStack(Material.AIR, 1));
                 e.getView().close();
-                fListener.getLog().append2(Msg.PlayerRepairBlocked.getValue(e.getView().getPlayer().getName()));
+                fListener
+                        .getLog()
+                        .append2(Msg.PlayerRepairBlocked.getValue(
+                                e.getView().getPlayer().getName()));
                 return;
             }
 
@@ -91,10 +96,12 @@ public class ProtectionListener implements Listener {
                 if (Protections.RemoveItemsMatchingName.loreNameMatch(im)) {
                     e.setResult(new ItemStack(Material.AIR, 1));
                     e.getView().close();
-                    fListener.getLog().append2(Msg.PlayerRepairBlocked.getValue(e.getView().getPlayer().getName()));
+                    fListener
+                            .getLog()
+                            .append2(Msg.PlayerRepairBlocked.getValue(
+                                    e.getView().getPlayer().getName()));
                 }
             }
         }
     }
-
 }

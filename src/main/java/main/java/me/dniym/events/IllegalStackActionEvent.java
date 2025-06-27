@@ -26,15 +26,13 @@ public class IllegalStackActionEvent extends Event implements Cancellable {
             Block block,
             ItemStack itemStack,
             Entity entity1,
-            Inventory inventory
-    ) {
+            Inventory inventory) {
         this.protection = protections;
         this.setCause(entity);
         this.block = block;
         this.item = itemStack;
         this.setMount(entity1);
         this.affectedInventory = inventory;
-
     }
 
     public static HandlerList getHandlerList() {
@@ -80,34 +78,27 @@ public class IllegalStackActionEvent extends Event implements Cancellable {
         this.item = item;
     }
 
-
     public Entity getMount() {
         return mount;
     }
-
 
     public void setMount(Entity mount) {
         this.mount = mount;
     }
 
-
     public Entity getCause() {
         return cause;
     }
-
 
     public void setCause(Entity cause) {
         this.cause = cause;
     }
 
-
     public Inventory getAffectedInventory() {
         return affectedInventory;
     }
 
-
     public void setAffectedInventory(Inventory affectedInventory) {
         this.affectedInventory = affectedInventory;
     }
-
 }

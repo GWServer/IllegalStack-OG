@@ -26,32 +26,30 @@ public class Listener113 implements Listener {
         plugin = illegalStack;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         LOGGER.info("Enabling 1.13+ Checks");
-
     }
 
     @EventHandler
     public void spawnerSpawnEvent(SpawnerSpawnEvent e) {
-    	
-        if(Protections.SpawnerReset.isEnabled(e.getLocation())) {
-        		
-        	
-        		CreatureSpawner cs = e.getSpawner();
-        		EntityType et = e.getEntityType();
-        		if(et != null && Protections.ResetSpawnersOfTypeOnSpawn.isWhitelisted(et))
-        		{
-        			e.setCancelled(true);
-        			EntityType oldType = cs.getSpawnedType();
-        			cs.setSpawnedType(EntityType.PIG);
-        			cs.setBlockData(cs.getBlockData());
-        			cs.update(true);
-        			fListener.getLog().append(Msg.StaffMsgSpawnerOnSpawnReset.getValue(oldType.name(), e.getLocation()), Protections.ResetSpawnersOfTypeOnSpawn);
-        		} 
-        	}
-        
-        
 
+        if (Protections.SpawnerReset.isEnabled(e.getLocation())) {
+
+            CreatureSpawner cs = e.getSpawner();
+            EntityType et = e.getEntityType();
+            if (et != null && Protections.ResetSpawnersOfTypeOnSpawn.isWhitelisted(et)) {
+                e.setCancelled(true);
+                EntityType oldType = cs.getSpawnedType();
+                cs.setSpawnedType(EntityType.PIG);
+                cs.setBlockData(cs.getBlockData());
+                cs.update(true);
+                fListener
+                        .getLog()
+                        .append(
+                                Msg.StaffMsgSpawnerOnSpawnReset.getValue(oldType.name(), e.getLocation()),
+                                Protections.ResetSpawnersOfTypeOnSpawn);
+            }
+        }
     }
-    
+
     @EventHandler
     public void spawnerChangeCheck(PlayerInteractEvent event) {
         if (Protections.PreventSpawnEggsOnSpawners.isEnabled(event.getPlayer())) {
@@ -72,16 +70,15 @@ public class Listener113 implements Listener {
                         event.setCancelled(true);
 
                     } else if (blk.getType() == Material.SPAWNER) {
-                        fListener.getLog().append(
-                                Msg.StaffMsgChangedSpawnerType.getValue(plr, is.getType().name()),
-                                Protections.PreventSpawnEggsOnSpawners
-                        );
+                        fListener
+                                .getLog()
+                                .append(
+                                        Msg.StaffMsgChangedSpawnerType.getValue(
+                                                plr, is.getType().name()),
+                                        Protections.PreventSpawnEggsOnSpawners);
                     }
-
-
                 }
             }
         }
     }
-
 }

@@ -2,13 +2,12 @@ package main.java.me.dniym.listeners;
 
 import com.gmail.nossr50.events.skills.abilities.McMMOPlayerAbilityActivateEvent;
 import com.gmail.nossr50.events.skills.abilities.McMMOPlayerAbilityDeactivateEvent;
+import java.util.HashSet;
+import java.util.UUID;
 import main.java.me.dniym.IllegalStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.HashSet;
-import java.util.UUID;
 
 public class mcMMOListener implements Listener {
 
@@ -67,5 +66,4 @@ public class mcMMOListener implements Listener {
     public void onAbilDeactivate(McMMOPlayerAbilityDeactivateEvent e) {
         mcMMOactive.remove(e.getPlayer().getUniqueId());
     }
-
 }

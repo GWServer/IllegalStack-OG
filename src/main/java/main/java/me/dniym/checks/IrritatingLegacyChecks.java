@@ -19,7 +19,8 @@ public class IrritatingLegacyChecks {
         if (itemStack == null) {
             return false;
         }
-        if (Protections.FixIllegalEnchantmentLevels.isEnabled() && !itemStack.getEnchantments().isEmpty()) {
+        if (Protections.FixIllegalEnchantmentLevels.isEnabled()
+                && !itemStack.getEnchantments().isEmpty()) {
 
             for (Enchantment enchantment : itemStack.getEnchantments().keySet()) {
                 if (itemStack.getEnchantmentLevel(enchantment) > enchantment.getMaxLevel()) {
@@ -28,9 +29,9 @@ public class IrritatingLegacyChecks {
                         continue;
                     }
 
-                    if (IllegalStack.isEpicRename() && ((enchantment == Enchantment.LURE || enchantment == Enchantment.ARROW_INFINITE) && itemStack
-                            .getEnchantmentLevel(
-                                    enchantment) == 4341)) {
+                    if (IllegalStack.isEpicRename()
+                            && ((enchantment == Enchantment.LURE || enchantment == Enchantment.ARROW_INFINITE)
+                                    && itemStack.getEnchantmentLevel(enchantment) == 4341)) {
                         continue;
                     }
                     if (Protections.EnchantedItemWhitelist.isWhitelisted(itemStack)) {
@@ -38,9 +39,7 @@ public class IrritatingLegacyChecks {
                     }
 
                     if (Protections.CustomEnchantOverride.isAllowedEnchant(
-                            enchantment,
-                            itemStack.getEnchantmentLevel(enchantment)
-                    )) {
+                            enchantment, itemStack.getEnchantmentLevel(enchantment))) {
                         continue;
                     }
                     return true;
@@ -54,7 +53,6 @@ public class IrritatingLegacyChecks {
                     }
                 }
             }
-
         }
 
         return false;
@@ -63,7 +61,7 @@ public class IrritatingLegacyChecks {
     public static boolean CheckItem(ItemStack item, Location location) {
         boolean cancel = false;
 
-        if (item.hasItemMeta() && IllegalStack.hasShulkers()) { //check for shulkers
+        if (item.hasItemMeta() && IllegalStack.hasShulkers()) { // check for shulkers
             final BlockStateMeta blockStateMeta = (BlockStateMeta) item.getItemMeta();
             if (blockStateMeta.getBlockState() instanceof ShulkerBox) {
                 final ShulkerBox shulker = (ShulkerBox) blockStateMeta.getBlockState();
@@ -72,11 +70,9 @@ public class IrritatingLegacyChecks {
                     boolean illegalEnchanted = false;
                     if (Protections.RemoveOverstackedItems.isEnabled()) {
                         overstacked = IrritatingLegacyChecks.CheckContainer(itemStack, location);
-
                     }
                     if (Protections.FixIllegalEnchantmentLevels.isEnabled()) {
                         illegalEnchanted = isIllegallyEnchanted(itemStack);
-
                     }
                     if (overstacked || illegalEnchanted) {
                         cancel = true;
@@ -84,16 +80,14 @@ public class IrritatingLegacyChecks {
                     }
                 }
             }
-        } else {  //should be a single item.
+        } else { // should be a single item.
             cancel = CheckForOverstackedItems(item);
-
         }
         return cancel;
     }
 
     private static boolean CheckForOverstackedItems(ItemStack item) {
         return item.getAmount() > item.getType().getMaxStackSize();
-
     }
 
     public static boolean CheckContainer(ItemStack itemStack, Location loc) {
@@ -102,7 +96,6 @@ public class IrritatingLegacyChecks {
         }
         if (itemStack.getAmount() > itemStack.getMaxStackSize()) {
             return !Protections.AllowStack.isWhitelisted(itemStack.getType().name(), null);
-
         }
 
         return false;
@@ -115,16 +108,18 @@ public class IrritatingLegacyChecks {
         if (blockState instanceof InventoryHolder) {
             for (ItemStack itemStack : ((InventoryHolder) blockState).getInventory()) {
                 if (itemStack != null && CheckItem(itemStack, block.getLocation())) {
-                    Scheduler.runTaskLater(IllegalStack.getPlugin(), () -> {
-                        ((InventoryHolder) blockState).getInventory().removeItem(itemStack);
-                    }, 2, blockState.getLocation());
+                    Scheduler.runTaskLater(
+                            IllegalStack.getPlugin(),
+                            () -> {
+                                ((InventoryHolder) blockState).getInventory().removeItem(itemStack);
+                            },
+                            2,
+                            blockState.getLocation());
                     invalid = true;
                 }
             }
         }
 
-
         return invalid;
     }
-
 }

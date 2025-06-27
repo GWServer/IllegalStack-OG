@@ -1,6 +1,14 @@
 package main.java.me.dniym.listeners;
 
 import io.netty.util.internal.ThreadLocalRandom;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.actions.IllegalStackAction;
 import main.java.me.dniym.checks.BadAttributeCheck;
@@ -64,7 +72,6 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.TraderLlama;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Vex;
 import org.bukkit.entity.Zombie;
 import org.bukkit.entity.minecart.HopperMinecart;
@@ -94,7 +101,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -122,15 +128,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.spigotmc.event.entity.EntityMountEvent;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 public class fListener implements Listener {
 
     private static final HashSet<UUID> chestOffense = new HashSet<>();
@@ -152,7 +149,7 @@ public class fListener implements Listener {
     private final HashMap<Player, Long> swapDelay = new HashMap<>();
     private final Set<Material> glassBlocks = new HashSet<>();
     private final HashSet<Player> itemWatcher = new HashSet<>();
-    private final static HashSet<Material> unbreakable = new HashSet<>();
+    private static final HashSet<Material> unbreakable = new HashSet<>();
     IllegalStack plugin;
     HashMap<Block, Long> movedTNT = new HashMap<>();
     private boolean is118 = false;
@@ -168,7 +165,7 @@ public class fListener implements Listener {
     private Boolean is112 = false;
     private Boolean is110 = false;
     private HashMap<UUID, Location> teleGlitch = new HashMap<>();
-    
+
     public fListener(IllegalStack plugin) {
         this.plugin = plugin;
         fListener.setInstance(this);
@@ -252,10 +249,10 @@ public class fListener implements Listener {
             }
 
             if (!m.isSolid()) {
-                if (m.name().toLowerCase().contains("glass") || m.name().toLowerCase().contains("door") || m
-                        .name()
-                        .toLowerCase()
-                        .contains("fence") || m.name().toLowerCase().contains("portal")) {
+                if (m.name().toLowerCase().contains("glass")
+                        || m.name().toLowerCase().contains("door")
+                        || m.name().toLowerCase().contains("fence")
+                        || m.name().toLowerCase().contains("portal")) {
                 } else {
                     getPassThrough().add(m);
                 }
@@ -271,7 +268,6 @@ public class fListener implements Listener {
         if (Material.matchMaterial("CAVE_AIR") != null) {
             getAirBlocks().add(Material.CAVE_AIR);
             getAirBlocks().add(Material.VOID_AIR);
-
         }
 
         endPortal = Material.matchMaterial("END_PORTAL");
@@ -285,11 +281,21 @@ public class fListener implements Listener {
         }
 
         getUnbreakable().add(endPortal);
-        //unbreakable.add(portal);
+        // unbreakable.add(portal);
         getUnbreakable().add(Material.BEDROCK);
 
-        String[] mats = new String[]{"ENDER_PORTAL_FRAME", "END_PORTAL_FRAME", "COMMAND", "COMMAND_BLOCK", "COMMAND_CHAIN", "CHAIN_COMMAND_BLOCK",
-                "COMMAND_REPEATING", "REPEATING_COMMAND_BLOCK", "STRUCTURE_BLOCK", "BARRIER"};
+        String[] mats = new String[] {
+            "ENDER_PORTAL_FRAME",
+            "END_PORTAL_FRAME",
+            "COMMAND",
+            "COMMAND_BLOCK",
+            "COMMAND_CHAIN",
+            "CHAIN_COMMAND_BLOCK",
+            "COMMAND_REPEATING",
+            "REPEATING_COMMAND_BLOCK",
+            "STRUCTURE_BLOCK",
+            "BARRIER"
+        };
         for (final String mat : mats) {
             Material testMaterial = Material.matchMaterial(mat);
             if (testMaterial != null) {
@@ -297,7 +303,14 @@ public class fListener implements Listener {
             }
         }
 
-        if (!ver.contains("v1_14") && !ver.contains("v1_15") && !ver.contains("v1_16") && !ver.contains("v1_17") && !ver.contains("v1_18") && !ver.contains("V1_19") && !ver.contains("v1_20") && !ver.contains("V1_21")) {
+        if (!ver.contains("v1_14")
+                && !ver.contains("v1_15")
+                && !ver.contains("v1_16")
+                && !ver.contains("v1_17")
+                && !ver.contains("v1_18")
+                && !ver.contains("V1_19")
+                && !ver.contains("v1_20")
+                && !ver.contains("V1_21")) {
             if (ver.contains("v1_13")) {
                 LOGGER.info("MC Version 1.13+ detected!");
 
@@ -317,7 +330,6 @@ public class fListener implements Listener {
                 blacklist.add(Material.matchMaterial("RAILS"));
                 blacklist.add(Material.matchMaterial("CARPET"));
                 book = Material.matchMaterial("BOOK_AND_QUILL");
-
 
                 pistonCheck.add(Material.matchMaterial("PISTON_MOVING_PIECE"));
                 Set<Material> removeCheck = new HashSet<>();
@@ -343,12 +355,11 @@ public class fListener implements Listener {
         if (!Protections.PunishForChestsOnMobs.isEnabled()) {
             return;
         }
-        if (chestOffense.contains(player.getUniqueId()) && IllegalStackAction.isCompleted(
-                Protections.PunishForChestsOnMobs,
-                rightClicked,
-                player
-        )) {
-            fListener.getLog().append(Msg.StaffChestPunishment.getValue(player, rightClicked), Protections.PunishForChestsOnMobs);
+        if (chestOffense.contains(player.getUniqueId())
+                && IllegalStackAction.isCompleted(Protections.PunishForChestsOnMobs, rightClicked, player)) {
+            fListener
+                    .getLog()
+                    .append(Msg.StaffChestPunishment.getValue(player, rightClicked), Protections.PunishForChestsOnMobs);
             rightClicked.eject();
             rightClicked.remove();
             player.getInventory().clear();
@@ -396,7 +407,6 @@ public class fListener implements Listener {
 
     public void setIs114(Boolean is114) {
         fListener.is114 = is114;
-
     }
 
     public static HashSet<Material> getPassThrough() {
@@ -413,21 +423,28 @@ public class fListener implements Listener {
 
     @EventHandler
     public void OnItemDrop(PlayerDropItemEvent e) {
-        if (Protections.RemoveItemTypes.isEnabled() && RemoveItemTypesCheck.shouldRemove(e
-                .getItemDrop()
-                .getItemStack()
-                .getType())) {
+        if (Protections.RemoveItemTypes.isEnabled()
+                && RemoveItemTypesCheck.shouldRemove(
+                        e.getItemDrop().getItemStack().getType())) {
             e.setCancelled(true);
-            Scheduler.runTaskLater(this.plugin, () -> {
-                fListener.getLog().append(Msg.ItemTypeRemovedPlayerOnDrop.getValue(
-                        e.getPlayer(),
-                        e.getItemDrop().getItemStack().getType().name()
-                ), Protections.RemoveItemTypes);
-                e.getPlayer().getInventory().remove(e.getItemDrop().getItemStack());
-            }, 2, e.getPlayer());
-
+            Scheduler.runTaskLater(
+                    this.plugin,
+                    () -> {
+                        fListener
+                                .getLog()
+                                .append(
+                                        Msg.ItemTypeRemovedPlayerOnDrop.getValue(
+                                                e.getPlayer(),
+                                                e.getItemDrop()
+                                                        .getItemStack()
+                                                        .getType()
+                                                        .name()),
+                                        Protections.RemoveItemTypes);
+                        e.getPlayer().getInventory().remove(e.getItemDrop().getItemStack());
+                    },
+                    2,
+                    e.getPlayer());
         }
-
     }
 
     /*
@@ -442,23 +459,31 @@ public class fListener implements Listener {
 
         boolean cancel = false;
 
-        if (Protections.RemoveItemTypes.isEnabled() && RemoveItemTypesCheck.shouldRemove(e.getBlockPlaced().getType())) {
-        	
-            Scheduler.runTaskLater(this.plugin, () -> {
-                fListener.getLog().append(Msg.ItemTypeRemovedPlayerOnPlace.getValue(
-                        e.getPlayer(),
-                        e.getBlockPlaced().getType().name()
-                ), Protections.RemoveItemTypes);
-                e.getBlockPlaced().setType(Material.AIR);
-            }, 2, e.getPlayer());
+        if (Protections.RemoveItemTypes.isEnabled()
+                && RemoveItemTypesCheck.shouldRemove(e.getBlockPlaced().getType())) {
 
+            Scheduler.runTaskLater(
+                    this.plugin,
+                    () -> {
+                        fListener
+                                .getLog()
+                                .append(
+                                        Msg.ItemTypeRemovedPlayerOnPlace.getValue(
+                                                e.getPlayer(),
+                                                e.getBlockPlaced().getType().name()),
+                                        Protections.RemoveItemTypes);
+                        e.getBlockPlaced().setType(Material.AIR);
+                    },
+                    2,
+                    e.getPlayer());
         }
 
         if (IllegalStack.hasShulkers()) {
 
-            if (!IllegalStack.isBlockMetaData()) {  //Old Versions
+            if (!IllegalStack.isBlockMetaData()) { // Old Versions
                 if (e.getItemInHand().getItemMeta() instanceof BlockStateMeta) {
-                    final BlockStateMeta sbm = (BlockStateMeta) e.getItemInHand().getItemMeta();
+                    final BlockStateMeta sbm =
+                            (BlockStateMeta) e.getItemInHand().getItemMeta();
                     if (sbm.getBlockState() instanceof ShulkerBox) {
                         final ShulkerBox shulker = (ShulkerBox) sbm.getBlockState();
                         for (ItemStack is : shulker.getInventory().getContents()) {
@@ -470,7 +495,8 @@ public class fListener implements Listener {
                             boolean illegalEnchanted = false;
                             Protections prot = null;
                             if (Protections.RemoveOverstackedItems.isEnabled()) {
-                                overstacked = IrritatingLegacyChecks.CheckContainer(is, e.getPlayer().getLocation());
+                                overstacked = IrritatingLegacyChecks.CheckContainer(
+                                        is, e.getPlayer().getLocation());
                                 prot = Protections.RemoveOverstackedItems;
                             }
                             if (Protections.FixIllegalEnchantmentLevels.isEnabled()) {
@@ -486,23 +512,32 @@ public class fListener implements Listener {
 
                                 Protections p = prot;
 
-                                if (IllegalStackAction.isCompleted(prot, e.getPlayer(), e.getBlock(), e.getItemInHand())) {
+                                if (IllegalStackAction.isCompleted(
+                                        prot, e.getPlayer(), e.getBlock(), e.getItemInHand())) {
                                     cancel = true;
 
-                                    Scheduler.runTaskLater(this.plugin, () -> {
-                                        e.getPlayer().getInventory().removeItem(e.getItemInHand());
-                                        fListener.getLog().append(Msg.ShulkerPlace.getValue(
-                                                e.getPlayer(),
-                                                e.getBlockPlaced().getLocation()
-                                        ), p);
-                                    }, 2, e.getPlayer());
+                                    Scheduler.runTaskLater(
+                                            this.plugin,
+                                            () -> {
+                                                e.getPlayer().getInventory().removeItem(e.getItemInHand());
+                                                fListener
+                                                        .getLog()
+                                                        .append(
+                                                                Msg.ShulkerPlace.getValue(
+                                                                        e.getPlayer(),
+                                                                        e.getBlockPlaced()
+                                                                                .getLocation()),
+                                                                p);
+                                            },
+                                            2,
+                                            e.getPlayer());
                                 }
                                 break;
                             }
                         }
                     }
                 }
-            } else { //Modern Versions
+            } else { // Modern Versions
 
                 if (e.getBlockPlaced().getState() instanceof ShulkerBox) {
                     ShulkerBox c = (ShulkerBox) e.getBlock().getState();
@@ -511,7 +546,8 @@ public class fListener implements Listener {
                             continue;
                         }
 
-                        if (Protections.RemoveOverstackedItems.isEnabled())//I think all checks probably need to be moved to their own classes
+                        if (Protections.RemoveOverstackedItems
+                                .isEnabled()) // I think all checks probably need to be moved to their own classes
                         {
                             OverstackedItemCheck.CheckContainer(is, c);
                         }
@@ -525,10 +561,7 @@ public class fListener implements Listener {
                         }
                     }
                 }
-
             }
-
-
         }
         if (cancel) {
             e.setCancelled(true);
@@ -540,12 +573,10 @@ public class fListener implements Listener {
      */
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        if (e.getMessage().startsWith("/") && e
-                .getPlayer()
-                .isSleeping() && Protections.PreventCommandsInBed.isEnabled() && IllegalStackAction.isCompleted(
-                Protections.PreventCommandsInBed,
-                e.getPlayer()
-        )) {
+        if (e.getMessage().startsWith("/")
+                && e.getPlayer().isSleeping()
+                && Protections.PreventCommandsInBed.isEnabled()
+                && IllegalStackAction.isCompleted(Protections.PreventCommandsInBed, e.getPlayer())) {
             e.setCancelled(true);
             e.getPlayer().sendMessage(Msg.PlayerCommandSleepMsg.getValue());
         }
@@ -564,49 +595,58 @@ public class fListener implements Listener {
     /*
      * Looks for bad signs, tripwire dupe, players on top of the nether etc
      */
-    @EventHandler (ignoreCancelled = true)
-    public void onSignPlace(BlockPlaceEvent e) {  //only affects versions 1.9 through 1.12
+    @EventHandler(ignoreCancelled = true)
+    public void onSignPlace(BlockPlaceEvent e) { // only affects versions 1.9 through 1.12
         if (Protections.PreventTripwireDupe.isEnabled(e.getBlock().getWorld())) {
             if (e.getBlock().getType() == Material.TRIPWIRE_HOOK) {
                 for (BlockFace face : BlockFace.values()) {
-                	
-                    if ((Tag.TRAPDOORS.getValues().contains(e.getBlock().getRelative(face).getType()) || Tag.DOORS.getValues().contains(e.getBlock().getRelative(face).getType()))
+
+                    if ((Tag.TRAPDOORS
+                                            .getValues()
+                                            .contains(e.getBlock()
+                                                    .getRelative(face)
+                                                    .getType())
+                                    || Tag.DOORS
+                                            .getValues()
+                                            .contains(e.getBlock()
+                                                    .getRelative(face)
+                                                    .getType()))
                             && IllegalStackAction.isCompleted(
-                            Protections.PreventTripwireDupe,
-                            e.getPlayer(),
-                            e.getBlockPlaced(),
-                            e.getItemInHand()
-                    )) {
+                                    Protections.PreventTripwireDupe,
+                                    e.getPlayer(),
+                                    e.getBlockPlaced(),
+                                    e.getItemInHand())) {
                         e.setCancelled(true);
                         e.getPlayer().getInventory().removeItem(e.getItemInHand());
                         getLog().append(
-                                Msg.BlockedTripwireDupe.getValue(e.getPlayer(), e.getPlayer().getLocation().toString()),
-                                Protections.PreventTripwireDupe
-                        );
+                                        Msg.BlockedTripwireDupe.getValue(
+                                                e.getPlayer(),
+                                                e.getPlayer().getLocation().toString()),
+                                        Protections.PreventTripwireDupe);
                     }
                 }
             }
         }
 
-
-        if ((Protections.BlockBuildingAboveNether.isEnabled() || Protections.BlockPlayersAboveNether.isEnabled()) && !e
-                .getPlayer()
-                .isOp()) {
-            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet().contains(e.getPlayer().getWorld().getName())) {
+        if ((Protections.BlockBuildingAboveNether.isEnabled() || Protections.BlockPlayersAboveNether.isEnabled())
+                && !e.getPlayer().isOp()) {
+            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet()
+                    .contains(e.getPlayer().getWorld().getName())) {
                 return;
             }
             Location l = e.getBlock().getLocation();
             if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
                 if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
-                    if (l.getBlockY() >= Protections.NetherYLevel.getIntValue() && (l.getWorld().getName().toLowerCase().contains(
-                            "nether") || l.getWorld().getEnvironment() == Environment.NETHER)) //already on top of the nether..
+                    if (l.getBlockY() >= Protections.NetherYLevel.getIntValue()
+                            && (l.getWorld().getName().toLowerCase().contains("nether")
+                                    || l.getWorld().getEnvironment()
+                                            == Environment.NETHER)) // already on top of the nether..
                     {
                         e.setCancelled(IllegalStackAction.isCompleted(
                                 Protections.BlockPlayersAboveNether,
                                 e.getPlayer(),
                                 e.getBlockPlaced(),
-                                e.getItemInHand()
-                        ));
+                                e.getItemInHand()));
                     }
                 }
             }
@@ -617,7 +657,8 @@ public class fListener implements Listener {
         }
         boolean isSign = e.getBlockPlaced().getState() instanceof Sign;
 
-        if (Protections.RemoveBooksNotMatchingCharset.isEnabled() && isSign
+        if (Protections.RemoveBooksNotMatchingCharset.isEnabled()
+                && isSign
                 && !Protections.BookAuthorWhitelist.isWhitelisted(e.getPlayer().getName())) {
 
             sTimer.checkSign(e.getBlock(), e.getPlayer());
@@ -633,28 +674,33 @@ public class fListener implements Listener {
         if (e.getMount() instanceof Player) {
             return;
         }
-        if(Protections.PreventVexTrapping.isEnabled(e.getEntity().getLocation())) {
-        	if(e.getEntity() instanceof Vex) {
-                Vex v = ((Vex)e.getEntity());
+        if (Protections.PreventVexTrapping.isEnabled(e.getEntity().getLocation())) {
+            if (e.getEntity() instanceof Vex) {
+                Vex v = ((Vex) e.getEntity());
                 v.eject();
-        		v.getCollidableExemptions().add(e.getMount().getUniqueId());
-        		e.setCancelled(true);
-        	}
+                v.getCollidableExemptions().add(e.getMount().getUniqueId());
+                e.setCancelled(true);
+            }
         }
 
         if (Protections.PreventHeadInsideBlock.isEnabled() && e.getEntity() instanceof Player) {
             Player driver = (Player) e.getEntity();
-            if (e.getMount().getLocation().getBlock().getRelative(BlockFace.UP).getType().isSolid()
+            if (e.getMount()
+                            .getLocation()
+                            .getBlock()
+                            .getRelative(BlockFace.UP)
+                            .getType()
+                            .isSolid()
                     && IllegalStackAction.isCompleted(
-                    Protections.PreventHeadInsideBlock,
-                    e.getMount(),
-                    driver,
-                    e.getMount().getLocation().getBlock().getRelative(BlockFace.UP)
-            )) {
-                fListener.getLog().append(
-                        Msg.HeadInsideSolidBlock.getValue(driver, e.getMount()),
-                        Protections.PreventHeadInsideBlock
-                );
+                            Protections.PreventHeadInsideBlock,
+                            e.getMount(),
+                            driver,
+                            e.getMount().getLocation().getBlock().getRelative(BlockFace.UP))) {
+                fListener
+                        .getLog()
+                        .append(
+                                Msg.HeadInsideSolidBlock.getValue(driver, e.getMount()),
+                                Protections.PreventHeadInsideBlock);
                 e.getMount().eject();
                 e.getMount().remove();
             }
@@ -662,16 +708,13 @@ public class fListener implements Listener {
 
         if (Protections.DisableRidingExploitableMobs.isEnabled()) {
             if (IllegalStack.hasChestedAnimals()) {
-                if ((e.getMount() instanceof Mule || e.getMount() instanceof Donkey || e.getMount() instanceof ChestedHorse) ||
-                        (IllegalStack.hasTraders() && (e.getMount() instanceof Llama || e.getMount() instanceof TraderLlama))) {
+                if ((e.getMount() instanceof Mule
+                                || e.getMount() instanceof Donkey
+                                || e.getMount() instanceof ChestedHorse)
+                        || (IllegalStack.hasTraders()
+                                && (e.getMount() instanceof Llama || e.getMount() instanceof TraderLlama))) {
                     if (!IllegalStackAction.isCompleted(
-                            Protections.DisableRidingExploitableMobs,
-                            e.getEntity(),
-                            null,
-                            null,
-                            e.getMount(),
-                            null
-                    )) {
+                            Protections.DisableRidingExploitableMobs, e.getEntity(), null, null, e.getMount(), null)) {
                         return;
                     }
 
@@ -685,17 +728,16 @@ public class fListener implements Listener {
                     if (e.getEntity() instanceof Player) {
                         e.getEntity().sendMessage(Msg.PlayerDisabledRidingChestedMsg.getValue());
                     }
-
                 }
             } else {
-                if (e.getMount() instanceof Horse && IllegalStackAction.isCompleted(
-                        Protections.DisableRidingExploitableMobs,
-                        e.getEntity(),
-                        null,
-                        null,
-                        e.getMount(),
-                        null
-                )) {
+                if (e.getMount() instanceof Horse
+                        && IllegalStackAction.isCompleted(
+                                Protections.DisableRidingExploitableMobs,
+                                e.getEntity(),
+                                null,
+                                null,
+                                e.getMount(),
+                                null)) {
                     e.getMount().eject();
                     ((Horse) e.getMount()).setTamed(false);
                     if (e.getEntity() instanceof Player) {
@@ -703,8 +745,6 @@ public class fListener implements Listener {
                     }
                     e.setCancelled(true);
                 }
-
-
             }
         }
         if (Protections.PreventMinecartsInBoats.isEnabled()) {
@@ -713,15 +753,15 @@ public class fListener implements Listener {
                 return;
             }
 
-            if (e.getEntity() instanceof Minecart && e.getMount() instanceof Boat && IllegalStackAction.isCompleted(
-                    Protections.PreventMinecartsInBoats,
-                    e.getEntity(),
-                    e.getMount()
-            )) {
-                fListener.getLog().append(
-                        Msg.MinecartMount.getValue(e.getEntity(), e.getMount()),
-                        Protections.PreventMinecartsInBoats
-                );
+            if (e.getEntity() instanceof Minecart
+                    && e.getMount() instanceof Boat
+                    && IllegalStackAction.isCompleted(
+                            Protections.PreventMinecartsInBoats, e.getEntity(), e.getMount())) {
+                fListener
+                        .getLog()
+                        .append(
+                                Msg.MinecartMount.getValue(e.getEntity(), e.getMount()),
+                                Protections.PreventMinecartsInBoats);
                 e.setCancelled(true);
             }
         }
@@ -737,29 +777,27 @@ public class fListener implements Listener {
                 if ((above112 && adj.getType() == Material.END_PORTAL) || !above112 && adj.getType() == endPortal) {
                     e.setCancelled(true);
                     getLog().append(
-                            Msg.StaffEndPortalProtected.getValue(e.getBlockClicked().getLocation().toString()),
-                            Protections.PreventEndPortalDestruction
-                    );
+                                    Msg.StaffEndPortalProtected.getValue(
+                                            e.getBlockClicked().getLocation().toString()),
+                                    Protections.PreventEndPortalDestruction);
                 }
-
             }
         }
-
     }
 
-	/*
-	private String getSource(Inventory source) {
-		String src = "UNKNOWN LOCATION : InventoryType was: " + source.getType().name();
-		if(source instanceof Hopper) {
-			Hopper h = (Hopper) source;
-			src = getLog().cleanMessage("in a : " + source.getType().name() + " @" +h.getLocation());
-		} else if (source instanceof ) {
+    /*
+    private String getSource(Inventory source) {
+    	String src = "UNKNOWN LOCATION : InventoryType was: " + source.getType().name();
+    	if(source instanceof Hopper) {
+    		Hopper h = (Hopper) source;
+    		src = getLog().cleanMessage("in a : " + source.getType().name() + " @" +h.getLocation());
+    	} else if (source instanceof ) {
 
-		}
+    	}
 
-		return src;
-	}
-	 */
+    	return src;
+    }
+     */
 
     @EventHandler
     public void onDispenserDispense(BlockDispenseEvent e) {
@@ -769,11 +807,9 @@ public class fListener implements Listener {
         }
 
         if (Protections.PreventShulkerCrash.isEnabled()) {
-            if ((e.getBlock().getLocation().getY() >= 255 || e.getBlock().getLocation().getY() <= 0) && e
-                    .getItem()
-                    .getType()
-                    .name()
-                    .endsWith("SHULKER_BOX")) {
+            if ((e.getBlock().getLocation().getY() >= 255
+                            || e.getBlock().getLocation().getY() <= 0)
+                    && e.getItem().getType().name().endsWith("SHULKER_BOX")) {
                 e.setCancelled(true);
             }
         }
@@ -784,38 +820,40 @@ public class fListener implements Listener {
                 if (d.getFacing() == BlockFace.DOWN) {
                     e.setCancelled(true);
                     getLog().append(
-                            Msg.StaffMsgDispenerFlint.getValue(e.getItem().getType().name(), e.getBlock().getLocation()),
-                            Protections.PreventShulkerCrash2
-                    );
-                    Scheduler.runTaskLater(this.plugin, () -> e.getBlock().breakNaturally(), 4, e.getBlock().getLocation());
+                                    Msg.StaffMsgDispenerFlint.getValue(
+                                            e.getItem().getType().name(),
+                                            e.getBlock().getLocation()),
+                                    Protections.PreventShulkerCrash2);
+                    Scheduler.runTaskLater(
+                            this.plugin,
+                            () -> e.getBlock().breakNaturally(),
+                            4,
+                            e.getBlock().getLocation());
                 }
             }
         }
         if (!Protections.RemoveItemTypes.getTxtSet().isEmpty()) {
-            if (RemoveItemTypesCheck.shouldRemove(e.getItem(), e.getBlock().getState()) && IllegalStackAction.isCompleted(
-                    Protections.RemoveItemTypes,
-                    e.getItem(),
-                    e.getBlock()
-            )) {
+            if (RemoveItemTypesCheck.shouldRemove(e.getItem(), e.getBlock().getState())
+                    && IllegalStackAction.isCompleted(Protections.RemoveItemTypes, e.getItem(), e.getBlock())) {
 
                 if (IllegalStack.hasContainers()) {
 
                     Container c = (Container) e.getBlock().getState();
                     for (ItemStack itemStack : c.getInventory()) {
-                        if (itemStack != null && itemStack.getType() == e.getItem().getType()) {
+                        if (itemStack != null
+                                && itemStack.getType() == e.getItem().getType()) {
 
-                            Scheduler.runTaskLater(this.plugin, () -> e.getBlock().breakNaturally(), 4, e.getBlock().getLocation());
-
-
+                            Scheduler.runTaskLater(
+                                    this.plugin,
+                                    () -> e.getBlock().breakNaturally(),
+                                    4,
+                                    e.getBlock().getLocation());
                         }
                     }
                     e.setCancelled(true);
                     return;
-
                 }
-
             }
-
         }
         if (Protections.RemoveOverstackedItems.isEnabled() && !is18()) {
 
@@ -830,16 +868,13 @@ public class fListener implements Listener {
 
             } else {
                 if (IrritatingLegacyChecks.CheckContainer(e.getBlock())) {
-                    fListener.getLog().append2(Msg.ShulkerPlace.getValue(
-                            e.getItem().getType().name(),
-                            e.getBlock().getLocation()
-                    ));
+                    fListener
+                            .getLog()
+                            .append2(Msg.ShulkerPlace.getValue(
+                                    e.getItem().getType().name(), e.getBlock().getLocation()));
                     e.setCancelled(true);
                 }
-
             }
-
-
         }
         if (Protections.PreventEndPortalDestruction.isEnabled()) {
             if (e.getItem().getType().name().contains("END_PORTAL")) {
@@ -847,7 +882,8 @@ public class fListener implements Listener {
                     Directional d = (Directional) e.getBlock().getState().getBlockData();
                     if (e.getBlock().getRelative(d.getFacing()).getType() == Material.END_PORTAL) {
                         e.setCancelled(true);
-                        getLog().append2(Msg.StaffEndPortalProtected.getValue(e.getBlock().getLocation().toString()));
+                        getLog().append2(Msg.StaffEndPortalProtected.getValue(
+                                e.getBlock().getLocation().toString()));
                     }
                 }
             }
@@ -855,31 +891,37 @@ public class fListener implements Listener {
             for (BlockFace face : BlockFace.values()) {
                 if (e.getBlock().getRelative(face).getType().name().contains("END_PORTAL")) {
                     e.setCancelled(true);
-                    getLog().append2(Msg.StaffEndPortalProtected.getValue(e.getBlock().getLocation().toString()));
-
+                    getLog().append2(Msg.StaffEndPortalProtected.getValue(
+                            e.getBlock().getLocation().toString()));
                 }
             }
         }
     }
 
     @EventHandler
-    public void onHopperXfer(InventoryMoveItemEvent e) { //possibly affects all versions
+    public void onHopperXfer(InventoryMoveItemEvent e) { // possibly affects all versions
 
-        if (Protections.IgnoreAllHopperChecks.isEnabled() || e.getItem() == null || e.getItem().getType() == Material.AIR) {
+        if (Protections.IgnoreAllHopperChecks.isEnabled()
+                || e.getItem() == null
+                || e.getItem().getType() == Material.AIR) {
             return;
         }
 
         if (CheckUtils.CheckEntireInventory(e.getSource())) {
             e.setCancelled(true);
-            Scheduler.runTaskLater(this.plugin, () -> {
-                if (e.getSource().getHolder() instanceof DoubleChest) {
-                    e.getSource().getHolder().getInventory().remove(e.getItem());
+            Scheduler.runTaskLater(
+                    this.plugin,
+                    () -> {
+                        if (e.getSource().getHolder() instanceof DoubleChest) {
+                            e.getSource().getHolder().getInventory().remove(e.getItem());
 
-                } else if (e.getSource().getHolder().getInventory() instanceof BlockState) {
-                    BlockState bs = (BlockState) e.getSource().getHolder();
-                    bs.getBlock().breakNaturally();
-                }
-            }, 2, e.getSource().getLocation());
+                        } else if (e.getSource().getHolder().getInventory() instanceof BlockState) {
+                            BlockState bs = (BlockState) e.getSource().getHolder();
+                            bs.getBlock().breakNaturally();
+                        }
+                    },
+                    2,
+                    e.getSource().getLocation());
 
             return;
         }
@@ -916,10 +958,9 @@ public class fListener implements Listener {
             }
         }
 
-        if (Protections.BlockLoopedDroppers.isEnabled() && e.getSource().getHolder() instanceof Hopper && e
-                .getItem()
-                .getType()
-                .getMaxStackSize() <= 1) {
+        if (Protections.BlockLoopedDroppers.isEnabled()
+                && e.getSource().getHolder() instanceof Hopper
+                && e.getItem().getType().getMaxStackSize() <= 1) {
             if (!NBTStuff.hasSpigotNBT() && !IllegalStack.isNbtAPI()) {
                 Protections.BlockLoopedDroppers.setEnabled(false);
                 LOGGER.error(
@@ -944,13 +985,13 @@ public class fListener implements Listener {
                     return;
                 }
 
-                //if the stack was null then it already has a timestamp, so check it
+                // if the stack was null then it already has a timestamp, so check it
                 updatedStack = NBTStuff.checkTimestamp(e.getItem(), Protections.BlockLoopedDroppers);
-                if (updatedStack == null) //if its still null the item had a timestamp is looping, trigger a detection
+                if (updatedStack == null) // if its still null the item had a timestamp is looping, trigger a detection
                 {
                     shouldCancel = true;
                 } else {
-                    e.setItem(updatedStack); //otherwise the timestamp has expired so refresh it and do nothing.
+                    e.setItem(updatedStack); // otherwise the timestamp has expired so refresh it and do nothing.
                 }
             }
 
@@ -962,14 +1003,17 @@ public class fListener implements Listener {
                     drop.getBlock().setType(Material.AIR);
                 }
                 e.setItem(new ItemStack(Material.AIR, 1));
-                fListener.getLog().append2(Msg.StaffMsgDropperExploit.getValue(h.getLocation().toString()));
+                fListener
+                        .getLog()
+                        .append2(Msg.StaffMsgDropperExploit.getValue(
+                                h.getLocation().toString()));
                 e.setCancelled(true);
             }
-
         }
 
         if (Protections.PreventHoppersToUnloadedChunks.isEnabled()) {
-            if (e.getSource().getType() == InventoryType.HOPPER && e.getDestination().getType() == InventoryType.HOPPER) {
+            if (e.getSource().getType() == InventoryType.HOPPER
+                    && e.getDestination().getType() == InventoryType.HOPPER) {
                 HopperMinecart hm = null;
                 HopperMinecart hm2 = null;
                 Hopper h = null;
@@ -1031,11 +1075,12 @@ public class fListener implements Listener {
 
                         if (Protections.ItemNamesToRemove.notifyOnly()) {
                             getLog().notify(
-                                    Protections.RemoveItemsMatchingName,
-                                    " Triggered by: " + p.getName() + "with item: " + is.getType().name()
-                            );
+                                            Protections.RemoveItemsMatchingName,
+                                            " Triggered by: " + p.getName() + "with item: "
+                                                    + is.getType().name());
                         } else {
-                            getLog().append2(Msg.NamedItemRemovalPlayer.getValue(p, is.getType().name()));
+                            getLog().append2(Msg.NamedItemRemovalPlayer.getValue(
+                                    p, is.getType().name()));
                             e.setCancelled(true);
                             p.getInventory().removeItem(is);
                         }
@@ -1051,13 +1096,13 @@ public class fListener implements Listener {
             if (bm.getAuthor() != null && Protections.BookAuthorWhitelist.isWhitelisted(bm.getAuthor())) {
                 return;
             }
-            if (Protections.LimitNumberOfPages.getIntValue() > 0 && bm.getPageCount() > Protections.LimitNumberOfPages.getIntValue()) {
+            if (Protections.LimitNumberOfPages.getIntValue() > 0
+                    && bm.getPageCount() > Protections.LimitNumberOfPages.getIntValue()) {
                 e.setCancelled(true);
             }
             if (Protections.RemoveBooksNotMatchingCharset.isEnabled()) {
                 for (String page : bm.getPages()) {
-                    if (!Charset
-                            .forName(Protections.ValidCharset.getTxtValue())
+                    if (!Charset.forName(Protections.ValidCharset.getTxtValue())
                             .newEncoder()
                             .canEncode(ChatColor.stripColor(page))) {
                         pageCount++;
@@ -1066,7 +1111,6 @@ public class fListener implements Listener {
                 if (pageCount >= Protections.PageCountThreshold.getIntValue()) {
                     e.setCancelled(true);
                 }
-
             }
         }
     }
@@ -1077,7 +1121,8 @@ public class fListener implements Listener {
             ItemStack is = e.getItem();
             if (NBTStuff.hasNbtTag("IllegalStack", is, "NoEnchant", Protections.BlockEnchantingInstead)) {
                 e.setCancelled(true);
-                getLog().append2(Msg.PlayerEnchantBlocked.getValue(e.getEnchanter().getName()));
+                getLog().append2(Msg.PlayerEnchantBlocked.getValue(
+                        e.getEnchanter().getName()));
                 return;
             }
 
@@ -1085,7 +1130,8 @@ public class fListener implements Listener {
                 ItemMeta im = is.getItemMeta();
                 if (Protections.RemoveItemsMatchingName.loreNameMatch(im)) {
                     e.setCancelled(true);
-                    getLog().append2(Msg.PlayerEnchantBlocked.getValue(e.getEnchanter().getName()));
+                    getLog().append2(Msg.PlayerEnchantBlocked.getValue(
+                            e.getEnchanter().getName()));
                 }
             }
         }
@@ -1094,9 +1140,12 @@ public class fListener implements Listener {
     @EventHandler
     public void onCraftPrep(PrepareItemCraftEvent e) {
 
-        OverstackedItemCheck.CheckStorageInventory(e.getInventory(), (Player) e.getView().getPlayer());
-        IllegalEnchantCheck.CheckStorageInventory(e.getInventory(), (Player) e.getView().getPlayer());
-        BadAttributeCheck.CheckStorageInventory(e.getInventory(), (Player) e.getView().getPlayer());
+        OverstackedItemCheck.CheckStorageInventory(
+                e.getInventory(), (Player) e.getView().getPlayer());
+        IllegalEnchantCheck.CheckStorageInventory(
+                e.getInventory(), (Player) e.getView().getPlayer());
+        BadAttributeCheck.CheckStorageInventory(
+                e.getInventory(), (Player) e.getView().getPlayer());
     }
 
     @EventHandler
@@ -1121,11 +1170,9 @@ public class fListener implements Listener {
                 Set<ItemStack> remove = new HashSet<>();
 
                 try {
-                    if (e.getInventory().getType() == InventoryType.SHULKER_BOX || (e.getView().getTitle() != null && e
-                            .getView()
-                            .getTitle()
-                            .toLowerCase()
-                            .contains("shulker"))) {
+                    if (e.getInventory().getType() == InventoryType.SHULKER_BOX
+                            || (e.getView().getTitle() != null
+                                    && e.getView().getTitle().toLowerCase().contains("shulker"))) {
 
                         for (ItemStack is : e.getInventory().getContents()) {
                             if (is != null && is.getType().name().contains("SHULKER_BOX")) {
@@ -1146,13 +1193,14 @@ public class fListener implements Listener {
 
                 if (removed > 0) {
                     if (Protections.PreventNestedShulkers.notifyOnly()) {
-                        getLog().notify(Protections.PreventNestedShulkers, " Triggered by: " + e.getPlayer().getName());
+                        getLog().notify(
+                                        Protections.PreventNestedShulkers,
+                                        " Triggered by: " + e.getPlayer().getName());
                     } else {
                         getLog().append2(Msg.ShulkerClick.getValue(e.getPlayer().getName()));
                     }
                 }
             }
-
 
             if (Protections.FixIllegalEnchantmentLevels.isThirdPartyInventory(e.getView())) {
                 return;
@@ -1163,14 +1211,13 @@ public class fListener implements Listener {
                     continue;
                 }
 
-                if (Protections.FixIllegalEnchantmentLevels.isEnabled() && !is
-                        .getEnchantments()
-                        .isEmpty() && !mcMMOListener.ismcMMOActive(p)) {
-                    if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) //world list isn't empty
+                if (Protections.FixIllegalEnchantmentLevels.isEnabled()
+                        && !is.getEnchantments().isEmpty()
+                        && !mcMMOListener.ismcMMOActive(p)) {
+                    if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) // world list isn't empty
                     {
-                        if (!Protections.OnlyFunctionInWorlds.getTxtSet().contains(p
-                                .getWorld()
-                                .getName())) //isn't in a checked world
+                        if (!Protections.OnlyFunctionInWorlds.getTxtSet()
+                                .contains(p.getWorld().getName())) // isn't in a checked world
                         {
                             continue;
                         }
@@ -1187,8 +1234,9 @@ public class fListener implements Listener {
                                 continue;
                             }
 
-                            if (IllegalStack.isEpicRename() && ((en == Enchantment.LURE || en == Enchantment.ARROW_INFINITE) && is
-                                    .getEnchantmentLevel(en) == 4341)) {
+                            if (IllegalStack.isEpicRename()
+                                    && ((en == Enchantment.LURE || en == Enchantment.ARROW_INFINITE)
+                                            && is.getEnchantmentLevel(en) == 4341)) {
                                 continue;
                             }
                             if (Protections.EnchantedItemWhitelist.isWhitelisted(is)) {
@@ -1229,9 +1277,10 @@ public class fListener implements Listener {
                         if (Protections.RemoveItemTypes.isWhitelisted(is)) {
                             if (Protections.RemoveItemTypes.notifyOnly()) {
                                 getLog().notify(
-                                        Protections.RemoveItemTypes,
-                                        " Triggered by: " + e.getPlayer().getName() + " with item: " + is.getType().name()
-                                );
+                                                Protections.RemoveItemTypes,
+                                                " Triggered by: "
+                                                        + e.getPlayer().getName() + " with item: "
+                                                        + is.getType().name());
                             } else {
                                 getLog().append2(Msg.ItemTypeRemovedPlayer.getValue(p, is));
                                 e.getInventory().remove(is);
@@ -1241,9 +1290,10 @@ public class fListener implements Listener {
 
                     if (is.getAmount() > is.getMaxStackSize()) {
 
-                        if (!Protections.IllegalStackMode.isEnabled())  //in blacklist mode and on the blacklist
+                        if (!Protections.IllegalStackMode.isEnabled()) // in blacklist mode and on the blacklist
                         {
-                            if (!Protections.AllowStack.isWhitelisted(is.getType().name(), p)) {
+                            if (!Protections.AllowStack.isWhitelisted(
+                                    is.getType().name(), p)) {
                                 continue;
                             }
                             if (Protections.AllowStack.isThirdPartyInventory(e.getView())) {
@@ -1262,8 +1312,9 @@ public class fListener implements Listener {
                         if (Protections.AllowStack.isWhitelisted(is.getType().name(), p)) {
                             continue;
                         }
-                        if (Protections.AllowStackForGroup.isWhitelisted(is.getType().name()) && p.hasPermission(
-                                "illegalstack.overstack")) {
+                        if (Protections.AllowStackForGroup.isWhitelisted(
+                                        is.getType().name())
+                                && p.hasPermission("illegalstack.overstack")) {
                             continue;
                         }
 
@@ -1273,9 +1324,9 @@ public class fListener implements Listener {
 
                         if (Protections.RemoveOverstackedItems.notifyOnly()) {
                             getLog().notify(
-                                    Protections.RemoveOverstackedItems,
-                                    " Triggered by: " + e.getPlayer().getName() + " with item: " + is.getType().name()
-                            );
+                                            Protections.RemoveOverstackedItems,
+                                            " Triggered by: " + e.getPlayer().getName() + " with item: "
+                                                    + is.getType().name());
                         } else if (Protections.FixOverstackedItemInstead.isEnabled()) {
                             is.setAmount(is.getType().getMaxStackSize());
                             getLog().append2(Msg.IllegalStackShorten.getValue((Player) e.getPlayer(), is));
@@ -1285,8 +1336,10 @@ public class fListener implements Listener {
                         }
                     }
 
-                    
-                    if (Protections.RemoveBooksNotMatchingCharset.isEnabled() && is != null && is.hasItemMeta() && is.getItemMeta() instanceof BookMeta) {
+                    if (Protections.RemoveBooksNotMatchingCharset.isEnabled()
+                            && is != null
+                            && is.hasItemMeta()
+                            && is.getItemMeta() instanceof BookMeta) {
 
                         BookMeta bm = (BookMeta) is.getItemMeta();
 
@@ -1301,17 +1354,17 @@ public class fListener implements Listener {
                             author = bm.getAuthor();
                         }
 
-                        if (Protections.LimitNumberOfPages.getIntValue() > 0 && bm.getPageCount() > Protections.LimitNumberOfPages
-                                .getIntValue()) {
-                            getLog().append2(Msg.TooManyPages.getValue(e.getPlayer().getName()));
+                        if (Protections.LimitNumberOfPages.getIntValue() > 0
+                                && bm.getPageCount() > Protections.LimitNumberOfPages.getIntValue()) {
+                            getLog().append2(Msg.TooManyPages.getValue(
+                                    e.getPlayer().getName()));
                             e.getInventory().removeItem(is);
                             e.setCancelled(true);
                         }
                         if (Protections.RemoveBooksNotMatchingCharset.isEnabled()) {
                             int InvalidPages = 0;
                             for (String page : bm.getPages()) {
-                                if (!Charset
-                                        .forName(Protections.ValidCharset.getTxtValue())
+                                if (!Charset.forName(Protections.ValidCharset.getTxtValue())
                                         .newEncoder()
                                         .canEncode(ChatColor.stripColor(page))) {
                                     InvalidPages++;
@@ -1320,7 +1373,9 @@ public class fListener implements Listener {
 
                             if (InvalidPages >= Protections.PageCountThreshold.getIntValue()) {
                                 if (Protections.RemoveBooksNotMatchingCharset.notifyOnly()) {
-                                    getLog().notify(Protections.RemoveBooksNotMatchingCharset, " Triggered by: " + author);
+                                    getLog().notify(
+                                                    Protections.RemoveBooksNotMatchingCharset,
+                                                    " Triggered by: " + author);
                                 } else {
                                     getLog().append2(Msg.BookRemoved.getValue(author));
                                     bm.setPages(new ArrayList<>());
@@ -1337,11 +1392,12 @@ public class fListener implements Listener {
         }
     }
 
-    //Fix the stupid 1.12.2 - 1.13 carpet/rail dupe glitch with pistons also the 1.12 piston / item frame dupe
+    // Fix the stupid 1.12.2 - 1.13 carpet/rail dupe glitch with pistons also the 1.12 piston / item frame dupe
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPistonBreak(BlockPistonRetractEvent event) {
 
-        if (Protections.DisableInWorlds.isWhitelisted(event.getBlock().getWorld().getName())) {
+        if (Protections.DisableInWorlds.isWhitelisted(
+                event.getBlock().getWorld().getName())) {
             return;
         }
         if (Protections.PreventEndCrystalLagMachine.isEnabled()) {
@@ -1363,7 +1419,8 @@ public class fListener implements Listener {
 
             if (count > 1 && !remove.isEmpty()) {
                 event.setCancelled(true);
-                getLog().append2(Msg.StoppedPushableEntity.getValue(remove.get(0).getLocation(), ""));
+                getLog().append2(
+                                Msg.StoppedPushableEntity.getValue(remove.get(0).getLocation(), ""));
                 for (Entity ec : remove) {
                     ec.remove();
                 }
@@ -1372,31 +1429,34 @@ public class fListener implements Listener {
 
         if (Protections.PreventIndirectTNTPowerDupe.isEnabled()) {
             for (Block b : event.getBlocks()) {
-                if (getIs112()) { //hack for 112 tnt that does not trigger a entity spawn event
+                if (getIs112()) { // hack for 112 tnt that does not trigger a entity spawn event
                     if (b.getType() != Material.TNT) {
                         continue;
                     }
                     b.setType(Material.AIR);
                 } else {
-                    if (b.getType() == Material.TNT) //found a moved TNT Block
+                    if (b.getType() == Material.TNT) // found a moved TNT Block
                     {
-                        movedTNT.put(b, System.currentTimeMillis() + ThreadLocalRandom.current().nextLong(213, 1132));
+                        movedTNT.put(
+                                b,
+                                System.currentTimeMillis()
+                                        + ThreadLocalRandom.current().nextLong(213, 1132));
                     }
                 }
             }
         }
 
-        //item frame dupe for only versions < 1.13
+        // item frame dupe for only versions < 1.13
         if (Protections.PreventItemFramePistonDupe.isEnabled()) {
             Set<Entity> removed = new HashSet<>();
             BlockFace[] faces = {BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH};
 
-            //check for frames on the back of the piston
+            // check for frames on the back of the piston
             BlockFace dir = event.getDirection();
-            for (Entity ent : event.getBlock().getWorld().getNearbyEntities(event
-                    .getBlock()
-                    .getRelative(dir.getOppositeFace())
-                    .getLocation(), 1.1, 1.1, 1.1)) {
+            for (Entity ent : event.getBlock()
+                    .getWorld()
+                    .getNearbyEntities(
+                            event.getBlock().getRelative(dir.getOppositeFace()).getLocation(), 1.1, 1.1, 1.1)) {
                 if (ent instanceof ItemFrame) {
                     removed.add(ent);
                 }
@@ -1420,7 +1480,7 @@ public class fListener implements Listener {
             }
 
             removed.clear();
-            //check all blocks moved by this piston
+            // check all blocks moved by this piston
             if (event.isSticky()) {
                 for (Block b : event.getBlocks()) {
                     for (BlockFace face : faces) {
@@ -1441,9 +1501,8 @@ public class fListener implements Listener {
 
                                     if (Protections.PreventItemFramePistonDupe.notifyOnly()) {
                                         getLog().notify(
-                                                Protections.PreventItemFramePistonDupe,
-                                                " Triggered @" + frame.getLocation()
-                                        );
+                                                        Protections.PreventItemFramePistonDupe,
+                                                        " Triggered @" + frame.getLocation());
                                     } else {
                                         getLog().append2(Msg.ItemFrameRemoveOnRetract + " @" + frame.getLocation());
                                         frame.setItem(null);
@@ -1473,7 +1532,7 @@ public class fListener implements Listener {
             }
         }
 
-        //<1.13 has carpet/rail dupes, only 1.14 has the tnt dupe
+        // <1.13 has carpet/rail dupes, only 1.14 has the tnt dupe
         if (Protections.PreventRailDupe.isEnabled()) {
             StringBuilder types = new StringBuilder();
             for (Block b : event.getBlocks()) {
@@ -1496,29 +1555,30 @@ public class fListener implements Listener {
 
                 if (Protections.PreventRailDupe.notifyOnly()) {
                     getLog().notify(
-                            Protections.PreventRailDupe,
-                            " Triggered @" + event.getBlock().getLocation() + " blocks affected: " + types
-                    );
+                                    Protections.PreventRailDupe,
+                                    " Triggered @" + event.getBlock().getLocation() + " blocks affected: " + types);
                 } else {
-                    getLog().append2(Msg.PistonRetractionDupe.getValue(event.getBlock().getLocation(), types.toString()));
+                    getLog().append2(Msg.PistonRetractionDupe.getValue(
+                            event.getBlock().getLocation(), types.toString()));
                     if (!Protections.BreakExploitMachines.isEnabled()) {
                         if (event.getBlock().getType() != Material.AIR) {
-                            event.getBlock().getWorld().dropItemNaturally(
-                                    event.getBlock().getLocation(),
-                                    new ItemStack(event.getBlock().getType(), 1)
-                            );
+                            event.getBlock()
+                                    .getWorld()
+                                    .dropItemNaturally(
+                                            event.getBlock().getLocation(),
+                                            new ItemStack(event.getBlock().getType(), 1));
                         }
                     }
                     event.getBlock().setType(Material.AIR);
                 }
-
             }
         }
     }
 
     @EventHandler
     public void onBookCreate(PlayerEditBookEvent e) {
-        if (Protections.DisableInWorlds.getTxtSet().contains(e.getPlayer().getWorld().getName())) {
+        if (Protections.DisableInWorlds.getTxtSet()
+                .contains(e.getPlayer().getWorld().getName())) {
             return;
         }
 
@@ -1528,7 +1588,8 @@ public class fListener implements Listener {
                     return;
                 }
                 if (e.getNewBookMeta() != null && e.getNewBookMeta().getAuthor() != null) {
-                    if (Protections.BookAuthorWhitelist.isWhitelisted(e.getNewBookMeta().getAuthor())) {
+                    if (Protections.BookAuthorWhitelist.isWhitelisted(
+                            e.getNewBookMeta().getAuthor())) {
                         return;
                     }
                 }
@@ -1547,42 +1608,49 @@ public class fListener implements Listener {
                 e.setNewBookMeta(bm);
 
                 final Player player = e.getPlayer();
-                Scheduler.runTaskLater(this.plugin, () -> {
-                    for (ItemStack is : player.getInventory()) {
-                        if (is != null && (is.getType() == book || is.getType() == Material.WRITTEN_BOOK)) {
-                            BookMeta bm1 = (BookMeta) is.getItemMeta();
+                Scheduler.runTaskLater(
+                        this.plugin,
+                        () -> {
+                            for (ItemStack is : player.getInventory()) {
+                                if (is != null && (is.getType() == book || is.getType() == Material.WRITTEN_BOOK)) {
+                                    BookMeta bm1 = (BookMeta) is.getItemMeta();
 
-                            if (bm1.getAuthor() != null && Protections.BookAuthorWhitelist.isWhitelisted(bm1.getAuthor())) {
-                                continue;
-                            }
-                            for (String page : bm1.getPages()) {
-                                if (page != null && !page.isEmpty()) {
-                                    if (!is18() && player.getInventory().getItemInOffHand().equals(is)) {
-                                        player.getInventory().setItemInOffHand(new ItemStack(Material.AIR, 1));
-                                    } else {
-                                        player.getInventory().removeItem(is);
+                                    if (bm1.getAuthor() != null
+                                            && Protections.BookAuthorWhitelist.isWhitelisted(bm1.getAuthor())) {
+                                        continue;
+                                    }
+                                    for (String page : bm1.getPages()) {
+                                        if (page != null && !page.isEmpty()) {
+                                            if (!is18()
+                                                    && player.getInventory()
+                                                            .getItemInOffHand()
+                                                            .equals(is)) {
+                                                player.getInventory().setItemInOffHand(new ItemStack(Material.AIR, 1));
+                                            } else {
+                                                player.getInventory().removeItem(is);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (is != null && is.getType() == Material.WRITTEN_BOOK) {
+                                    BookMeta bm1 = (BookMeta) is.getItemMeta();
+                                    if (Protections.BookAuthorWhitelist.isWhitelisted(bm1.getAuthor())) {
+                                        continue;
+                                    }
+
+                                    for (String page : bm1.getPages()) {
+                                        if (page.contains(ChatColor.RED + "*DISABLED BOOK*")) {
+                                            player.getInventory().removeItem(is);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if (is != null && is.getType() == Material.WRITTEN_BOOK) {
-                            BookMeta bm1 = (BookMeta) is.getItemMeta();
-                            if (Protections.BookAuthorWhitelist.isWhitelisted(bm1.getAuthor())) {
-                                continue;
-                            }
-
-                            for (String page : bm1.getPages()) {
-                                if (page.contains(ChatColor.RED + "*DISABLED BOOK*")) {
-                                    player.getInventory().removeItem(is);
-                                }
-                            }
-                        }
-                    }
-                }, 12, player);
+                        },
+                        12,
+                        player);
             } else {
                 getLog().notify(Protections.DisableBookWriting, " Triggered by" + e.getPlayer());
             }
-
         }
     }
 
@@ -1600,16 +1668,17 @@ public class fListener implements Listener {
             hasPassengers = 0;
         }
 
-        if (hasPassengers == 0 || Protections.DisableInWorlds.isWhitelisted(e.getVehicle().getWorld().getName())) {
+        if (hasPassengers == 0
+                || Protections.DisableInWorlds.isWhitelisted(
+                        e.getVehicle().getWorld().getName())) {
             return;
         }
 
-        if (e.getFrom().getBlockX() == e.getTo().getBlockX() && e.getFrom().getBlockY() == e.getTo().getBlockY() && e
-                .getFrom()
-                .getBlockZ() == e.getTo().getBlockZ()) {
+        if (e.getFrom().getBlockX() == e.getTo().getBlockX()
+                && e.getFrom().getBlockY() == e.getTo().getBlockY()
+                && e.getFrom().getBlockZ() == e.getTo().getBlockZ()) {
             return;
         }
-
 
         Player driver = null;
         for (Entity ent : e.getVehicle().getPassengers()) {
@@ -1628,17 +1697,14 @@ public class fListener implements Listener {
                 e.getVehicle().eject();
                 e.getVehicle().remove();
             }
-
         }
 
         if (!Protections.PreventEndGatewayCrashExploit.isEnabled()) {
             return;
         }
-        if ((e.getFrom().getWorld().getEnvironment() == Environment.THE_END && e
-                .getTo()
-                .getWorld()
-                .getEnvironment() == Environment.THE_END) && e.getFrom().getBlock() != e.getTo().getBlock()) {
-
+        if ((e.getFrom().getWorld().getEnvironment() == Environment.THE_END
+                        && e.getTo().getWorld().getEnvironment() == Environment.THE_END)
+                && e.getFrom().getBlock() != e.getTo().getBlock()) {
 
             for (BlockFace face : BlockFace.values()) {
                 Block next = e.getVehicle().getLocation().getBlock().getRelative(face);
@@ -1649,30 +1715,29 @@ public class fListener implements Listener {
                 }
             }
 
-			/*
-			for(int x = (int) e.getVehicle().getBoundingBox().getMinX();x <= e.getVehicle().getBoundingBox().getMaxX(); x = x + 1)
-				for(int z = (int) e.getVehicle().getBoundingBox().getMinZ();z <= e.getVehicle().getBoundingBox().getMaxZ(); z = z + 1)
-				{
-					for(BlockFace face:faces) {
+            /*
+            for(int x = (int) e.getVehicle().getBoundingBox().getMinX();x <= e.getVehicle().getBoundingBox().getMaxX(); x = x + 1)
+            	for(int z = (int) e.getVehicle().getBoundingBox().getMinZ();z <= e.getVehicle().getBoundingBox().getMaxZ(); z = z + 1)
+            	{
+            		for(BlockFace face:faces) {
 
-						Block b = e.getVehicle().getWorld().getBlockAt(x, e.getTo().getBlockY(), z);
-						Block next = b.getRelative(face);
+            			Block b = e.getVehicle().getWorld().getBlockAt(x, e.getTo().getBlockY(), z);
+            			Block next = b.getRelative(face);
 
-						if(b.getType() == Material.END_GATEWAY || next.getType() == Material.END_GATEWAY) {
-							e.getVehicle().eject();
-							e.getVehicle().remove();
-							getLog().append2(Msg.StaffMsgEndGatewayVehicleRemoved.getValue(driver,e.getVehicle()));
-						}
-					}
-				}
-			 */
+            			if(b.getType() == Material.END_GATEWAY || next.getType() == Material.END_GATEWAY) {
+            				e.getVehicle().eject();
+            				e.getVehicle().remove();
+            				getLog().append2(Msg.StaffMsgEndGatewayVehicleRemoved.getValue(driver,e.getVehicle()));
+            			}
+            		}
+            	}
+             */
 
         }
     }
 
     @EventHandler
     public void onEntityTeleport(EntityPortalEvent e) {
-
 
         if (e.getTo() == null || e.getFrom() == null || e.getEntity() == null) {
             return;
@@ -1687,76 +1752,75 @@ public class fListener implements Listener {
             whiteLiString = whiteLiString + s;
         }
 
-
         boolean blockNether = Protections.BlockNonPlayersInNetherPortal.isEnabled();
         boolean blockEnd = Protections.BlockNonPlayersInEndPortal.isEnabled();
 
         if (!(e.getEntity() instanceof Player)) {
-            //entity teleporting
+            // entity teleporting
             World wTo = e.getTo().getWorld();
             World wFrom = e.getFrom().getWorld();
 
-
             double randY = ThreadLocalRandom.current().nextDouble(0, 1);
-            if (blockNether && (wFrom.getEnvironment() == Environment.NETHER || wTo.getEnvironment() == Environment.NETHER)) {
-                boolean allowed = !Protections.NetherWhiteListMode.isEnabled() || Protections.NetherWhiteList.isWhitelisted(e
-                        .getEntity()
-                        .getType()
-                        .name());
-                if (!Protections.NetherWhiteListMode.isEnabled() && Protections.NetherWhiteList.isWhitelisted(e
-                        .getEntity()
-                        .getType()
-                        .name())) {
+            if (blockNether
+                    && (wFrom.getEnvironment() == Environment.NETHER || wTo.getEnvironment() == Environment.NETHER)) {
+                boolean allowed = !Protections.NetherWhiteListMode.isEnabled()
+                        || Protections.NetherWhiteList.isWhitelisted(
+                                e.getEntity().getType().name());
+                if (!Protections.NetherWhiteListMode.isEnabled()
+                        && Protections.NetherWhiteList.isWhitelisted(
+                                e.getEntity().getType().name())) {
                     allowed = false;
                 }
 
                 if (!allowed) {
                     if (Protections.BlockNonPlayersInNetherPortal.notifyOnly()) {
                         getLog().notify(
-                                Protections.BlockNonPlayersInNetherPortal,
-                                " Triggered by" + e.getEntity().getType().name() + " @" + e.getEntity().getLocation()
-                        );
+                                        Protections.BlockNonPlayersInNetherPortal,
+                                        " Triggered by"
+                                                + e.getEntity().getType().name() + " @"
+                                                + e.getEntity().getLocation());
                     } else {
                         e.setCancelled(true);
                         Vector v = e.getEntity().getVelocity().multiply(-2);
                         e.getEntity().setVelocity(v);
                         if (Protections.NotifyBlockedPortalAttempts.isEnabled()) {
                             getLog().append(
-                                    Msg.NetherPortalBlock.getValue(e.getEntity().getLocation(), e.getEntity().getName()),
-                                    Protections.BlockNonPlayersInNetherPortal
-                            );
+                                            Msg.NetherPortalBlock.getValue(
+                                                    e.getEntity().getLocation(),
+                                                    e.getEntity().getName()),
+                                            Protections.BlockNonPlayersInNetherPortal);
                             LOGGER.warn(
                                     "Nether Portal Blocked Item: {} leaving world: {} entering: {} is world {} whitelisted? whitelist = {}",
                                     e.getEntity().getType().name(),
                                     e.getFrom().getWorld().getName(),
                                     e.getTo().getWorld().getName(),
-                                    Protections.DisableInWorlds.isWhitelisted(e.getTo().getWorld().getName()),
-                                    whiteLiString
-                            );
+                                    Protections.DisableInWorlds.isWhitelisted(
+                                            e.getTo().getWorld().getName()),
+                                    whiteLiString);
                         }
                     }
                 }
             }
 
-            if (blockEnd && (wFrom.getEnvironment() == Environment.THE_END || wTo.getEnvironment() == Environment.THE_END)) {
+            if (blockEnd
+                    && (wFrom.getEnvironment() == Environment.THE_END || wTo.getEnvironment() == Environment.THE_END)) {
 
-                boolean allowed = !Protections.EndWhiteListMode.isEnabled() || Protections.EndWhiteList.isWhitelisted(e
-                        .getEntity()
-                        .getType()
-                        .name());
-                if (!Protections.EndWhiteListMode.isEnabled() && Protections.EndWhiteList.isWhitelisted(e
-                        .getEntity()
-                        .getType()
-                        .name())) {
+                boolean allowed = !Protections.EndWhiteListMode.isEnabled()
+                        || Protections.EndWhiteList.isWhitelisted(
+                                e.getEntity().getType().name());
+                if (!Protections.EndWhiteListMode.isEnabled()
+                        && Protections.EndWhiteList.isWhitelisted(
+                                e.getEntity().getType().name())) {
                     allowed = false;
                 }
 
                 if (!allowed) {
                     if (Protections.BlockNonPlayersInEndPortal.notifyOnly()) {
                         getLog().notify(
-                                Protections.BlockNonPlayersInEndPortal,
-                                " Triggered by" + e.getEntity().getType().name() + " @" + e.getEntity().getLocation()
-                        );
+                                        Protections.BlockNonPlayersInEndPortal,
+                                        " Triggered by"
+                                                + e.getEntity().getType().name() + " @"
+                                                + e.getEntity().getLocation());
                     } else {
                         e.setCancelled(true);
                         Vector v = e.getEntity().getVelocity().multiply(-2);
@@ -1765,7 +1829,8 @@ public class fListener implements Listener {
                         v.setY(randY);
                         e.getEntity().setVelocity(v);
                         if (Protections.NotifyBlockedPortalAttempts.isEnabled()) {
-                            getLog().append2(Msg.EndPortalBlock.getValue(e.getEntity().getLocation(), e.getEntity().getName()));
+                            getLog().append2(Msg.EndPortalBlock.getValue(
+                                    e.getEntity().getLocation(), e.getEntity().getName()));
                         }
                     }
                 }
@@ -1781,30 +1846,33 @@ public class fListener implements Listener {
 
         if (Protections.RemoveExistingGlitchedMinecarts.isEnabled()) {
             final Chunk chunk = e.getChunk();
-            Scheduler.runTaskLater(this.plugin, () -> {
-                if (!chunk.isLoaded()) {
-                    return;
-                }
+            Scheduler.runTaskLater(
+                    this.plugin,
+                    () -> {
+                        if (!chunk.isLoaded()) {
+                            return;
+                        }
 
-                for (Entity ent : e.getChunk().getEntities()) {
-                    if (ent instanceof Minecart) {
+                        for (Entity ent : e.getChunk().getEntities()) {
+                            if (ent instanceof Minecart) {
 
-                        Block b = ent.getLocation().getBlock();
-                        if (b.getType().isSolid()) {
-                            if (Protections.RemoveExistingGlitchedMinecarts.notifyOnly()) {
-                                getLog().notify(
-                                        Protections.RemoveExistingGlitchedMinecarts,
-                                        " Triggered @" + b.getLocation()
-                                );
-                            } else {
-                                getLog().append2(Msg.MinecartGlitch1.getValue(b.getLocation(), b.getType().name()));
-                                ent.remove();
+                                Block b = ent.getLocation().getBlock();
+                                if (b.getType().isSolid()) {
+                                    if (Protections.RemoveExistingGlitchedMinecarts.notifyOnly()) {
+                                        getLog().notify(
+                                                        Protections.RemoveExistingGlitchedMinecarts,
+                                                        " Triggered @" + b.getLocation());
+                                    } else {
+                                        getLog().append2(Msg.MinecartGlitch1.getValue(
+                                                b.getLocation(), b.getType().name()));
+                                        ent.remove();
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-            }, 250, e.getChunk().getBlock(0, 0, 0).getLocation());
-
+                    },
+                    250,
+                    e.getChunk().getBlock(0, 0, 0).getLocation());
         }
 
         if (Protections.DestroyBadSignsonChunkLoad.isEnabled()) {
@@ -1813,15 +1881,13 @@ public class fListener implements Listener {
         }
     }
 
-
-    
     @EventHandler(priority = EventPriority.LOWEST)
     public void creatureSpawnEvent(CreatureSpawnEvent e) {
 
         if (Protections.DisableInWorlds.isWhitelisted(e.getLocation().getWorld().getName())) {
             return;
         }
-    	
+
         if (Protections.PreventZombieItemPickup.isEnabled()) {
             if (e.getEntity() instanceof Zombie) {
                 Zombie z = (Zombie) e.getEntity();
@@ -1833,10 +1899,9 @@ public class fListener implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
 
-        if (event.getEntity() instanceof EnderDragon && Protections.BlockNonPlayersInEndPortal.isEnabled() && event
-                .getEntity()
-                .getWorld()
-                .getEnvironment() == Environment.THE_END) {
+        if (event.getEntity() instanceof EnderDragon
+                && Protections.BlockNonPlayersInEndPortal.isEnabled()
+                && event.getEntity().getWorld().getEnvironment() == Environment.THE_END) {
             fTimer.setEndScanFinish(System.currentTimeMillis() + (30 * 1000));
             fTimer.setDragon(event.getEntity().getWorld());
         }
@@ -1845,9 +1910,9 @@ public class fListener implements Listener {
             return;
         }
 
-        if (event.getEntity().getKiller() == null || event
-                .getEntity()
-                .getKiller() == null || event.getEntity() instanceof Player) {
+        if (event.getEntity().getKiller() == null
+                || event.getEntity().getKiller() == null
+                || event.getEntity() instanceof Player) {
             return;
         }
 
@@ -1859,14 +1924,16 @@ public class fListener implements Listener {
             return;
         }
 
-        if (offHand.containsEnchantment(Enchantment.LOOT_BONUS_MOBS)) //offhand enchantment found
+        if (offHand.containsEnchantment(Enchantment.LOOT_BONUS_MOBS)) // offhand enchantment found
         {
-            if (mainHand.containsEnchantment(Enchantment.LOOT_BONUS_MOBS)) //also have a looting enchantment
+            if (mainHand.containsEnchantment(Enchantment.LOOT_BONUS_MOBS)) // also have a looting enchantment
             {
-                if (mainHand.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS) < offHand.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS)) //trying to screw with the levels deny
+                if (mainHand.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS)
+                        < offHand.getEnchantmentLevel(
+                                Enchantment.LOOT_BONUS_MOBS)) // trying to screw with the levels deny
                 {
                     nerf = true;
-                } else  //otherwise they are definitely trying to cheat the system give no bonus at all.
+                } else // otherwise they are definitely trying to cheat the system give no bonus at all.
                 {
                     nerf = true;
                 }
@@ -1882,9 +1949,10 @@ public class fListener implements Listener {
 
     @EventHandler
     public void onPistonBreak(BlockPistonExtendEvent event) {
-        //fix minecart glitching by pushing a block into a minecart
+        // fix minecart glitching by pushing a block into a minecart
 
-        if (Protections.DisableInWorlds.isWhitelisted(event.getBlock().getWorld().getName())) {
+        if (Protections.DisableInWorlds.isWhitelisted(
+                event.getBlock().getWorld().getName())) {
             return;
         }
 
@@ -1916,18 +1984,19 @@ public class fListener implements Listener {
             }
             if (count > 1 && !remove.isEmpty()) {
                 event.setCancelled(true);
-                getLog().append2(Msg.StoppedPushableEntity.getValue(remove.get(0).getLocation(), ""));
+                getLog().append2(
+                                Msg.StoppedPushableEntity.getValue(remove.get(0).getLocation(), ""));
                 for (Entity ec : remove) {
                     ec.remove();
                 }
             }
-
         }
 
         if (Protections.PreventArmorStandLagMachine.isEnabled() && event.getDirection() == BlockFace.UP) {
 
             Block above = event.getBlock().getRelative(BlockFace.UP);
-            for (Entity ent : above.getWorld().getNearbyEntities(above.getLocation().clone().add(0.5, 0, 0.5), 0, 1.5, 0)) {
+            for (Entity ent : above.getWorld()
+                    .getNearbyEntities(above.getLocation().clone().add(0.5, 0, 0.5), 0, 1.5, 0)) {
                 if (ent instanceof ArmorStand) {
                     if (Protections.PreventEndCrystalLagMachine.isThirdPartyObject(ent)) {
                         continue;
@@ -1942,7 +2011,8 @@ public class fListener implements Listener {
             }
             if (!event.isCancelled()) {
                 for (Block b : event.getBlocks()) {
-                    for (Entity ent : b.getWorld().getNearbyEntities(b.getLocation().clone().add(0.5, 0, 0.5), 0, 1.5, 0)) {
+                    for (Entity ent : b.getWorld()
+                            .getNearbyEntities(b.getLocation().clone().add(0.5, 0, 0.5), 0, 1.5, 0)) {
                         if (ent instanceof ArmorStand) {
                             if (Protections.PreventEndCrystalLagMachine.isThirdPartyObject(ent)) {
                                 continue;
@@ -1963,38 +2033,39 @@ public class fListener implements Listener {
             final List<Block> bList = event.getBlocks();
             final BlockFace dir = event.getDirection();
 
-            Scheduler.runTaskLater(this.plugin, () -> {
-                for (Block b : bList) {
-                    Block next = b.getRelative(dir);
-                    if (next.getType() == Material.AIR || Protections.MinecartBlockWhiteList.isWhitelisted(next
-                            .getType()
-                            .name()) || fListener.getInstance().blacklist.contains(next.getType())) {
-                        continue;
-                    }
+            Scheduler.runTaskLater(
+                    this.plugin,
+                    () -> {
+                        for (Block b : bList) {
+                            Block next = b.getRelative(dir);
+                            if (next.getType() == Material.AIR
+                                    || Protections.MinecartBlockWhiteList.isWhitelisted(
+                                            next.getType().name())
+                                    || fListener.getInstance().blacklist.contains(next.getType())) {
+                                continue;
+                            }
 
-                    for (Entity ent : next.getWorld().getNearbyEntities(
-                            next.getLocation().clone().add(0.5, 0.5, 0.5),
-                            0.4,
-                            0.4,
-                            0.4
-                    )) {
+                            for (Entity ent : next.getWorld()
+                                    .getNearbyEntities(
+                                            next.getLocation().clone().add(0.5, 0.5, 0.5), 0.4, 0.4, 0.4)) {
 
-                        if (ent instanceof Minecart) {
-                            if (Protections.PreventMinecartGlitch.notifyOnly()) {
-                                getLog().notify(
-                                        Protections.PreventMinecartGlitch,
-                                        " Triggered @" + ent.getLocation()
-                                );
-                            } else {
-                                getLog().append2(Msg.MinecartGlitch2.getValue(ent.getLocation(), ""));
-                                ent.remove();
+                                if (ent instanceof Minecart) {
+                                    if (Protections.PreventMinecartGlitch.notifyOnly()) {
+                                        getLog().notify(
+                                                        Protections.PreventMinecartGlitch,
+                                                        " Triggered @" + ent.getLocation());
+                                    } else {
+                                        getLog().append2(Msg.MinecartGlitch2.getValue(ent.getLocation(), ""));
+                                        ent.remove();
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-            }, 50, event.getBlock().getLocation());
+                    },
+                    50,
+                    event.getBlock().getLocation());
         }
-        //Not fixed in 1.14
+        // Not fixed in 1.14
         if (Protections.PreventCactusDupe.isEnabled()) {
             BlockFace dir = event.getDirection();
             Block head = event.getBlock().getRelative(dir);
@@ -2002,26 +2073,30 @@ public class fListener implements Listener {
             List<Material> growable = loadGrowables();
             List<Material> substrate = loadSubstrates();
 
-            //Check for pistons pushing substrate under the plant
+            // Check for pistons pushing substrate under the plant
             for (Block b : event.getBlocks()) {
-                if (substrate.contains(b.getType())) { //pushing a substrate block
+                if (substrate.contains(b.getType())) { // pushing a substrate block
 
                     Block above = b.getRelative(BlockFace.UP);
-                    if (growable.contains(above.getType())) { //is a growable block above
+                    if (growable.contains(above.getType())) { // is a growable block above
                         if (Protections.PreventCactusDupe.notifyOnly()) {
-                            getLog().notify(Protections.PreventCactusDupe, " Triggered @" + event.getBlock().getLocation());
+                            getLog().notify(
+                                            Protections.PreventCactusDupe,
+                                            " Triggered @" + event.getBlock().getLocation());
                         } else {
                             event.setCancelled(true);
                             if (!Protections.BreakExploitMachines.isEnabled()) {
                                 World w = event.getBlock().getWorld();
-                                w.dropItemNaturally(event.getBlock().getLocation(), new ItemStack(event.getBlock().getType(), 1));
+                                w.dropItemNaturally(
+                                        event.getBlock().getLocation(),
+                                        new ItemStack(event.getBlock().getType(), 1));
                                 w.dropItemNaturally(above.getLocation(), new ItemStack(above.getType(), 1));
                                 w.dropItemNaturally(b.getLocation(), new ItemStack(b.getType(), 1));
                             }
                             getLog().append2(Msg.ZeroTickGlitch.getValue(
                                     event.getBlock().getLocation(),
-                                    above.getType().name() + ", " + b.getType().name() + ", " + event.getBlock().getType().name()
-                            ));
+                                    above.getType().name() + ", " + b.getType().name() + ", "
+                                            + event.getBlock().getType().name()));
                             b.setType(Material.AIR);
                             above.setType(Material.AIR);
                             event.getBlock().setType(Material.AIR);
@@ -2057,12 +2132,12 @@ public class fListener implements Listener {
                     }
                 }
 
-                //check above a piston
+                // check above a piston
                 Block above = head.getRelative(BlockFace.UP);
 
-                if (!is1152 && substrate.contains(above.getType()) && growable.contains(above
-                        .getRelative(BlockFace.UP)
-                        .getType())) {
+                if (!is1152
+                        && substrate.contains(above.getType())
+                        && growable.contains(above.getRelative(BlockFace.UP).getType())) {
 
                     found = above.getType();
                     above.setType(Material.AIR);
@@ -2071,14 +2146,16 @@ public class fListener implements Listener {
                 if (found != null) {
                     event.setCancelled(true);
                     if (!Protections.BreakExploitMachines.isEnabled()) {
-                        event.getBlock().getWorld().dropItemNaturally(
-                                event.getBlock().getLocation(),
-                                new ItemStack(event.getBlock().getType(), 1)
-                        );
+                        event.getBlock()
+                                .getWorld()
+                                .dropItemNaturally(
+                                        event.getBlock().getLocation(),
+                                        new ItemStack(event.getBlock().getType(), 1));
                     }
                     event.getBlock().setType(Material.AIR);
-                    //check2
-                    getLog().append2(Msg.ZeroTickGlitch.getValue(event.getBlock().getLocation(), found.name()));
+                    // check2
+                    getLog().append2(
+                                    Msg.ZeroTickGlitch.getValue(event.getBlock().getLocation(), found.name()));
                     break;
                 }
             }
@@ -2099,12 +2176,12 @@ public class fListener implements Listener {
         if (Protections.PreventItemFramePistonDupe.isEnabled()) {
             Set<Entity> removed = new HashSet<>();
             BlockFace[] faces = {BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH};
-            //check for frames on the back of the piston
+            // check for frames on the back of the piston
             BlockFace dir = event.getDirection();
-            for (Entity ent : event.getBlock().getWorld().getNearbyEntities(event
-                    .getBlock()
-                    .getRelative(dir.getOppositeFace())
-                    .getLocation(), 1, 1, 1)) {
+            for (Entity ent : event.getBlock()
+                    .getWorld()
+                    .getNearbyEntities(
+                            event.getBlock().getRelative(dir.getOppositeFace()).getLocation(), 1, 1, 1)) {
                 if (ent instanceof ItemFrame) {
                     removed.add(ent);
                 }
@@ -2120,20 +2197,18 @@ public class fListener implements Listener {
                 }
                 if (Protections.PreventItemFramePistonDupe.notifyOnly()) {
                     getLog().notify(
-                            Protections.PreventItemFramePistonDupe,
-                            " Triggered @" + frame.getLocation() + " with contents: " + contents
-                    );
+                                    Protections.PreventItemFramePistonDupe,
+                                    " Triggered @" + frame.getLocation() + " with contents: " + contents);
                 } else {
                     getLog().append2(Msg.ItemFrameRemoveOnExtend.getValue(frame.getLocation(), contents));
 
                     frame.setItem(null);
                     ent.remove();
                 }
-
             }
 
             removed.clear();
-            //check all blocks moved by this piston
+            // check all blocks moved by this piston
             for (Block b : event.getBlocks()) {
                 for (BlockFace face : faces) {
                     Block moved = b.getRelative(face);
@@ -2153,11 +2228,12 @@ public class fListener implements Listener {
 
                                 if (Protections.PreventItemFramePistonDupe.notifyOnly()) {
                                     getLog().notify(
-                                            Protections.PreventItemFramePistonDupe,
-                                            " Triggered @" + frame.getLocation() + " with contents: " + contents
-                                    );
+                                                    Protections.PreventItemFramePistonDupe,
+                                                    " Triggered @" + frame.getLocation() + " with contents: "
+                                                            + contents);
                                 } else {
-                                    getLog().append2(Msg.ItemFrameRemoveOnExtend.getValue(frame.getLocation(), contents));
+                                    getLog().append2(Msg.ItemFrameRemoveOnExtend.getValue(
+                                            frame.getLocation(), contents));
                                     frame.setItem(null);
                                     removed.add(ent);
                                 }
@@ -2173,10 +2249,10 @@ public class fListener implements Listener {
             }
         }
 
-        //Indirect Power TNT Duper
+        // Indirect Power TNT Duper
         if (Protections.PreventIndirectTNTPowerDupe.isEnabled()) {
             for (Block b : event.getBlocks()) {
-                if (getIs112()) { //hack for 112 tnt that does not trigger a entity spawn event
+                if (getIs112()) { // hack for 112 tnt that does not trigger a entity spawn event
                     if (b.getType() != Material.TNT) {
                         continue;
                     }
@@ -2184,9 +2260,12 @@ public class fListener implements Listener {
                         b.setType(Material.AIR);
                     }
                 } else {
-                    if (b.getType() == Material.TNT) //found a moved TNT Block
+                    if (b.getType() == Material.TNT) // found a moved TNT Block
                     {
-                        movedTNT.put(b, System.currentTimeMillis() + ThreadLocalRandom.current().nextLong(213, 1132));
+                        movedTNT.put(
+                                b,
+                                System.currentTimeMillis()
+                                        + ThreadLocalRandom.current().nextLong(213, 1132));
                     }
                 }
             }
@@ -2210,17 +2289,18 @@ public class fListener implements Listener {
             if (types.length() > 0) {
                 if (Protections.PreventRailDupe.notifyOnly()) {
                     getLog().notify(
-                            Protections.PreventRailDupe,
-                            " Triggered @" + event.getBlock().getLocation() + " affected blocks: " + types
-                    );
+                                    Protections.PreventRailDupe,
+                                    " Triggered @" + event.getBlock().getLocation() + " affected blocks: " + types);
                 } else {
-                    getLog().append2(Msg.PistonRetractionDupe.getValue(event.getBlock().getLocation(), types.toString()));
+                    getLog().append2(Msg.PistonRetractionDupe.getValue(
+                            event.getBlock().getLocation(), types.toString()));
 
                     if (!Protections.BreakExploitMachines.isEnabled()) {
-                        event.getBlock().getWorld().dropItemNaturally(
-                                event.getBlock().getLocation(),
-                                new ItemStack(event.getBlock().getType(), 1)
-                        );
+                        event.getBlock()
+                                .getWorld()
+                                .dropItemNaturally(
+                                        event.getBlock().getLocation(),
+                                        new ItemStack(event.getBlock().getType(), 1));
                     }
                     event.getBlock().setType(Material.AIR);
                 }
@@ -2229,26 +2309,36 @@ public class fListener implements Listener {
     }
 
     private List<Material> loadSubstrates() {
-        Material[] subs = new Material[]{Material.SAND, Material.RED_SAND, Material.END_STONE};
+        Material[] subs = new Material[] {Material.SAND, Material.RED_SAND, Material.END_STONE};
         if (is114() || is115()) {
-            subs = new Material[]{Material.DIRT, Material.GRASS_BLOCK, Material.COARSE_DIRT, Material.RED_SAND, Material.SAND, Material.GRAVEL,
-                    Material.MYCELIUM, Material.PODZOL, Material.END_STONE};
+            subs = new Material[] {
+                Material.DIRT,
+                Material.GRASS_BLOCK,
+                Material.COARSE_DIRT,
+                Material.RED_SAND,
+                Material.SAND,
+                Material.GRAVEL,
+                Material.MYCELIUM,
+                Material.PODZOL,
+                Material.END_STONE
+            };
         }
         return Arrays.asList(subs);
     }
 
     private List<Material> loadGrowables() {
-        Material[] grows = new Material[]{Material.CACTUS, Material.CHORUS_FLOWER};
+        Material[] grows = new Material[] {Material.CACTUS, Material.CHORUS_FLOWER};
         fListener.getInstance();
         if (fListener.getIs114() || fListener.getInstance().is115()) {
-            grows = new Material[]{Material.BAMBOO, Material.SUGAR_CANE, Material.CACTUS, Material.CHORUS_FLOWER};
+            grows = new Material[] {Material.BAMBOO, Material.SUGAR_CANE, Material.CACTUS, Material.CHORUS_FLOWER};
         }
         return Arrays.asList(grows);
     }
 
     @EventHandler()
     public void CMIShulkerFix(InventoryClickEvent e) {
-        if (Protections.DisableInWorlds.isWhitelisted(e.getWhoClicked().getWorld().getName())) {
+        if (Protections.DisableInWorlds.isWhitelisted(
+                e.getWhoClicked().getWorld().getName())) {
             return;
         }
         if (SpigotMethods.isNPC(e.getWhoClicked())) {
@@ -2257,25 +2347,25 @@ public class fListener implements Listener {
         if (Protections.BlockCMIShulkerStacking.isEnabled()) {
             if (Protections.PreventNestedShulkers.isEnabled() && IllegalStack.hasShulkers() && IllegalStack.isCMI()) {
                 try {
-                    if (e.getView().getTitle().toLowerCase().contains("shulker")) {
-                    }
+                    if (e.getView().getTitle().toLowerCase().contains("shulker")) {}
                 } catch (IllegalStateException ex) {
                     return;
                 }
                 if (e.isShiftClick()) {
                     Inventory inv = e.getWhoClicked().getOpenInventory().getTopInventory();
-                    if (inv.getType() != InventoryType.SHULKER_BOX && e
-                            .getView()
-                            .getTitle()
-                            .toLowerCase()
-                            .contains("shulker"))//inv.getName().toLowerCase().contains("shulker"))
+                    if (inv.getType() != InventoryType.SHULKER_BOX
+                            && e.getView()
+                                    .getTitle()
+                                    .toLowerCase()
+                                    .contains("shulker")) // inv.getName().toLowerCase().contains("shulker"))
                     {
-                        if (e.getCurrentItem() != null && e.getCurrentItem().getType().name().contains("SHULKER_BOX")) {
+                        if (e.getCurrentItem() != null
+                                && e.getCurrentItem().getType().name().contains("SHULKER_BOX")) {
                             if (Protections.PreventNestedShulkers.notifyOnly()) {
                                 getLog().notify(
-                                        Protections.PreventNestedShulkers,
-                                        " Triggered by: " + e.getWhoClicked().getName()
-                                );
+                                                Protections.PreventNestedShulkers,
+                                                " Triggered by: "
+                                                        + e.getWhoClicked().getName());
                             } else {
                                 e.getWhoClicked().sendMessage(Msg.PlayerCMIShulkerNest.getValue());
                                 e.setCancelled(true);
@@ -2283,16 +2373,20 @@ public class fListener implements Listener {
                         }
                     }
                 }
-                if (e.getClickedInventory() != null && e.getClickedInventory().getType() != InventoryType.SHULKER_BOX && e
-                        .getView()
-                        .getTitle()
-                        .toLowerCase()
-                        .contains("shulker"))//e.getClickedInventory().getName().toLowerCase().contains("shulker"))
+                if (e.getClickedInventory() != null
+                        && e.getClickedInventory().getType() != InventoryType.SHULKER_BOX
+                        && e.getView()
+                                .getTitle()
+                                .toLowerCase()
+                                .contains(
+                                        "shulker")) // e.getClickedInventory().getName().toLowerCase().contains("shulker"))
                 {
 
                     if (e.getCursor() != null && e.getCursor().getType().name().contains("SHULKER_BOX")) {
                         if (Protections.PreventNestedShulkers.notifyOnly()) {
-                            getLog().notify(Protections.PreventNestedShulkers, " Triggered by:" + e.getWhoClicked().getName());
+                            getLog().notify(
+                                            Protections.PreventNestedShulkers,
+                                            " Triggered by:" + e.getWhoClicked().getName());
                         } else {
                             e.getWhoClicked().sendMessage(Msg.PlayerCMIShulkerNest.getValue());
                             e.setCancelled(true);
@@ -2321,7 +2415,8 @@ public class fListener implements Listener {
 
                 boolean loreFound = false;
                 boolean nameFound = false;
-                for (String s : Protections.RemoveItemsMatchingName.getLoreNameList().keySet()) {
+                for (String s :
+                        Protections.RemoveItemsMatchingName.getLoreNameList().keySet()) {
 
                     if (Protections.RemoveItemsMatchingName.getLoreNameList().get(s) && im.hasLore()) {
                         for (String line : im.getLore()) {
@@ -2341,19 +2436,17 @@ public class fListener implements Listener {
                         } else if (ChatColor.stripColor(im.getDisplayName()).contains(s)) {
                             nameFound = true;
                         }
-
                     }
                     if (loreFound || nameFound) {
 
                         if (Protections.ItemNamesToRemove.notifyOnly()) {
                             getLog().notify(
-                                    Protections.RemoveItemsMatchingName,
-                                    " Triggered by: " + is.getType().name() + " @" + h.getLocation()
-                            );
+                                            Protections.RemoveItemsMatchingName,
+                                            " Triggered by: " + is.getType().name() + " @" + h.getLocation());
                         } else {
-                            getLog().append2(Msg.NamedItemRemovalHopper.getValue(h.getLocation(), is.getType().name()));
+                            getLog().append2(Msg.NamedItemRemovalHopper.getValue(
+                                    h.getLocation(), is.getType().name()));
                             h.getInventory().removeItem(is);
-
                         }
                         return;
                     }
@@ -2368,33 +2461,31 @@ public class fListener implements Listener {
                 }
             }
 
-			/*
-			if(Protections.RemoveEnchantsLargerThan.getIntValue() > 0) {
-				ItemStack is = e.getItem();
-				HashSet<Enchantment> remove = new HashSet<>();
-				for(Enchantment en:is.getEnchantments().keySet())
-					if(is.getEnchantmentLevel(en) > en.getMaxLevel() && is.getEnchantmentLevel(en) > Protections.RemoveEnchantsLargerThan.getIntValue())
-					{
-						getLog().append2(Msg.);
-						//getLog().append2("Illegal Enchantment Found: " + is.getType().name() + " Enchantment: " + en.getName()
-						+ " Level: (" + is.getEnchantmentLevel(en) + ") " + " Server max level is: " + Protections.RemoveEnchantsLargerThan.getIntValue()
-						+ " " ); //getSource(e.getSource()));
-						remove.add(en);
+            /*
+            if(Protections.RemoveEnchantsLargerThan.getIntValue() > 0) {
+            	ItemStack is = e.getItem();
+            	HashSet<Enchantment> remove = new HashSet<>();
+            	for(Enchantment en:is.getEnchantments().keySet())
+            		if(is.getEnchantmentLevel(en) > en.getMaxLevel() && is.getEnchantmentLevel(en) > Protections.RemoveEnchantsLargerThan.getIntValue())
+            		{
+            			getLog().append2(Msg.);
+            			//getLog().append2("Illegal Enchantment Found: " + is.getType().name() + " Enchantment: " + en.getName()
+            			+ " Level: (" + is.getEnchantmentLevel(en) + ") " + " Server max level is: " + Protections.RemoveEnchantsLargerThan.getIntValue()
+            			+ " " ); //getSource(e.getSource()));
+            			remove.add(en);
 
-					}
+            		}
 
-				for(Enchantment en:remove)
-					is.removeEnchantment(en);
-			}
-			 */
+            	for(Enchantment en:remove)
+            		is.removeEnchantment(en);
+            }
+             */
             if (e.getItem() != null && e.getItem().getAmount() > e.getItem().getMaxStackSize()) {
                 if (Protections.AllowStack.isWhitelisted(e.getItem().getType().name())) {
                     return;
                 }
                 e.setCancelled(true);
                 e.getSource().removeItem(e.getItem());
-
-
             }
         }
     }
@@ -2402,20 +2493,26 @@ public class fListener implements Listener {
     @EventHandler()
     public void onBlockExplode(BlockExplodeEvent e) {
         if (Protections.PreventBedExplosions.isEnabled()) {
-            if (e.getYield() == 0.2f && e.getBlock().getLocation().getWorld().getName().toUpperCase().contains("_NETHER") || e
-                    .getBlock()
-                    .getLocation()
-                    .getWorld()
-                    .getName()
-                    .toUpperCase()
-                    .contains("_THE_END")) {
+            if (e.getYield() == 0.2f
+                            && e.getBlock()
+                                    .getLocation()
+                                    .getWorld()
+                                    .getName()
+                                    .toUpperCase()
+                                    .contains("_NETHER")
+                    || e.getBlock()
+                            .getLocation()
+                            .getWorld()
+                            .getName()
+                            .toUpperCase()
+                            .contains("_THE_END")) {
                 e.blockList().clear();
                 e.setYield(0f);
                 e.setCancelled(true);
                 getLog().append(
-                        Msg.StaffMsgBedExplosion.getValue(e.getBlock().getLocation().toString()),
-                        Protections.PreventBedExplosions
-                );
+                                Msg.StaffMsgBedExplosion.getValue(
+                                        e.getBlock().getLocation().toString()),
+                                Protections.PreventBedExplosions);
             }
         }
     }
@@ -2432,15 +2529,13 @@ public class fListener implements Listener {
                 if (primed.getSource() instanceof Skeleton) {
                     e.setCancelled(true);
                 }
-
-
             }
         }
     }
 
     @EventHandler()
-    public void onPistonExplode(EntityExplodeEvent e) //stuff that still works even in 1.14
-    {
+    public void onPistonExplode(EntityExplodeEvent e) // stuff that still works even in 1.14
+            {
 
         if (Protections.DisableInWorlds.isWhitelisted(e.getEntity().getWorld().getName())) {
             return;
@@ -2464,9 +2559,7 @@ public class fListener implements Listener {
                         }
                     }
                 }
-
             }
-
 
             if (!remove.isEmpty()) {
                 e.blockList().removeAll(remove);
@@ -2474,7 +2567,6 @@ public class fListener implements Listener {
                     Scheduler.runTaskLater(plugin, () -> b.setType(Material.AIR), 5, b.getLocation());
                 }
             }
-
         }
     }
 
@@ -2519,7 +2611,8 @@ public class fListener implements Listener {
         if (Protections.RemoveCustomAttributes.isEnabled() || Protections.BlockBadItemsFromCreativeTab.isEnabled()) {
             if (e.getCursor() != null && e.getCursor().getType() != Material.AIR) {
 
-                if (Protections.RemoveOverstackedItems.isEnabled())//I think all checks probably need to be moved to their own classes
+                if (Protections.RemoveOverstackedItems
+                        .isEnabled()) // I think all checks probably need to be moved to their own classes
                 {
                     if (OverstackedItemCheck.CheckContainer(e.getCursor(), e.getInventory())) {
                         e.setResult(Result.DENY);
@@ -2538,10 +2631,10 @@ public class fListener implements Listener {
                     }
                 }
 
-
                 if (Protections.RemoveCustomAttributes.isEnabled()) {
-                    if (Protections.AllowBypass.isEnabled() && e.getWhoClicked() instanceof Player && e.getWhoClicked()
-                            .hasPermission("illegalstack.enchantbypass")) {
+                    if (Protections.AllowBypass.isEnabled()
+                            && e.getWhoClicked() instanceof Player
+                            && e.getWhoClicked().hasPermission("illegalstack.enchantbypass")) {
                         return;
                     }
 
@@ -2573,7 +2666,6 @@ public class fListener implements Listener {
                     if (exit.getType() == fListener.getPortal()) {
                         break;
                     }
-
                 }
 
                 boolean valid = false;
@@ -2581,16 +2673,20 @@ public class fListener implements Listener {
                     for (BlockFace face : fListener.getFaces()) {
                         Block next = exit.getRelative(face);
                         if (getPassThrough().contains(next.getType())) {
-                            if (getPassThrough().contains(next.getRelative(BlockFace.UP).getType())) {
+                            if (getPassThrough()
+                                    .contains(next.getRelative(BlockFace.UP).getType())) {
                                 valid = true;
                                 break;
                             }
                         }
-
-                    } //didn't find a valid exit point at the exit block, lets search and try to find a new valid portal block to check
+                    } // didn't find a valid exit point at the exit block, lets search and try to find a new valid
+                    // portal block to check
                     if (!valid) {
                         p.getLocation().getBlock().breakNaturally();
-                        fListener.getLog().append2(Msg.StaffMsgBlockedPortalLogin.getValue(p, p.getLocation().toString()));
+                        fListener
+                                .getLog()
+                                .append2(Msg.StaffMsgBlockedPortalLogin.getValue(
+                                        p, p.getLocation().toString()));
 
                         return;
                     }
@@ -2639,7 +2735,7 @@ public class fListener implements Listener {
                     ItemMeta im = is.getItemMeta();
                     for (String s : target.keySet()) {
 
-                        if (target.get(s) && im.hasLore()) {//islore
+                        if (target.get(s) && im.hasLore()) { // islore
                             for (String line : im.getLore()) {
                                 if (Protections.NameLoreStrictMatchMode.isEnabled()) {
                                     if (line.equals(s)) {
@@ -2657,18 +2753,18 @@ public class fListener implements Listener {
                             } else if (im.getDisplayName().contains(s)) {
                                 found = true;
                             }
-
                         }
                         if (found) {
                             if (Protections.RemoveItemsMatchingName.notifyOnly()) {
                                 getLog().notify(
-                                        Protections.RemoveItemsMatchingName,
-                                        " Triggered by: " + e.getPlayer().getName() + " item was: " + is.getType().name()
-                                );
+                                                Protections.RemoveItemsMatchingName,
+                                                " Triggered by: "
+                                                        + e.getPlayer().getName() + " item was: "
+                                                        + is.getType().name());
                             } else {
-                                getLog().append2(Msg.NamedItemRemovalPlayer.getValue(e.getPlayer(), is.getType().name()));
+                                getLog().append2(Msg.NamedItemRemovalPlayer.getValue(
+                                        e.getPlayer(), is.getType().name()));
                                 e.getPlayer().getInventory().removeItem(is);
-
                             }
                             return;
                         }
@@ -2688,9 +2784,10 @@ public class fListener implements Listener {
                 if (is == null || is.getEnchantments().isEmpty()) {
                     continue;
                 }
-                if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) //world list isn't empty
+                if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) // world list isn't empty
                 {
-                    if (!Protections.OnlyFunctionInWorlds.getTxtSet().contains(p.getWorld().getName())) //isn't in a checked world
+                    if (!Protections.OnlyFunctionInWorlds.getTxtSet()
+                            .contains(p.getWorld().getName())) // isn't in a checked world
                     {
                         continue;
                     }
@@ -2705,8 +2802,9 @@ public class fListener implements Listener {
                         if (SlimefunCompat.isValid(is, en)) {
                             continue;
                         }
-                        if (IllegalStack.isEpicRename() && ((en == Enchantment.LURE || en == Enchantment.ARROW_INFINITE) && is.getEnchantmentLevel(
-                                en) == 4341)) {
+                        if (IllegalStack.isEpicRename()
+                                && ((en == Enchantment.LURE || en == Enchantment.ARROW_INFINITE)
+                                        && is.getEnchantmentLevel(en) == 4341)) {
                             continue;
                         }
                         if (Protections.EnchantedItemWhitelist.isWhitelisted(is)) {
@@ -2745,9 +2843,9 @@ public class fListener implements Listener {
                     if (Protections.RemoveItemTypes.isWhitelisted(is)) {
                         if (Protections.RemoveItemTypes.notifyOnly()) {
                             getLog().notify(
-                                    Protections.RemoveItemTypes,
-                                    " Triggered by: " + e.getPlayer().getName() + " with item: " + is.getType().name()
-                            );
+                                            Protections.RemoveItemTypes,
+                                            " Triggered by: " + e.getPlayer().getName() + " with item: "
+                                                    + is.getType().name());
                         } else {
                             getLog().append2(Msg.ItemTypeRemovedPlayer.getValue(p, is));
                             p.getInventory().remove(is);
@@ -2756,9 +2854,10 @@ public class fListener implements Listener {
                 }
                 if (Protections.RemoveOverstackedItems.isEnabled()) {
                     if (is != null && is.getAmount() > is.getMaxStackSize()) {
-                        if (!Protections.IllegalStackMode.isEnabled())  //in blacklist mode and on the blacklist
+                        if (!Protections.IllegalStackMode.isEnabled()) // in blacklist mode and on the blacklist
                         {
-                            if (!Protections.AllowStack.isWhitelisted(is.getType().name(), p)) {
+                            if (!Protections.AllowStack.isWhitelisted(
+                                    is.getType().name(), p)) {
                                 continue;
                             }
                             if (Protections.FixOverstackedItemInstead.isEnabled()) {
@@ -2773,15 +2872,16 @@ public class fListener implements Listener {
                         if (Protections.AllowStack.isWhitelisted(is.getType().name(), p)) {
                             continue;
                         }
-                        if (Protections.AllowStackForGroup.isWhitelisted(is.getType().name()) && e.getPlayer().hasPermission(
-                                "illegalstack.overstack")) {
+                        if (Protections.AllowStackForGroup.isWhitelisted(
+                                        is.getType().name())
+                                && e.getPlayer().hasPermission("illegalstack.overstack")) {
                             continue;
                         }
                         if (Protections.RemoveOverstackedItems.notifyOnly()) {
                             getLog().notify(
-                                    Protections.RemoveOverstackedItems,
-                                    " Triggered by: " + p.getName() + " item was: " + is.getType().name()
-                            );
+                                            Protections.RemoveOverstackedItems,
+                                            " Triggered by: " + p.getName() + " item was: "
+                                                    + is.getType().name());
                         } else if (Protections.FixOverstackedItemInstead.isEnabled()) {
                             getLog().append2(Msg.IllegalStackShorten.getValue(p, is));
                             is.setAmount(is.getType().getMaxStackSize());
@@ -2812,9 +2912,10 @@ public class fListener implements Listener {
 
         Player p = (Player) e.getWhoClicked();
         if (Protections.FixIllegalEnchantmentLevels.isEnabled() && !mcMMOListener.ismcMMOActive(p)) {
-            if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) //world list isn't empty
+            if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) // world list isn't empty
             {
-                if (!Protections.OnlyFunctionInWorlds.getTxtSet().contains(p.getWorld().getName())) //isn't in a checked world
+                if (!Protections.OnlyFunctionInWorlds.getTxtSet()
+                        .contains(p.getWorld().getName())) // isn't in a checked world
                 {
                     return;
                 }
@@ -2830,8 +2931,9 @@ public class fListener implements Listener {
                         if (SlimefunCompat.isValid(is, en)) {
                             continue;
                         }
-                        if (IllegalStack.isEpicRename() && ((en == Enchantment.LURE || en == Enchantment.ARROW_INFINITE) && is.getEnchantmentLevel(
-                                en) == 4341)) {
+                        if (IllegalStack.isEpicRename()
+                                && ((en == Enchantment.LURE || en == Enchantment.ARROW_INFINITE)
+                                        && is.getEnchantmentLevel(en) == 4341)) {
                             continue;
                         }
 
@@ -2873,7 +2975,7 @@ public class fListener implements Listener {
                     if (Protections.AllowStack.isThirdPartyInventory(e.getView())) {
                         return;
                     }
-                    if (!Protections.IllegalStackMode.isEnabled())  //in blacklist mode
+                    if (!Protections.IllegalStackMode.isEnabled()) // in blacklist mode
                     {
                         if (!Protections.AllowStack.isWhitelisted(is.getType().name(), p)) {
                             return;
@@ -2893,15 +2995,15 @@ public class fListener implements Listener {
                     if (Protections.AllowStack.isWhitelisted(is.getType().name(), p)) {
                         return;
                     }
-                    if (Protections.AllowStackForGroup.isWhitelisted(is.getType().name()) && p.hasPermission(
-                            "illegalstack.overstack")) {
+                    if (Protections.AllowStackForGroup.isWhitelisted(
+                                    is.getType().name())
+                            && p.hasPermission("illegalstack.overstack")) {
                         return;
                     }
                     if (Protections.RemoveOverstackedItems.notifyOnly()) {
                         getLog().notify(
-                                Protections.RemoveOverstackedItems,
-                                " Triggered by: " + p.getName() + " item was: " + is.getType()
-                        );
+                                        Protections.RemoveOverstackedItems,
+                                        " Triggered by: " + p.getName() + " item was: " + is.getType());
                     } else if (Protections.FixOverstackedItemInstead.isEnabled()) {
                         getLog().append2(Msg.IllegalStackShorten.getValue(p, is));
                         is.setAmount(is.getType().getMaxStackSize());
@@ -2923,17 +3025,16 @@ public class fListener implements Listener {
             return;
         }
 
-
         final Player p = (Player) e.getWhoClicked();
 
-
-        if (p != null && Protections.DisableInWorlds.isWhitelisted(e.getWhoClicked().getWorld().getName())) {
+        if (p != null
+                && Protections.DisableInWorlds.isWhitelisted(
+                        e.getWhoClicked().getWorld().getName())) {
             return;
         }
 
         ItemStack is = e.getCurrentItem();
         if (is != null && is.hasItemMeta() && is.getItemMeta() instanceof BookMeta) {
-
 
             BookMeta bm = (BookMeta) is.getItemMeta();
             if (bm.getAuthor() != null) {
@@ -2943,7 +3044,8 @@ public class fListener implements Listener {
                 }
             }
 
-            if (Protections.LimitNumberOfPages.getIntValue() > 0 && bm.getPageCount() > Protections.LimitNumberOfPages.getIntValue()) {
+            if (Protections.LimitNumberOfPages.getIntValue() > 0
+                    && bm.getPageCount() > Protections.LimitNumberOfPages.getIntValue()) {
                 getLog().append2(Msg.TooManyPages.getValue(e.getWhoClicked().getName()));
                 e.getWhoClicked().getInventory().removeItem(is);
 
@@ -2952,8 +3054,7 @@ public class fListener implements Listener {
             if (Protections.RemoveBooksNotMatchingCharset.isEnabled()) {
                 int InvalidPages = 0;
                 for (String page : bm.getPages()) {
-                    if (!Charset
-                            .forName(Protections.ValidCharset.getTxtValue())
+                    if (!Charset.forName(Protections.ValidCharset.getTxtValue())
                             .newEncoder()
                             .canEncode(ChatColor.stripColor(page))) {
                         InvalidPages++;
@@ -2990,11 +3091,12 @@ public class fListener implements Listener {
                     if (Protections.RemoveItemsMatchingName.loreNameMatch(im)) {
                         if (Protections.RemoveItemsMatchingName.notifyOnly()) {
                             getLog().notify(
-                                    Protections.RemoveItemsMatchingName,
-                                    " Triggered by: " + p.getName() + " item was: " + is.getType().name()
-                            );
+                                            Protections.RemoveItemsMatchingName,
+                                            " Triggered by: " + p.getName() + " item was: "
+                                                    + is.getType().name());
                         } else {
-                            getLog().append2(Msg.NamedItemRemovalPlayer.getValue(p, is.getType().name()));
+                            getLog().append2(Msg.NamedItemRemovalPlayer.getValue(
+                                    p, is.getType().name()));
                             e.setCancelled(true);
                             e.setResult(Result.DENY);
                             e.setCurrentItem(new ItemStack(Material.AIR));
@@ -3009,7 +3111,9 @@ public class fListener implements Listener {
                     ItemMeta im = is.getItemMeta();
                     if (Protections.RemoveAllRenamedItems.isEnabled()) {
                         if (!p.hasPermission("IllegalStack.RenameBypass")) {
-                            if (is != null && is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
+                            if (is != null
+                                    && is.hasItemMeta()
+                                    && is.getItemMeta().hasDisplayName()) {
                                 getLog().append2(Msg.RemovedRenamedItem.getValue(p, is));
                                 e.setResult(Result.DENY);
                                 e.getCursor().setType(Material.AIR);
@@ -3017,16 +3121,16 @@ public class fListener implements Listener {
                                 e.setCursor(new ItemStack(Material.AIR, 1));
                             }
                         }
-
                     }
                     if (Protections.RemoveItemsMatchingName.loreNameMatch(im)) {
                         if (Protections.RemoveItemsMatchingName.notifyOnly()) {
                             getLog().notify(
-                                    Protections.RemoveItemsMatchingName,
-                                    " Triggered by: " + p.getName() + " item was: " + is.getType().name()
-                            );
+                                            Protections.RemoveItemsMatchingName,
+                                            " Triggered by: " + p.getName() + " item was: "
+                                                    + is.getType().name());
                         } else {
-                            getLog().append2(Msg.NamedItemRemovalPlayer.getValue(p, is.getType().name()));
+                            getLog().append2(Msg.NamedItemRemovalPlayer.getValue(
+                                    p, is.getType().name()));
                             e.setCancelled(true);
                             e.setResult(Result.DENY);
                             e.getCursor().setType(Material.AIR);
@@ -3051,17 +3155,16 @@ public class fListener implements Listener {
                             e.getCursor().setAmount(0);
                             e.setCursor(new ItemStack(Material.AIR, 1));
                             final ItemStack isRemove = is;
-                            Scheduler.runTaskLater(this.plugin, () -> p.getInventory().removeItem(isRemove), 12, p);
-
+                            Scheduler.runTaskLater(
+                                    this.plugin, () -> p.getInventory().removeItem(isRemove), 12, p);
                         }
                     }
                 }
                 if (Protections.FixIllegalEnchantmentLevels.isEnabled() && !mcMMOListener.ismcMMOActive(p)) {
-                    if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) //world list isn't empty
+                    if (!Protections.OnlyFunctionInWorlds.getTxtSet().isEmpty()) // world list isn't empty
                     {
-                        if (!Protections.OnlyFunctionInWorlds.getTxtSet().contains(p
-                                .getWorld()
-                                .getName())) //isn't in a checked world
+                        if (!Protections.OnlyFunctionInWorlds.getTxtSet()
+                                .contains(p.getWorld().getName())) // isn't in a checked world
                         {
                             continue;
                         }
@@ -3079,15 +3182,17 @@ public class fListener implements Listener {
                                 if (SlimefunCompat.isValid(is, en)) {
                                     continue;
                                 }
-                                if (IllegalStack.isEpicRename() && ((en == Enchantment.LURE || en == Enchantment.ARROW_INFINITE) && is
-                                        .getEnchantmentLevel(en) == 4341)) {
+                                if (IllegalStack.isEpicRename()
+                                        && ((en == Enchantment.LURE || en == Enchantment.ARROW_INFINITE)
+                                                && is.getEnchantmentLevel(en) == 4341)) {
                                     continue;
                                 }
 
                                 if (Protections.EnchantedItemWhitelist.isWhitelisted(is)) {
                                     break;
                                 }
-                                if (Protections.CustomEnchantOverride.isAllowedEnchant(en, is.getEnchantmentLevel(en))) {
+                                if (Protections.CustomEnchantOverride.isAllowedEnchant(
+                                        en, is.getEnchantmentLevel(en))) {
                                     continue;
                                 }
                                 if (en.canEnchantItem(is)) {
@@ -3120,15 +3225,17 @@ public class fListener implements Listener {
                     if (found) {
                         if (Protections.RemoveItemsMatchingName.notifyOnly()) {
                             getLog().notify(
-                                    Protections.RemoveItemsMatchingName,
-                                    " Triggered by: " + p.getName() + " item was: " + is.getType().name()
-                            );
+                                            Protections.RemoveItemsMatchingName,
+                                            " Triggered by: " + p.getName() + " item was: "
+                                                    + is.getType().name());
                         } else {
-                            getLog().append2(Msg.NamedItemRemovalPlayer.getValue(p, is.getType().name()));
+                            getLog().append2(Msg.NamedItemRemovalPlayer.getValue(
+                                    p, is.getType().name()));
 
                             e.setCancelled(true);
                             final ItemStack isRemove = is;
-                            Scheduler.runTaskLater(this.plugin, () -> p.getInventory().removeItem(isRemove), 12, p);
+                            Scheduler.runTaskLater(
+                                    this.plugin, () -> p.getInventory().removeItem(isRemove), 12, p);
                         }
                         return;
                     }
@@ -3136,8 +3243,10 @@ public class fListener implements Listener {
             }
         }
 
-        // Since there is no real way to check if this is custom inventory, this is the only way to stop calling fake-logs for
-        // events that don't occur at all (interacting with wrong itemstack in custom inventory, won't change the inventory)
+        // Since there is no real way to check if this is custom inventory, this is the only way to stop calling
+        // fake-logs for
+        // events that don't occur at all (interacting with wrong itemstack in custom inventory, won't change the
+        // inventory)
         if (Protections.RemoveOverstackedItems.isEnabled() && !e.isCancelled()) {
 
             if (p != null) {
@@ -3146,7 +3255,7 @@ public class fListener implements Listener {
                     if (Protections.AllowStack.isThirdPartyInventory(e.getView())) {
                         return;
                     }
-                    if (!Protections.IllegalStackMode.isEnabled()) {  //in blacklist mode
+                    if (!Protections.IllegalStackMode.isEnabled()) { // in blacklist mode
                         if (!Protections.AllowStack.isWhitelisted(is.getType().name(), p)) {
                             return;
                         }
@@ -3165,15 +3274,15 @@ public class fListener implements Listener {
                     if (Protections.AllowStack.isWhitelisted(is.getType().name(), p)) {
                         return;
                     }
-                    if (Protections.AllowStackForGroup.isWhitelisted(is.getType().name()) && p.hasPermission(
-                            "illegalstack.overstack")) {
+                    if (Protections.AllowStackForGroup.isWhitelisted(
+                                    is.getType().name())
+                            && p.hasPermission("illegalstack.overstack")) {
                         return;
                     }
                     if (Protections.RemoveOverstackedItems.notifyOnly()) {
                         getLog().notify(
-                                Protections.RemoveOverstackedItems,
-                                " Triggered by: " + p.getName() + " item was: " + is.getType()
-                        );
+                                        Protections.RemoveOverstackedItems,
+                                        " Triggered by: " + p.getName() + " item was: " + is.getType());
                     } else if (Protections.FixOverstackedItemInstead.isEnabled()) {
                         getLog().append2(Msg.IllegalStackShorten.getValue(p, is));
                         is.setAmount(is.getType().getMaxStackSize());
@@ -3189,9 +3298,9 @@ public class fListener implements Listener {
                             if (Protections.RemoveItemTypes.isWhitelisted(is)) {
                                 if (Protections.RemoveItemTypes.notifyOnly()) {
                                     getLog().notify(
-                                            Protections.RemoveItemTypes,
-                                            " Triggered by: " + p.getName() + " with item: " + is.getType().name()
-                                    );
+                                                    Protections.RemoveItemTypes,
+                                                    " Triggered by: " + p.getName() + " with item: "
+                                                            + is.getType().name());
                                 } else {
                                     getLog().append2(Msg.ItemTypeRemovedPlayer.getValue(p, is));
                                     p.getInventory().remove(is);
@@ -3199,17 +3308,17 @@ public class fListener implements Listener {
                             }
                         }
                         if (is2 != null && is2.getAmount() > is2.getMaxStackSize()) {
-                            if (!Protections.IllegalStackMode.isEnabled())  //in blacklist mode and on the blacklist
+                            if (!Protections.IllegalStackMode.isEnabled()) // in blacklist mode and on the blacklist
                             {
-                                if (!Protections.AllowStack.isWhitelisted(is2.getType().name(), p)) {
+                                if (!Protections.AllowStack.isWhitelisted(
+                                        is2.getType().name(), p)) {
                                     continue;
                                 }
 
                                 if (Protections.RemoveOverstackedItems.notifyOnly()) {
                                     getLog().notify(
-                                            Protections.RemoveOverstackedItems,
-                                            " Triggered by: " + p.getName() + " item was: " + is.getType()
-                                    );
+                                                    Protections.RemoveOverstackedItems,
+                                                    " Triggered by: " + p.getName() + " item was: " + is.getType());
                                 } else if (Protections.FixOverstackedItemInstead.isEnabled()) {
                                     is2.setAmount(is2.getType().getMaxStackSize());
                                     fListener.getLog().append2(Msg.IllegalStackShorten.getValue(p, is2));
@@ -3223,7 +3332,6 @@ public class fListener implements Listener {
                 }
             }
         }
-
     }
 
     @EventHandler
@@ -3258,7 +3366,9 @@ public class fListener implements Listener {
             if (e.hasItem()) {
                 if (e.getItem().getType() == book) {
                     if (Protections.DisableBookWriting.notifyOnly()) {
-                        getLog().notify(Protections.DisableBookWriting, " Triggered by: " + e.getPlayer().getName());
+                        getLog().notify(
+                                        Protections.DisableBookWriting,
+                                        " Triggered by: " + e.getPlayer().getName());
                     } else {
                         e.setCancelled(true);
                         e.getPlayer().sendMessage(Msg.PlayerDisabledBookMsg.getValue(e.getPlayer(), ""));
@@ -3266,12 +3376,16 @@ public class fListener implements Listener {
                         final ItemStack remove = e.getItem();
                         final Player player = e.getPlayer();
                         final boolean offhandRemove = wasOffhand;
-                        Scheduler.runTaskLater(this.plugin, () -> {
-                            player.getInventory().removeItem(remove);
-                            if (!is18() && offhandRemove) {
-                                player.getInventory().setItemInOffHand(new ItemStack(Material.AIR, 1));
-                            }
-                        }, 12, player);
+                        Scheduler.runTaskLater(
+                                this.plugin,
+                                () -> {
+                                    player.getInventory().removeItem(remove);
+                                    if (!is18() && offhandRemove) {
+                                        player.getInventory().setItemInOffHand(new ItemStack(Material.AIR, 1));
+                                    }
+                                },
+                                12,
+                                player);
                     }
                 }
             }
@@ -3280,18 +3394,21 @@ public class fListener implements Listener {
 
     @EventHandler
     public void onStringShear(BlockFromToEvent e) {
-        if (Protections.DisableInWorlds.isWhitelisted(e.getBlock().getWorld().getName()) || !Protections.PreventStringDupe.isEnabled()) {
+        if (Protections.DisableInWorlds.isWhitelisted(e.getBlock().getWorld().getName())
+                || !Protections.PreventStringDupe.isEnabled()) {
             return;
         }
-        
-        if(e.getToBlock().getType() == Material.TRIPWIRE)
-        {
-        	e.setCancelled(true);
-        	e.getToBlock().setType(Material.AIR);
-        	fListener.getLog().append(Msg.BlockedStringDupe.getValue(e.getBlock().getLocation(), ""), Protections.PreventStringDupe);
+
+        if (e.getToBlock().getType() == Material.TRIPWIRE) {
+            e.setCancelled(true);
+            e.getToBlock().setType(Material.AIR);
+            fListener
+                    .getLog()
+                    .append(
+                            Msg.BlockedStringDupe.getValue(e.getBlock().getLocation(), ""),
+                            Protections.PreventStringDupe);
         }
     }
-
 
     @EventHandler
     public void onFish2(PlayerInteractEvent e) {
@@ -3310,22 +3427,20 @@ public class fListener implements Listener {
                             fishing = true;
                         }
                     } else {
-                        if (!is18() && p.getInventory().getItemInOffHand() != null && p
-                                .getInventory()
-                                .getItemInOffHand()
-                                .getType() == Material.FISHING_ROD) {
+                        if (!is18()
+                                && p.getInventory().getItemInOffHand() != null
+                                && p.getInventory().getItemInOffHand().getType() == Material.FISHING_ROD) {
                             fishing = true;
-                        } else if (p.getInventory().getItemInMainHand() != null && p
-                                .getInventory()
-                                .getItemInMainHand()
-                                .getType() == Material.FISHING_ROD) {
+                        } else if (p.getInventory().getItemInMainHand() != null
+                                && p.getInventory().getItemInMainHand().getType() == Material.FISHING_ROD) {
                             fishing = true;
                         }
                     }
                     if (fishing) {
                         FishAttempt fa = FishAttempt.findPlayer(p);
                         fa.addAttempt();
-                        if (Protections.WatchForAutoFishMod.isEnabled() && Protections.WarnPlayerThenKickInsteadOfNotify.isEnabled()) {
+                        if (Protections.WatchForAutoFishMod.isEnabled()
+                                && Protections.WarnPlayerThenKickInsteadOfNotify.isEnabled()) {
                             FishHook hook = FishAttempt.findHook(p);
                             if (hook != null && fa.isBlackListedSpot(hook.getLocation())) {
                                 if (Protections.WatchForAutoFishMod.notifyOnly()) {
@@ -3361,7 +3476,9 @@ public class fListener implements Listener {
                 }
                 if (fa.isBlackListedSpot(hook.getLocation())) {
                     if (Protections.KickForAutoClickerFishing.notifyOnly()) {
-                        getLog().notify(Protections.KickForAutoClickerFishing, " Triggered by: " + e.getPlayer().getName());
+                        getLog().notify(
+                                        Protections.KickForAutoClickerFishing,
+                                        " Triggered by: " + e.getPlayer().getName());
                     } else {
                         e.setCancelled(true);
                         hook.remove();
@@ -3393,8 +3510,7 @@ public class fListener implements Listener {
                         message = Msg.PlayerKickMsgFishMod.getValue();
                         LOGGER.info(
                                 " - Kicked {} for suspected fishing mod, warning issued last attempt.",
-                                e.getPlayer().getName()
-                        );
+                                e.getPlayer().getName());
                         shouldKick = true;
                         fa.reset();
                     } else {
@@ -3403,18 +3519,20 @@ public class fListener implements Listener {
                                 e.getPlayer().sendMessage(Msg.PlayerKickMsgFishMod.getValue());
                             }
                         }
-
                     }
                 } else {
                     if (Protections.WatchForAutoFishMod.notifyOnly()) {
-                        getLog().notify(Protections.WatchForAutoFishMod, " Triggered by: " + e.getPlayer().getName());
+                        getLog().notify(
+                                        Protections.WatchForAutoFishMod,
+                                        " Triggered by: " + e.getPlayer().getName());
                     } else {
                         getLog().append2(Msg.StaffAutoFishingNotice.getValue(
                                 e.getPlayer(),
                                 fa.getSameSpotCount(),
-                                e.getPlayer().getLocation()
-                        ));
-                        //getLog().append2(e.getPlayer().getName() + " appears to be using an autofishing mod.. " + fa.getSameSpotCount() + " caught within 0.3 blocks of each other @" + e.getPlayer().getLocation());
+                                e.getPlayer().getLocation()));
+                        // getLog().append2(e.getPlayer().getName() + " appears to be using an autofishing mod.. " +
+                        // fa.getSameSpotCount() + " caught within 0.3 blocks of each other @" +
+                        // e.getPlayer().getLocation());
                         e.setCancelled(true);
                         e.setExpToDrop(0);
                         if (hook != null) {
@@ -3427,13 +3545,12 @@ public class fListener implements Listener {
             }
             if (spamming && Protections.KickForAutoClickerFishing.isEnabled()) {
                 if (Protections.KickForAutoClickerFishing.notifyOnly()) {
-                    getLog().notify(Protections.KickForAutoClickerFishing, " Triggered by: " + e.getPlayer().getName());
+                    getLog().notify(
+                                    Protections.KickForAutoClickerFishing,
+                                    " Triggered by: " + e.getPlayer().getName());
                 } else {
                     getLog().append2(Msg.StaffSpamFishingNotice.getValue(
-                            e.getPlayer(),
-                            fa.getCount(),
-                            e.getPlayer().getLocation()
-                    ));
+                            e.getPlayer(), fa.getCount(), e.getPlayer().getLocation()));
                     e.setCancelled(true);
                     e.setExpToDrop(0);
                     shouldKick = true;
@@ -3447,7 +3564,7 @@ public class fListener implements Listener {
         }
     }
 
-    @EventHandler// (ignoreCancelled = false, priority=EventPriority.LOWEST)
+    @EventHandler // (ignoreCancelled = false, priority=EventPriority.LOWEST)
     public void onTNTPrime(EntitySpawnEvent e) {
         if (e.getEntity() instanceof Item) {
             if (RemoveItemTypesCheck.shouldRemove(((Item) e.getEntity()).getItemStack(), null)) {
@@ -3509,12 +3626,16 @@ public class fListener implements Listener {
                             punishPlayer(e.getPlayer(), e.getRightClicked());
                         } else {
                             e.setCancelled(true);
-                            Scheduler.runTaskLater(this.plugin, () -> {
-                                e.getPlayer().sendMessage(Msg.PlayerDisabledHorseChestMsg.getValue());
-                                getLog().append2(Msg.ChestPrevented.getValue(e.getPlayer(), horse));
-                                horse.setCarryingChest(false);
-                                punishPlayer(e.getPlayer(), e.getRightClicked());
-                            }, 2, e.getPlayer());
+                            Scheduler.runTaskLater(
+                                    this.plugin,
+                                    () -> {
+                                        e.getPlayer().sendMessage(Msg.PlayerDisabledHorseChestMsg.getValue());
+                                        getLog().append2(Msg.ChestPrevented.getValue(e.getPlayer(), horse));
+                                        horse.setCarryingChest(false);
+                                        punishPlayer(e.getPlayer(), e.getRightClicked());
+                                    },
+                                    2,
+                                    e.getPlayer());
                         }
                     }
                 } else if (e.getRightClicked() instanceof ChestedHorse) {
@@ -3523,14 +3644,18 @@ public class fListener implements Listener {
                     horse.setCarryingChest(false);
                     e.setCancelled(true);
 
-                    Scheduler.runTaskLater(this.plugin, () -> {
-                        e.getPlayer().sendMessage(Msg.PlayerDisabledHorseChestMsg.getValue());
-                        getLog().append2(Msg.ChestPrevented.getValue(e.getPlayer(), horse));
-                        horse.setCarryingChest(false);
-                        LOGGER.warn(
-                                "ProtocolLib was NOT found on this server and DisableChestsOnMobs protection is turned on.. It may still be possible for players to dupe using horses/donkeys on your server using a hacked client.  It is highly recommended that you install ProtocolLib for optimal protection!");
-                        punishPlayer(e.getPlayer(), e.getRightClicked());
-                    }, 2, e.getPlayer());
+                    Scheduler.runTaskLater(
+                            this.plugin,
+                            () -> {
+                                e.getPlayer().sendMessage(Msg.PlayerDisabledHorseChestMsg.getValue());
+                                getLog().append2(Msg.ChestPrevented.getValue(e.getPlayer(), horse));
+                                horse.setCarryingChest(false);
+                                LOGGER.warn(
+                                        "ProtocolLib was NOT found on this server and DisableChestsOnMobs protection is turned on.. It may still be possible for players to dupe using horses/donkeys on your server using a hacked client.  It is highly recommended that you install ProtocolLib for optimal protection!");
+                                punishPlayer(e.getPlayer(), e.getRightClicked());
+                            },
+                            2,
+                            e.getPlayer());
                 }
             }
         }
@@ -3539,40 +3664,46 @@ public class fListener implements Listener {
     @EventHandler
     public void NetherCeilingExploitTPCheck(PlayerTeleportEvent e) {
         if (Protections.PreventPearlGlassPhasing.isEnabled()) {
-            Scheduler.runTaskLater(this.plugin, () -> {
-                if (getTeleGlitch().containsKey(e.getPlayer().getUniqueId())) {
-                    Location corrected = getTeleGlitch().get(e.getPlayer().getUniqueId());
-                    corrected.setDirection(e.getTo().getDirection());
-                    if (Scheduler.FOLIA) {
-                        e.getPlayer().teleportAsync(corrected);
-                    } else {
-                        e.getPlayer().teleport(corrected);
-                    }
-                    getTeleGlitch().remove(e.getPlayer().getUniqueId());
-                    if (Protections.TeleportCorrectionNotify.isEnabled()) {
-                        getLog().append2(Msg.CorrectedPlayerLocation.getValue(e.getPlayer(), corrected));
-                    }
-                }
-            }, 5, e.getPlayer());
+            Scheduler.runTaskLater(
+                    this.plugin,
+                    () -> {
+                        if (getTeleGlitch().containsKey(e.getPlayer().getUniqueId())) {
+                            Location corrected =
+                                    getTeleGlitch().get(e.getPlayer().getUniqueId());
+                            corrected.setDirection(e.getTo().getDirection());
+                            if (Scheduler.FOLIA) {
+                                e.getPlayer().teleportAsync(corrected);
+                            } else {
+                                e.getPlayer().teleport(corrected);
+                            }
+                            getTeleGlitch().remove(e.getPlayer().getUniqueId());
+                            if (Protections.TeleportCorrectionNotify.isEnabled()) {
+                                getLog().append2(Msg.CorrectedPlayerLocation.getValue(e.getPlayer(), corrected));
+                            }
+                        }
+                    },
+                    5,
+                    e.getPlayer());
         }
         if (Protections.BlockPlayersAboveNether.isEnabled() && !Protections.DamagePlayersAboveNether.isEnabled()) {
-            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet().contains(e.getTo().getWorld().getName())) {
+            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet()
+                    .contains(e.getTo().getWorld().getName())) {
                 return;
             }
-            if ((!e.getFrom().getWorld().getName().toLowerCase().contains("nether") && e
-                    .getFrom()
-                    .getWorld()
-                    .getEnvironment() != Environment.NETHER)) {
+            if ((!e.getFrom().getWorld().getName().toLowerCase().contains("nether")
+                    && e.getFrom().getWorld().getEnvironment() != Environment.NETHER)) {
                 return;
             }
             Location l = e.getTo();
             if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
-                if (!e.getPlayer().isOp() && (l.getWorld().getName().toLowerCase().contains("nether") || l
-                        .getWorld()
-                        .getEnvironment() == Environment.NETHER)) {
+                if (!e.getPlayer().isOp()
+                        && (l.getWorld().getName().toLowerCase().contains("nether")
+                                || l.getWorld().getEnvironment() == Environment.NETHER)) {
                     e.setCancelled(true);
                     getLog().append2(Msg.StaffMsgNetherBlock.getValue(e.getPlayer(), l.toString()));
-                    e.getPlayer().sendMessage(Msg.PlayerNetherBlock.getValue(e.getPlayer().getName()));
+                    e.getPlayer()
+                            .sendMessage(
+                                    Msg.PlayerNetherBlock.getValue(e.getPlayer().getName()));
                 }
             }
         }
@@ -3581,14 +3712,17 @@ public class fListener implements Listener {
     @EventHandler
     public void VehicleEnterEvent(VehicleEnterEvent e) {
         if (Protections.BlockPlayersAboveNether.isEnabled() && e.getEntered() instanceof Player) {
-            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet().contains(e.getVehicle().getWorld().getName())) {
+            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet()
+                    .contains(e.getVehicle().getWorld().getName())) {
                 return;
             }
             Location l = e.getVehicle().getLocation();
             if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
                 if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
-                    if (l.getBlockY() >= Protections.NetherYLevel.getIntValue() && (l.getWorld().getName().toLowerCase().contains(
-                            "nether") || l.getWorld().getEnvironment() == Environment.NETHER)) //already on top of the nether..
+                    if (l.getBlockY() >= Protections.NetherYLevel.getIntValue()
+                            && (l.getWorld().getName().toLowerCase().contains("nether")
+                                    || l.getWorld().getEnvironment()
+                                            == Environment.NETHER)) // already on top of the nether..
                     {
                         e.setCancelled(true);
                         e.getVehicle().remove();
@@ -3601,15 +3735,20 @@ public class fListener implements Listener {
 
     @EventHandler
     public void onVehicleExitEvent(VehicleExitEvent e) {
-        if (Protections.BlockPlayersAboveNether.isEnabled() && e.getExited() instanceof Player && !Protections.DamagePlayersAboveNether.isEnabled()) {
-            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet().contains(e.getVehicle().getWorld().getName())) {
+        if (Protections.BlockPlayersAboveNether.isEnabled()
+                && e.getExited() instanceof Player
+                && !Protections.DamagePlayersAboveNether.isEnabled()) {
+            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet()
+                    .contains(e.getVehicle().getWorld().getName())) {
                 return;
             }
             Location l = e.getVehicle().getLocation();
             if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
                 if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
-                    if (l.getBlockY() >= Protections.NetherYLevel.getIntValue() && (l.getWorld().getName().toLowerCase().contains(
-                            "nether") || l.getWorld().getEnvironment() == Environment.NETHER)) //already on top of the nether..
+                    if (l.getBlockY() >= Protections.NetherYLevel.getIntValue()
+                            && (l.getWorld().getName().toLowerCase().contains("nether")
+                                    || l.getWorld().getEnvironment()
+                                            == Environment.NETHER)) // already on top of the nether..
                     {
                         e.setCancelled(true);
                         e.getVehicle().remove();
@@ -3622,28 +3761,25 @@ public class fListener implements Listener {
 
     @EventHandler
     public void NetherCeilingMovementCheck(PlayerMoveEvent e) {
-    	
-        if (e.getFrom().getBlockX() != e.getTo().getBlockX() || 
-        		e.getFrom().getBlockY() != e.getTo().getBlockY() || 
-        		e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
-        	
-        
-                if(e.getPlayer().isOp()) 
-                	return;
-               
-                
-               
-            if (Protections.KillPlayersBelowNether.isEnabled() &&
-                    (e.getPlayer().isFlying() || (IllegalStack.hasElytra() && e.getPlayer().isGliding()))) {
 
-                if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet().contains(e.getTo().getWorld().getName())) {
+        if (e.getFrom().getBlockX() != e.getTo().getBlockX()
+                || e.getFrom().getBlockY() != e.getTo().getBlockY()
+                || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
+
+            if (e.getPlayer().isOp()) return;
+
+            if (Protections.KillPlayersBelowNether.isEnabled()
+                    && (e.getPlayer().isFlying()
+                            || (IllegalStack.hasElytra() && e.getPlayer().isGliding()))) {
+
+                if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet()
+                        .contains(e.getTo().getWorld().getName())) {
                     return;
                 }
                 Location l = e.getTo();
                 if (l.getY() < 0) {
-                    if (l.getWorld().getName().toLowerCase().contains("nether") || l
-                            .getWorld()
-                            .getEnvironment() == Environment.NETHER) { //already on top of the nether..
+                    if (l.getWorld().getName().toLowerCase().contains("nether")
+                            || l.getWorld().getEnvironment() == Environment.NETHER) { // already on top of the nether..
                         e.getPlayer().setFlying(false);
 
                         if (IllegalStack.hasElytra()) {
@@ -3659,87 +3795,95 @@ public class fListener implements Listener {
                         }
 
                         e.setCancelled(true);
-                        getLog().append2(Msg.StaffMsgUnderNether.getValue(e.getPlayer(), e.getPlayer().getLocation().toString()));
+                        getLog().append2(Msg.StaffMsgUnderNether.getValue(
+                                e.getPlayer(), e.getPlayer().getLocation().toString()));
                         Scheduler.runTaskLater(this.plugin, () -> e.getPlayer().damage(9999), 12, e.getPlayer());
                         return;
-
                     }
                 }
             }
-        
 
-        if (!Protections.DamagePlayersAboveNether.isEnabled() && Protections.BlockPlayersAboveNether.isEnabled()) {
-            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet().contains(e.getTo().getWorld().getName())) {
-                return;
-            }
-            
-            Location l = e.getTo();
-            if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
-                if (e.getFrom().getBlockY() >= Protections.NetherYLevel.getIntValue() && (l
-                        .getWorld()
-                        .getName()
-                        .toLowerCase()
-                        .contains("nether") || l
-                        .getWorld()
-                        .getEnvironment() == Environment.NETHER)) { //already on top of the nether..
-                	
-                	if(e.getPlayer().hasPermission("illegalstack.notify"))
-                		return;
-                	
-                    e.setCancelled(true);
-                    if (Protections.EnsureSafeTeleportLocationIfAboveCeiling.isEnabled()) {
-                        int x = e.getFrom().getBlockX();
-                        int z = e.getFrom().getBlockZ();
-                        BlockFace[] faces = new BlockFace[]{BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
-                        for (int y = Protections.NetherYLevel.getIntValue(); y > (Protections.NetherYLevel.getIntValue() - 17); y--) {
-                            Block b = e.getFrom().getWorld().getBlockAt(x, y, z);
-                            if (b.getType() != Material.BEDROCK) {
-                                b.setType(Material.AIR);
-                                for (BlockFace face : faces) {
-                                    if (b.getRelative(face).getType() != Material.BEDROCK) {
-                                        b.getRelative(face).setType(Material.NETHERRACK);
-                                    }
-                                }
-                                b = b.getRelative(BlockFace.DOWN);
-                                if (b.getType() == Material.BEDROCK) {
-                                    continue;
-                                }
-                                b.setType(Material.AIR);
-                                for (BlockFace face : faces) {
-                                    if (b.getRelative(face).getType() != Material.BEDROCK) {
-                                        b.getRelative(face).setType(Material.NETHERRACK);
-                                    }
-                                }
-                                if (b.getRelative(BlockFace.DOWN).getType() != Material.BEDROCK) {
-                                    b.getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);
-                                }
-                                Location loc = b.getLocation();
-                                getLog().append2(Msg.StaffMsgNetherFix.getValue(e.getPlayer(), loc.toString()));
-                                e.setCancelled(true);
+            if (!Protections.DamagePlayersAboveNether.isEnabled() && Protections.BlockPlayersAboveNether.isEnabled()) {
+                if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet()
+                        .contains(e.getTo().getWorld().getName())) {
+                    return;
+                }
 
-                                Scheduler.runTaskLater(this.plugin, () -> {
-                                    if (Scheduler.FOLIA) {
-                                        e.getPlayer().teleportAsync(loc);
-                                    } else {
-                                        e.getPlayer().teleport(loc);
+                Location l = e.getTo();
+                if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
+                    if (e.getFrom().getBlockY() >= Protections.NetherYLevel.getIntValue()
+                            && (l.getWorld().getName().toLowerCase().contains("nether")
+                                    || l.getWorld().getEnvironment()
+                                            == Environment.NETHER)) { // already on top of the nether..
+
+                        if (e.getPlayer().hasPermission("illegalstack.notify")) return;
+
+                        e.setCancelled(true);
+                        if (Protections.EnsureSafeTeleportLocationIfAboveCeiling.isEnabled()) {
+                            int x = e.getFrom().getBlockX();
+                            int z = e.getFrom().getBlockZ();
+                            BlockFace[] faces =
+                                    new BlockFace[] {BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
+                            for (int y = Protections.NetherYLevel.getIntValue();
+                                    y > (Protections.NetherYLevel.getIntValue() - 17);
+                                    y--) {
+                                Block b = e.getFrom().getWorld().getBlockAt(x, y, z);
+                                if (b.getType() != Material.BEDROCK) {
+                                    b.setType(Material.AIR);
+                                    for (BlockFace face : faces) {
+                                        if (b.getRelative(face).getType() != Material.BEDROCK) {
+                                            b.getRelative(face).setType(Material.NETHERRACK);
+                                        }
                                     }
-                                }, 12, e.getPlayer());
-                                return;
+                                    b = b.getRelative(BlockFace.DOWN);
+                                    if (b.getType() == Material.BEDROCK) {
+                                        continue;
+                                    }
+                                    b.setType(Material.AIR);
+                                    for (BlockFace face : faces) {
+                                        if (b.getRelative(face).getType() != Material.BEDROCK) {
+                                            b.getRelative(face).setType(Material.NETHERRACK);
+                                        }
+                                    }
+                                    if (b.getRelative(BlockFace.DOWN).getType() != Material.BEDROCK) {
+                                        b.getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);
+                                    }
+                                    Location loc = b.getLocation();
+                                    getLog().append2(Msg.StaffMsgNetherFix.getValue(e.getPlayer(), loc.toString()));
+                                    e.setCancelled(true);
+
+                                    Scheduler.runTaskLater(
+                                            this.plugin,
+                                            () -> {
+                                                if (Scheduler.FOLIA) {
+                                                    e.getPlayer().teleportAsync(loc);
+                                                } else {
+                                                    e.getPlayer().teleport(loc);
+                                                }
+                                            },
+                                            12,
+                                            e.getPlayer());
+                                    return;
+                                }
+                            }
+                        } else {
+                            if (Scheduler.FOLIA) {
+                                e.getPlayer()
+                                        .teleportAsync(
+                                                e.getPlayer().getLocation().subtract(0, 3, 0));
+                            } else {
+                                e.getPlayer()
+                                        .teleport(e.getPlayer().getLocation().subtract(0, 3, 0));
                             }
                         }
-                    } else {
-                        if (Scheduler.FOLIA) {
-                            e.getPlayer().teleportAsync(e.getPlayer().getLocation().subtract(0, 3, 0));
-                        } else {
-                            e.getPlayer().teleport(e.getPlayer().getLocation().subtract(0, 3, 0));
-                        }
+                        e.setCancelled(true);
+                        getLog().append2(Msg.StaffMsgNetherBlock.getValue(e.getPlayer(), l.toString()));
+                        e.getPlayer()
+                                .sendMessage(Msg.PlayerNetherBlock.getValue(
+                                        e.getPlayer().getName()));
                     }
-                    e.setCancelled(true);
-                    getLog().append2(Msg.StaffMsgNetherBlock.getValue(e.getPlayer(), l.toString()));
-                    e.getPlayer().sendMessage(Msg.PlayerNetherBlock.getValue(e.getPlayer().getName()));
                 }
             }
-        }
         }
     }
 
@@ -3747,8 +3891,9 @@ public class fListener implements Listener {
     public void onSpawnerMine(BlockBreakEvent e) {
 
         if (Protections.PreventBedrockDestruction.isEnabled()) {
-            if (e.getBlock().getType() == Material.OBSIDIAN && e.getBlock().getWorld().getEnvironment() == Environment.THE_END) {
-                Location bLoc = e.getBlock().getLocation().clone().add(0.5, 0.5, 0.5); //block center
+            if (e.getBlock().getType() == Material.OBSIDIAN
+                    && e.getBlock().getWorld().getEnvironment() == Environment.THE_END) {
+                Location bLoc = e.getBlock().getLocation().clone().add(0.5, 0.5, 0.5); // block center
                 for (Entity ent : e.getBlock().getWorld().getNearbyEntities(bLoc, 0.1, 3.1, 0.1)) {
                     if (ent instanceof EnderCrystal) {
                         ent.remove();
@@ -3756,36 +3901,35 @@ public class fListener implements Listener {
                 }
             }
         }
-        if ((Protections.BlockBuildingAboveNether.isEnabled() || Protections.BlockPlayersAboveNether.isEnabled()) && !e
-                .getPlayer()
-                .isOp()) {
-            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet().contains(e.getPlayer().getWorld().getName())) {
+        if ((Protections.BlockBuildingAboveNether.isEnabled() || Protections.BlockPlayersAboveNether.isEnabled())
+                && !e.getPlayer().isOp()) {
+            if (Protections.ExcludeNetherWorldFromHeightCheck.getTxtSet()
+                    .contains(e.getPlayer().getWorld().getName())) {
                 return;
             }
             Location l = e.getBlock().getLocation();
             if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
                 if (l.getY() >= Protections.NetherYLevel.getIntValue()) {
-                    if (l.getBlockY() >= Protections.NetherYLevel.getIntValue() && (l.getWorld().getName().toLowerCase().contains(
-                            "nether") || l.getWorld().getEnvironment() == Environment.NETHER)) //already on top of the nether..
+                    if (l.getBlockY() >= Protections.NetherYLevel.getIntValue()
+                            && (l.getWorld().getName().toLowerCase().contains("nether")
+                                    || l.getWorld().getEnvironment()
+                                            == Environment.NETHER)) // already on top of the nether..
                     {
                         e.setCancelled(IllegalStackAction.isCompleted(
-                                Protections.BlockPlayersAboveNether,
-                                e.getPlayer(),
-                                e.getBlock()
-                        ));
+                                Protections.BlockPlayersAboveNether, e.getPlayer(), e.getBlock()));
                     }
                 }
             }
         }
 
-        
         if (Protections.ResetSpawnersOfType.getTxtSet().isEmpty()) {
             return;
         }
         if (e.getBlock().getType() == Material.SPAWNER) {
             BlockState bs = e.getBlock().getState();
             CreatureSpawner spawner = (CreatureSpawner) bs;
-            if (Protections.ResetSpawnersOfType.isWhitelisted(spawner.getSpawnedType().name())) {
+            if (Protections.ResetSpawnersOfType.isWhitelisted(
+                    spawner.getSpawnedType().name())) {
                 EntityType oldType = spawner.getSpawnedType();
                 spawner.setSpawnedType(EntityType.PIG);
                 bs.setBlockData(spawner.getBlockData());
@@ -3797,7 +3941,7 @@ public class fListener implements Listener {
 
     @EventHandler
     public void onEnchantItemPrep(PrepareItemEnchantEvent e) {
-        //String debug = "Modified enchantment offers: ";
+        // String debug = "Modified enchantment offers: ";
 
         if (!Protections.PreventRNGEnchant.isEnabled()) {
             return;
@@ -3805,7 +3949,7 @@ public class fListener implements Listener {
         EnchantmentOffer[] newOffers = new EnchantmentOffer[e.getOffers().length];
         for (int i = 0; i < e.getOffers().length; i++) {
             if (e.getOffers().length > 1) {
-                if (ThreadLocalRandom.current().nextBoolean()) //randomly skip some of the multiple offers
+                if (ThreadLocalRandom.current().nextBoolean()) // randomly skip some of the multiple offers
                 {
                     continue;
                 }
@@ -3821,9 +3965,9 @@ public class fListener implements Listener {
             int oldCost = eo.getCost();
             eo.setCost(ThreadLocalRandom.current().nextInt(min, min + 5));
             newOffers[i] = eo;
-            //debug = debug + " [" + i + "] new: " + eo.getCost() + " old: " + oldCost;
+            // debug = debug + " [" + i + "] new: " + eo.getCost() + " old: " + oldCost;
         }
-        //fListener.getLog().append2("DEBUG: Modified " + modified + " enchantment offers. " + debug);
+        // fListener.getLog().append2("DEBUG: Modified " + modified + " enchantment offers. " + debug);
         for (int i = 0; i < newOffers.length; i++) {
             if (newOffers[i] != null) {
                 e.getOffers()[i] = newOffers[i];
@@ -3846,31 +3990,33 @@ public class fListener implements Listener {
                 continue;
             }
             enchants = enc.getName() + " - " + e.getEnchantsToAdd().get(enc) + ", ";
-            //fListener.getLog().append2("DEBUG: Random xp for enchanting was: " + rndXp + " oldXp: " + oldXp + " new " + p.getExp()  + " " + p.getName() + " itm " + e.getItem().getType().name() + " added " + enchants);
+            // fListener.getLog().append2("DEBUG: Random xp for enchanting was: " + rndXp + " oldXp: " + oldXp + " new "
+            // + p.getExp()  + " " + p.getName() + " itm " + e.getItem().getType().name() + " added " + enchants);
         }
     }
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent e) {
-    	if(Protections.PreventVexTrapping.isEnabled(e.getEntity().getLocation())) {
-    		if(e.getEntity() instanceof Vex) {
-    			
-    			Vex v = ((Vex)e.getEntity());
-    			if(v.isInsideVehicle()) {
-    				v.getVehicle().removePassenger(e.getEntity());
-    	            getLog().append(Msg.VexEjected.getValue(v.getLocation().toString()), Protections.PreventVexTrapping);
-    			}
-    		}
-    	}
+        if (Protections.PreventVexTrapping.isEnabled(e.getEntity().getLocation())) {
+            if (e.getEntity() instanceof Vex) {
 
+                Vex v = ((Vex) e.getEntity());
+                if (v.isInsideVehicle()) {
+                    v.getVehicle().removePassenger(e.getEntity());
+                    getLog().append(
+                                    Msg.VexEjected.getValue(v.getLocation().toString()),
+                                    Protections.PreventVexTrapping);
+                }
+            }
+        }
     }
 
     @EventHandler
     public void onItemCraft(CraftItemEvent event) {
-        if (Protections.DisableCraftingRecipes.getTxtSet().isEmpty()){
+        if (Protections.DisableCraftingRecipes.getTxtSet().isEmpty()) {
             return;
         }
-        if (!(event.getWhoClicked() instanceof Player)){
+        if (!(event.getWhoClicked() instanceof Player)) {
             return;
         }
 
@@ -3878,18 +4024,21 @@ public class fListener implements Listener {
         ItemStack craftResult = event.getRecipe().getResult();
         HashSet<String> disabledMaterials = Protections.DisableCraftingRecipes.getTxtSet();
         HashSet<ItemStack> itemStacks = new HashSet<>();
-        for (String s : disabledMaterials){
+        for (String s : disabledMaterials) {
             Material material = Material.getMaterial(s);
-            if (material != null){
+            if (material != null) {
                 ItemStack itemStack = new ItemStack(material);
                 itemStacks.add(itemStack);
             }
         }
 
-        for (ItemStack itemStack : itemStacks){
-            if (craftResult.equals(itemStack)){
+        for (ItemStack itemStack : itemStacks) {
+            if (craftResult.equals(itemStack)) {
                 event.setCancelled(IllegalStackAction.isCompleted(Protections.DisableCraftingRecipes, player));
-                getLog().append(Msg.PreventedItemCraft.getValue(player, craftResult.getType().name()), Protections.DisableCraftingRecipes);
+                getLog().append(
+                                Msg.PreventedItemCraft.getValue(
+                                        player, craftResult.getType().name()),
+                                Protections.DisableCraftingRecipes);
                 player.sendMessage(Msg.PlayerItemCraftPrevented.getValue(player.getName()));
             }
         }
@@ -3990,11 +4139,12 @@ public class fListener implements Listener {
     public void setIs117(boolean is117) {
         this.is117 = is117;
     }
+
     public void setIs118(boolean is118) {
         this.is118 = is118;
     }
-	public static HashSet<Material> getUnbreakable() {
-		return unbreakable;
-	}
 
+    public static HashSet<Material> getUnbreakable() {
+        return unbreakable;
+    }
 }

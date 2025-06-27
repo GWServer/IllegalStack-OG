@@ -28,12 +28,10 @@ public class OverstackedItemCheck {
 
         for (ItemStack is : inv.getStorageContents()) {
             if (is != null && is.getType() != Material.AIR && CheckContainer(is, inv, true)) {
-                fListener.getLog().append2(Msg.GenericItemRemoval.getValue(
-                        is,
-                        Protections.RemoveOverstackedItems,
-                        player,
-                        "Crafting Inventory"
-                ));
+                fListener
+                        .getLog()
+                        .append2(Msg.GenericItemRemoval.getValue(
+                                is, Protections.RemoveOverstackedItems, player, "Crafting Inventory"));
             }
         }
         return false;
@@ -50,22 +48,20 @@ public class OverstackedItemCheck {
 
         if (is.getAmount() > is.getMaxStackSize()) {
 
-            if (!Protections.IllegalStackMode.isEnabled()) { //in blacklist mode and on the blacklist
+            if (!Protections.IllegalStackMode.isEnabled()) { // in blacklist mode and on the blacklist
                 if (Protections.FixOverstackedItemInstead.isEnabled()) {
                     if (!silent) {
-                        fListener.getLog().append(
-                                Msg.IllegalStackShorten.getValue(obj, is),
-                                Protections.RemoveOverstackedItems
-                        );
+                        fListener
+                                .getLog()
+                                .append(Msg.IllegalStackShorten.getValue(obj, is), Protections.RemoveOverstackedItems);
                     }
                     is.setAmount(is.getType().getMaxStackSize());
                     return true;
                 } else {
                     if (!silent) {
-                        fListener.getLog().append(
-                                Msg.IllegalStackItemScan.getValue(obj, is),
-                                Protections.RemoveOverstackedItems
-                        );
+                        fListener
+                                .getLog()
+                                .append(Msg.IllegalStackItemScan.getValue(obj, is), Protections.RemoveOverstackedItems);
                     }
                     if (obj instanceof Inventory) {
                         ((Inventory) obj).remove(is);
@@ -74,7 +70,6 @@ public class OverstackedItemCheck {
                     }
                     return true;
                 }
-
             }
 
             if (Protections.AllowStack.isWhitelisted(is.getType().name(), null)) {
@@ -103,5 +98,4 @@ public class OverstackedItemCheck {
 
         return false;
     }
-
 }

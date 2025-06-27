@@ -1,5 +1,8 @@
 package main.java.me.dniym.commands;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
@@ -16,10 +19,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class IllegalStackCommand implements CommandExecutor, TabCompleter {
 
@@ -46,11 +45,9 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
 
                 String ver = IllegalStack.getPlugin().getDescription().getVersion();
                 sender.sendMessage(ChatColor.AQUA + "-----===== Illegal Stack (" + ver + ") =====-----");
-                sender.sendMessage(ChatColor.GOLD + " Detected Server Version: " + IllegalStack.getVersion() + (IllegalStack.isSpigot()
-                        ? ""
-                        : "Spigot"));
+                sender.sendMessage(ChatColor.GOLD + " Detected Server Version: " + IllegalStack.getVersion()
+                        + (IllegalStack.isSpigot() ? "" : "Spigot"));
                 return true;
-
             }
 
             if (args[0].toLowerCase().startsWith("fix")) {
@@ -64,58 +61,58 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
                     sender.sendMessage("This command can only be used in game by a player.");
                 }
                 return true;
-
             }
             if (args[0].toLowerCase().startsWith("prot")) {
                 if (!hasPerm(sender, "illegalstack.admin")) {
                     return true;
                 }
                 sender.sendMessage(ChatColor.AQUA + "-----===== Illegal Stack Protections =====-----");
-                sender.sendMessage(ChatColor.GOLD + " Detected Server Version: " + IllegalStack.getVersion() + (IllegalStack.isSpigot()
-                        ? ""
-                        : "Spigot"));
+                sender.sendMessage(ChatColor.GOLD + " Detected Server Version: " + IllegalStack.getVersion()
+                        + (IllegalStack.isSpigot() ? "" : "Spigot"));
                 sender.sendMessage(ChatColor.AQUA + "-" + "   Version Specific Protections   -");
                 int parentId = 0;
                 int catId = 0;
                 if (args.length >= 2) {
-                	try {
-                		catId = Integer.parseInt(args[1].trim());
-                	} catch (NumberFormatException ex) {
-                		
-                	}
+                    try {
+                        catId = Integer.parseInt(args[1].trim());
+                    } catch (NumberFormatException ex) {
+
+                    }
                 }
                 if (args.length == 3) {
-                	try {
-                	    parentId = Integer.parseInt(args[2].trim());	
-                	} catch (NumberFormatException ex) {
-                    
+                    try {
+                        parentId = Integer.parseInt(args[2].trim());
+                    } catch (NumberFormatException ex) {
+
                     }
                 }
                 for (Protections p : Protections.values()) {
                     if (!p.getCommand().isEmpty()) {
                         continue;
                     }
-                    if (p.isVersionSpecific(IllegalStack.getVersion()) && p.isRelevantToVersion(IllegalStack.getVersion()) && p.getCatId() != 2) {
+                    if (p.isVersionSpecific(IllegalStack.getVersion())
+                            && p.isRelevantToVersion(IllegalStack.getVersion())
+                            && p.getCatId() != 2) {
                         sendProtection(sender, p, parentId, catId);
                     }
                 }
 
-                //sender.sendMessage(ChatColor.AQUA + "-     Multi-Version Protections     -");
+                // sender.sendMessage(ChatColor.AQUA + "-     Multi-Version Protections     -");
                 sendCategory(sender, "Multi-Version Protections", (catId == 1), 1);
                 if (catId == 1) {
                     for (Protections p : Protections.values()) {
                         if (!p.getCommand().isEmpty() || p.getCatId() == 2) {
                             continue;
                         }
-                        if (p.isRelevantToVersion(IllegalStack.getVersion()) && !p.isVersionSpecific(IllegalStack.getVersion())) {
+                        if (p.isRelevantToVersion(IllegalStack.getVersion())
+                                && !p.isVersionSpecific(IllegalStack.getVersion())) {
                             sendProtection(sender, p, parentId, catId);
                         }
                     }
-
                 }
 
                 sendCategory(sender, "Misc / User Requested Features", (catId == 2), 2);
-                //sender.sendMessage(ChatColor.AQUA + "-  Misc / User Requested Features  -");
+                // sender.sendMessage(ChatColor.AQUA + "-  Misc / User Requested Features  -");
                 if (catId == 2) {
                     for (Protections p : Protections.values()) {
                         if (!p.getCommand().isEmpty()) {
@@ -142,7 +139,6 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
                     } else {
                         plr.sendMessage(Msg.StaffEnchantBypassCancel.getValue());
                         return true;
-
                     }
                 }
             }
@@ -157,11 +153,7 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
                     if (args.length >= 4) {
                         World w = IllegalStack.getPlugin().getServer().getWorld(args[4]);
                         Location loc = new Location(
-                                w,
-                                Integer.parseInt(args[1]),
-                                Integer.parseInt(args[2]),
-                                Integer.parseInt(args[3])
-                        );
+                                w, Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
                         if (Scheduler.FOLIA) {
                             ((Player) sender).teleportAsync(loc);
                         } else {
@@ -190,7 +182,6 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
             }
-
         }
 
         if (args.length >= 4) {
@@ -222,11 +213,10 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
                         }
 
                         val = new StringBuilder(val.toString().trim());
-
                     }
 
                     pro.remTxtSet(val.toString(), sender);
-                    //refreshCommands(sender);
+                    // refreshCommands(sender);
                     return true;
                 }
 
@@ -234,7 +224,7 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
 
                     if (pro.validate(args[3].trim(), sender)) {
                         sender.sendMessage(Msg.StaffOptionUpdated.getValue());
-                        //refreshCommands(sender);
+                        // refreshCommands(sender);
                     }
                     return true;
                 }
@@ -254,7 +244,8 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
                 }
 
                 sender.sendMessage(ChatColor.GRAY + prots.toString());
-                sender.sendMessage(ChatColor.GOLD + "/istack toggle <protection>" + ChatColor.GRAY + " - Toggles a protection on/off");
+                sender.sendMessage(ChatColor.GOLD + "/istack toggle <protection>" + ChatColor.GRAY
+                        + " - Toggles a protection on/off");
                 return true;
             }
 
@@ -276,7 +267,6 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(Msg.StaffStringUpdated.getValue(text.toString()));
                     }
                     return true;
-
                 }
                 if (args.length > 3 && args[1].equalsIgnoreCase("set")) {
                     Protections pro = Protections.getProtection(args[2]);
@@ -286,19 +276,21 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
                     }
                     if (pro.validate(text.toString(), sender)) {
                         sender.sendMessage(Msg.StaffOptionUpdated.getValue());
-                        //refreshCommands(sender);
+                        // refreshCommands(sender);
                     }
 
                     return true;
                 }
                 sender.sendMessage(ChatColor.AQUA + "-----===== Available Protection Options =====-----");
-                sender.sendMessage(ChatColor.GOLD + "/istack values < set | remove > <protection>" + ChatColor.GRAY + " - Add/Remove a value from a protection's list");
+                sender.sendMessage(ChatColor.GOLD + "/istack values < set | remove > <protection>" + ChatColor.GRAY
+                        + " - Add/Remove a value from a protection's list");
             }
         }
 
         sender.sendMessage(ChatColor.AQUA + "Illegal Stack - Available Commands");
         sender.sendMessage(ChatColor.GOLD + "/istack protections" + ChatColor.GRAY + " Shows Protection Status'");
-        sender.sendMessage(ChatColor.GOLD + "/istack toggle <protection>" + ChatColor.GRAY + " - Toggles a protection on/off");
+        sender.sendMessage(
+                ChatColor.GOLD + "/istack toggle <protection>" + ChatColor.GRAY + " - Toggles a protection on/off");
         sender.sendMessage(ChatColor.GOLD + "/istack reload" + ChatColor.GRAY + " - Reloads config from config.yml");
 
         return true;
@@ -354,15 +346,16 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
 
         } else {
             if (!p.isList()) {
-                sender.sendMessage(ChatColor.GOLD + "[" + status + ChatColor.GOLD + "] " + ChatColor.DARK_AQUA + "" + p.getDisplayName() + "");
+                sender.sendMessage(ChatColor.GOLD + "[" + status + ChatColor.GOLD + "] " + ChatColor.DARK_AQUA + ""
+                        + p.getDisplayName() + "");
             } else {
-                sender.sendMessage(ChatColor.DARK_GRAY + "[" + "   " + ChatColor.DARK_GRAY + "] " + ChatColor.DARK_AQUA + "" + p.getDisplayName() + " " + p
-                        .findValue());
+                sender.sendMessage(ChatColor.DARK_GRAY + "[" + "   " + ChatColor.DARK_GRAY + "] " + ChatColor.DARK_AQUA
+                        + "" + p.getDisplayName() + " " + p.findValue());
             }
             for (Protections child : Protections.values()) {
                 if (child.getParentId() == p.getProtId()) {
-                    sender.sendMessage(ChatColor.AQUA + "-> " + ChatColor.DARK_AQUA + child.getDisplayName() + " " + ChatColor.GRAY + child
-                            .findValue());
+                    sender.sendMessage(ChatColor.AQUA + "-> " + ChatColor.DARK_AQUA + child.getDisplayName() + " "
+                            + ChatColor.GRAY + child.findValue());
                     line = false;
                 }
             }
@@ -373,11 +366,18 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
     }
 
     private void refreshCommands(final CommandSender sender) {
-        Scheduler.runTaskLater(IllegalStack.getPlugin(), () -> IllegalStack.getPlugin().getServer().dispatchCommand(sender, "istack prot"), 5);
+        Scheduler.runTaskLater(
+                IllegalStack.getPlugin(),
+                () -> IllegalStack.getPlugin().getServer().dispatchCommand(sender, "istack prot"),
+                5);
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String label, final @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(
+            @NotNull final CommandSender sender,
+            @NotNull final Command command,
+            @NotNull final String label,
+            final @NotNull String[] args) {
 
         List<String> arguments = new ArrayList<>();
         arguments.add("protections");
@@ -385,9 +385,9 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
         arguments.add("reload");
 
         List<String> result = new ArrayList<>();
-        if (args.length == 1){
-            for (String a : arguments){
-                if (a.toLowerCase().startsWith(args[0].toLowerCase())){
+        if (args.length == 1) {
+            for (String a : arguments) {
+                if (a.toLowerCase().startsWith(args[0].toLowerCase())) {
                     result.add(a);
                 }
             }
@@ -395,5 +395,4 @@ public class IllegalStackCommand implements CommandExecutor, TabCompleter {
         }
         return null;
     }
-
 }

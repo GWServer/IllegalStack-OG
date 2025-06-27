@@ -1,6 +1,7 @@
 package main.java.me.dniym.checks;
 
-
+import java.util.HashSet;
+import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
 import main.java.me.dniym.listeners.fListener;
@@ -15,10 +16,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import main.java.me.dniym.IllegalStack;
-
-import java.util.HashSet;
-
 public class BadAttributeCheck {
 
     public static void CheckStorageInventory(CraftingInventory inventory, Player player) {
@@ -28,13 +25,11 @@ public class BadAttributeCheck {
             }
             for (ItemStack itemStack : inventory.getStorageContents()) {
                 if (itemStack != null && itemStack.getType() != Material.AIR && NBTStuff.hasBadCustomData(itemStack)) {
-                    fListener.getLog().append2(Msg.GenericItemRemoval.getValue(
-                            itemStack,
-                            Protections.RemoveCustomAttributes,
-                            player,
-                            "Crafting Inventory"
-                    ));
-                    
+                    fListener
+                            .getLog()
+                            .append2(Msg.GenericItemRemoval.getValue(
+                                    itemStack, Protections.RemoveCustomAttributes, player, "Crafting Inventory"));
+
                     inventory.removeItem(itemStack);
                 }
             }
@@ -57,15 +52,19 @@ public class BadAttributeCheck {
                 for (Attribute a : itemMeta.getAttributeModifiers().keySet()) {
 
                     for (AttributeModifier st : itemMeta.getAttributeModifiers(a)) {
-                        attribs.append(" ").append(st.getName()).append(" value: ").append(st.getAmount());
+                        attribs.append(" ")
+                                .append(st.getName())
+                                .append(" value: ")
+                                .append(st.getAmount());
                     }
                     toRemove.add(a);
                 }
 
-                fListener.getLog().append(
-                        Msg.CustomAttribsRemoved3.getValue(itemStack, obj, attribs),
-                        Protections.RemoveCustomAttributes
-                );
+                fListener
+                        .getLog()
+                        .append(
+                                Msg.CustomAttribsRemoved3.getValue(itemStack, obj, attribs),
+                                Protections.RemoveCustomAttributes);
 
                 for (Attribute remove : toRemove) {
                     itemMeta.removeAttributeModifier(remove);
@@ -82,12 +81,12 @@ public class BadAttributeCheck {
             return NBTApiStuff.checkForBadCustomDataLegacy(itemStack, obj);
 
         } else {
-            fListener.getLog().append(
-                    Msg.StaffNoNBTAPI.getValue(Protections.RemoveCustomAttributes.name()),
-                    Protections.RemoveCustomAttributes
-            );
+            fListener
+                    .getLog()
+                    .append(
+                            Msg.StaffNoNBTAPI.getValue(Protections.RemoveCustomAttributes.name()),
+                            Protections.RemoveCustomAttributes);
         }
         return false;
     }
-
 }

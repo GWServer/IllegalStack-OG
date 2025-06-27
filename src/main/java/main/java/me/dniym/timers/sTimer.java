@@ -1,9 +1,13 @@
 package main.java.me.dniym.timers;
 
+import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
-import main.java.me.dniym.enums.ServerVersion;
 import main.java.me.dniym.listeners.fListener;
 import main.java.me.dniym.utils.Scheduler;
 import net.md_5.bungee.api.ChatColor;
@@ -15,13 +19,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class sTimer implements Runnable {
 
@@ -66,7 +63,8 @@ public class sTimer implements Runnable {
     @Override
     public void run() {
 
-        if (!IllegalStack.isIsHybridEnvironment() && IllegalStack.isPaperServer()
+        if (!IllegalStack.isIsHybridEnvironment()
+                && IllegalStack.isPaperServer()
                 && IllegalStack.getMajorServerVersion() >= 16) {
             if (IllegalStack.isDisable() || Bukkit.getServer().isStopping()) {
                 return;
@@ -77,44 +75,46 @@ public class sTimer implements Runnable {
             return;
         }
 
-        if (!Protections.DestroyBadSignsonChunkLoad.isEnabled() || Protections.DestroyBadSignsonChunkLoad.notifyOnly()) {
+        if (!Protections.DestroyBadSignsonChunkLoad.isEnabled()
+                || Protections.DestroyBadSignsonChunkLoad.notifyOnly()) {
             return;
         }
         if (getSignCheck() != -1L && System.currentTimeMillis() >= getSignCheck()) {
             for (Block b : signBlock.keySet()) {
-                Scheduler.executeOrScheduleSync(IllegalStack.getPlugin(), () -> {
-                    BlockState st = b.getState();
-                    if (st instanceof Sign) {
-                        Sign sign = (Sign) st;
-                        boolean illegal = false;
-                        for (String line : sign.getLines()) {
-                            if (!Charset
-                                    .forName(Protections.ValidCharset.getTxtValue())
-                                    .newEncoder()
-                                    .canEncode(ChatColor.stripColor(
-                                            line))) {
-                                illegal = true;
-                                LOGGER.info(
-                                        "Found a sign with illegal chars: line with invalid text was: {} @ {}",
-                                        line,
-                                        sign.getLocation().toString()
-                                );
-                            }
-                        }
+                Scheduler.executeOrScheduleSync(
+                        IllegalStack.getPlugin(),
+                        () -> {
+                            BlockState st = b.getState();
+                            if (st instanceof Sign) {
+                                Sign sign = (Sign) st;
+                                boolean illegal = false;
+                                for (String line : sign.getLines()) {
+                                    if (!Charset.forName(Protections.ValidCharset.getTxtValue())
+                                            .newEncoder()
+                                            .canEncode(ChatColor.stripColor(line))) {
+                                        illegal = true;
+                                        LOGGER.info(
+                                                "Found a sign with illegal chars: line with invalid text was: {} @ {}",
+                                                line,
+                                                sign.getLocation().toString());
+                                    }
+                                }
 
-                        Player p = signBlock.get(sign.getBlock());
-                        if (illegal) {
-                            if (p != null) {
-                                fListener.getLog().append2(Msg.SignRemovedOnPlace.getValue(
-                                        sign.getLocation(),
-                                        signBlock.get(b).getName()
-                                ));
+                                Player p = signBlock.get(sign.getBlock());
+                                if (illegal) {
+                                    if (p != null) {
+                                        fListener
+                                                .getLog()
+                                                .append2(Msg.SignRemovedOnPlace.getValue(
+                                                        sign.getLocation(),
+                                                        signBlock.get(b).getName()));
+                                    }
+                                    sign.getBlock().setType(Material.AIR);
+                                    p.kickPlayer(Msg.SignKickPlayerMsg.getValue());
+                                }
                             }
-                            sign.getBlock().setType(Material.AIR);
-                            p.kickPlayer(Msg.SignKickPlayerMsg.getValue());
-                        }
-                    }
-                }, b.getLocation());
+                        },
+                        b.getLocation());
             }
             signBlock.clear();
             setSignCheck(-1L);
@@ -127,13 +127,13 @@ public class sTimer implements Runnable {
                     if (st instanceof Sign) {
                         Sign sign = (Sign) st;
                         for (String line : sign.getLines()) {
-                            if (!Charset
-                                    .forName(Protections.ValidCharset.getTxtValue())
+                            if (!Charset.forName(Protections.ValidCharset.getTxtValue())
                                     .newEncoder()
                                     .canEncode(ChatColor.stripColor(line))) {
-                                Scheduler.executeOrScheduleSync(IllegalStack.getPlugin(),
-                                        () -> sign.getBlock().setType(Material.AIR), sign.getLocation()
-                                );
+                                Scheduler.executeOrScheduleSync(
+                                        IllegalStack.getPlugin(),
+                                        () -> sign.getBlock().setType(Material.AIR),
+                                        sign.getLocation());
                                 found.add(sign.getBlock());
                             }
                         }
@@ -149,5 +149,4 @@ public class sTimer implements Runnable {
             entList.clear();
         }
     }
-
 }

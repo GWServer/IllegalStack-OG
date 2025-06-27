@@ -5,13 +5,12 @@ package main.java.me.dniym.utils;
  */
 
 import com.comphenix.protocol.events.PacketEvent;
-import main.java.me.dniym.listeners.fListener;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
+import main.java.me.dniym.listeners.fListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PacketAttack {
 
@@ -54,7 +53,6 @@ public class PacketAttack {
         }
 
         return shouldCancelPacket(packetEvent, maxAttempts, attackType);
-
     }
 
     public boolean shouldCancelPacket(Object packetEvent, int maxAttempts, String attackType) {
@@ -64,23 +62,23 @@ public class PacketAttack {
             if (!event.isCancelled()) {
                 int size = event.getPacket().getBytes().toString().length();
 
-                if (size > 2700) { //sending too large of a packet, cancel it regardless
-                    fListener.getLog().append2(
-                            "Player sent a packet too large for the server to handle!  Probably a packet attack!");
+                if (size > 2700) { // sending too large of a packet, cancel it regardless
+                    fListener
+                            .getLog()
+                            .append2(
+                                    "Player sent a packet too large for the server to handle!  Probably a packet attack!");
                     event.getPlayer().kickPlayer("Invalid Packet Detected (packet too large)");
                     return true;
                 } else if (maxAttempts > 0) {
                     if (this.pAttack.get(attackType) >= maxAttempts) {
-                        //player has sent too many invalid packets of a given type.
+                        // player has sent too many invalid packets of a given type.
                         LOGGER.info("Player sent too many bad packets of type: {} kicking them.", attackType);
                         event.getPlayer().kickPlayer("Too many bad packets detected! " + attackType);
                         return true;
                     }
                 }
             }
-
         }
         return false;
     }
-
 }

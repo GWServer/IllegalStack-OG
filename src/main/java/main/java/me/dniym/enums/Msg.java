@@ -18,13 +18,13 @@ import org.bukkit.inventory.ItemStack;
 
 public enum Msg {
 
-    //@  Location of offense
-    //~name~ name of player or entity
-    //~contents~ contents of an item frame
-    //~removedblocks~ blocked removed
-    //~author~    book author
-    //~blockType  block type
-    //~item~
+    // @  Location of offense
+    // ~name~ name of player or entity
+    // ~contents~ contents of an item frame
+    // ~removedblocks~ blocked removed
+    // ~author~    book author
+    // ~blockType  block type
+    // ~item~
 
     PluginPrefix("[IllegalStack] -"),
     PluginTeleportText(ChatColor.GOLD + "Click to teleport here"),
@@ -33,7 +33,8 @@ public enum Msg {
     ChestPrevented("prevented ~player~ from putting a chest on a ~entity~ @"),
     StaffChestPunishment(
             "punished ~player~ for continuing to try to put chests on a creature.  A ~entity~ was removed, the player's inventory has been cleared and the player has been kicked from the server. @"),
-    BookRemoved("Found a book with characters that do NOT match the specified character set and removed it.. Author was: ~author~"),
+    BookRemoved(
+            "Found a book with characters that do NOT match the specified character set and removed it.. Author was: ~author~"),
     TooManyPages("Found a book with too many pages and removed it from the inventory of ~name~"),
     SignRemoved("Found a sign not matching the allowed character set in the world @"),
     SignRemovedOnPlace(
@@ -74,22 +75,22 @@ public enum Msg {
             "Unstacked an illegal stack of: ~item~ (~amount~) triggered by player: ~name~.  ~lost~ items were unable to fit and lost."),
     InvalidPotionRemoved("Removed invalid potion from ~name~ had the following effects: ~effects~"),
     InvalidThrownPotionRemoved("Removed an invalid potion thrown by ~name~ with the following effects: ~effects~"),
-    
+
     UnbreakableItemCleared("Removed Unbreakable flag from ~item~ found on player ~name~"),
     CustomAttribsRemoved("Removed Custom Attributes on ~item~ held by ~name~ (~attributes~)"),
     CustomAttribsRemoved2("Removed ~item~ with Custom Attributes worn by ~name~ (~attributes~)"),
     CustomAttribsRemoved3("Removed ~item~ with Custom attributes found in ~name~'s inventory (~attributes~)"),
     GlideActivateMaxBuild("Prevented ~name~ from activating an elytra while above the max build height. @"),
     GlideAboveMaxBuild("Player ~name~ was using an elytra above the max build height, disabling glide. @"),
-    CorrectedPlayerLocation("(possible pearl glitch into block) Corrected an enderpearl teleport location for ~player~ @"),
+    CorrectedPlayerLocation(
+            "(possible pearl glitch into block) Corrected an enderpearl teleport location for ~player~ @"),
     StoppedPushableArmorStand("Prevented an armor stand from being lifted straight up via a piston @"),
     StoppedPushableEntity("Prevented an entity (armor stand/end crystal) from being pushed into another entity @"),
     RemovedRenamedItem("Removed a renamed item ~item~ from the inventory of ~name~"),
     BlockedTripwireDupe(
             "Player ~name~ attempted to place a tripwire hook on a trap door, it has been removed (PreventTripwireDupe = true)"),
-    BlockedStringDupe(
-            "Removed a string that would have been broken by water..  Possible string dupe @"),
-    
+    BlockedStringDupe("Removed a string that would have been broken by water..  Possible string dupe @"),
+
     GenericItemRemoval("~item~ removed by protection ~protection~, found on source ~source~"),
     PlayerTrappedPortalMsg(
             "&cSorry ~name~ but that portal appears to not have a valid exit!  You would be trapped if you went through it!"),
@@ -112,11 +113,13 @@ public enum Msg {
     PlayerItemCraftPrevented("&cSorry ~name~ you can not craft that item!"),
 
     StaffMsgChangedSpawnerType("Player ~player~ used ~type~ to change a spawner type @"),
-    StaffMsgEndGatewayVehicleRemoved("player ~name~ attempted to take a ~vehicle~ through an end gateway, it has been removed."),
+    StaffMsgEndGatewayVehicleRemoved(
+            "player ~name~ attempted to take a ~vehicle~ through an end gateway, it has been removed."),
     StaffMsgBlockedPortalLogin("broke a trapped nether portal @"),
     StaffMsgBlockedPortal("~player~ was prevented from going through a blocked/trapped nether portal @"),
     StaffMsgDropperExploit("Detected a hopper/dropper loop exploit and removed a dispenser/dropper @"),
-    StaffMsgDispenerFlint("Detected a downward facing dispenser from dispensing flint and steel which would crash the server @"),
+    StaffMsgDispenerFlint(
+            "Detected a downward facing dispenser from dispensing flint and steel which would crash the server @"),
     StaffMsgSpawnerReset("A ~type~ spawner was reset to a pig spawner when broken by ~name~ @"),
     StaffMsgSpawnerOnSpawnReset("A ~type~ spawner was reset to a pig spawner when it tried to spawn a creature. @"),
     StaffMsgCreativeBlock("~name~ was prevented from loading in an illegal item via the creative saved toolbar."),
@@ -135,9 +138,12 @@ public enum Msg {
     StaffEnchantBypassCancel("&cEnchantedItemWhitelist add item mode DISABLED."),
     StaffEnchantBypassAdded("&aAdded ~itemdata~ to the EnchantedItemWhitelist!"),
     StaffSpamFishingNotice("&a~player~ is spam fishing! ~casts~ casts without a 2 second break! @"),
-    StaffAutoFishingNotice("&a~player~ appears to be using an autofishing mod..  ~count~ caught within 0.3 blocks of each other @"),
-    StaffBadShulkerRemoved("Removed a hacked shulker box with an excessive amount of items in it (~size~) from ~name~ @"),
-    StaffBadShulkerInWorld("Removed a dropped shulker box with an excessive amount of items in it (~size~) from the world: @"),
+    StaffAutoFishingNotice(
+            "&a~player~ appears to be using an autofishing mod..  ~count~ caught within 0.3 blocks of each other @"),
+    StaffBadShulkerRemoved(
+            "Removed a hacked shulker box with an excessive amount of items in it (~size~) from ~name~ @"),
+    StaffBadShulkerInWorld(
+            "Removed a dropped shulker box with an excessive amount of items in it (~size~) from the world: @"),
     StaffNoItem("You must be holding an item in your main hand to force fix it's enchantment!"),
     StaffNoEnchants("This item has no enchants to fix!"),
     StaffEnchantFixed("Corrected ~amount~ enchants on ~item~"),
@@ -150,8 +156,8 @@ public enum Msg {
     DestroyedEnchantedItem("Destroyed an Illegally Enchanted Item ~item~ ~enchant~.(~lvl) found on player: ~player~"),
     IllegalEnchantLevel("&aFixed Enchantment Level ~enchant~.(~lvl~) on ~item~ found on player: ~player~"),
     IllegalEnchantType(
-            "&aCould not fix Enchantment ~enchant~.(~lvl~) on ~item~ found on player: ~player~ this enchantment is not valid " +
-                    "for this item type!"),
+            "&aCould not fix Enchantment ~enchant~.(~lvl~) on ~item~ found on player: ~player~ this enchantment is not valid "
+                    + "for this item type!"),
     PreventedItemCraft("~player~ was prevented from crafting ~item~ as per DisableCraftingRecipes settings");
 
     private static final Logger LOGGER = LogManager.getLogger("IllegalStack/" + Msg.class.getSimpleName());
@@ -271,7 +277,6 @@ public enum Msg {
     public String getValue(Location loc, ItemStack is) {
         String val = value;
 
-
         val = val.replace("@", "@ " + loc.toString());
         val = val.replace("~item~", is.getType().name());
         val = val.replace("~amount~", "" + is.getAmount());
@@ -279,7 +284,6 @@ public enum Msg {
     }
 
     public String getValue(Object obj, ItemStack is, Enchantment en) {
-
 
         String val = value;
 
@@ -291,7 +295,8 @@ public enum Msg {
             val = val.replace("~lvl~", is.getEnchantmentLevel(en) + "");
         }
         if (obj instanceof BlockState) {
-            val = val.replace("~player~", "a " + ((BlockState) obj).getBlock().getType().name() + "'s inventory");
+            val = val.replace(
+                    "~player~", "a " + ((BlockState) obj).getBlock().getType().name() + "'s inventory");
         } else if (obj instanceof Player) {
             val = val.replace("~player~", ((Player) obj).getName());
         } else if (obj instanceof Inventory) {
@@ -325,7 +330,6 @@ public enum Msg {
             val = val.replace("@", "@ UNKNOWN ");
         }
         return val;
-
     }
 
     public String getValue(Player p, ItemStack is, Enchantment en) {
@@ -337,7 +341,6 @@ public enum Msg {
         val = val.replace("~player~", p.getName());
         val = val.replace("@", "@ " + p.getLocation());
         return val;
-
     }
 
     public String getValue(Player p, EntityType et) {
@@ -348,7 +351,6 @@ public enum Msg {
         val = val.replace("~name~", p.getName());
         return ChatColor.translateAlternateColorCodes('&', val);
     }
-
 
     public String getValue(Object obj, ItemStack is) {
         if (obj instanceof Inventory) {
@@ -363,8 +365,7 @@ public enum Msg {
         }
         LOGGER.error(
                 "An unknown object {} was passed to IllegalStack during a logging operation please report this to dNiym at the spigot forums or on the IllegalStack Discord.",
-                obj.toString()
-        );
+                obj.toString());
         return "???";
     }
 
@@ -402,28 +403,29 @@ public enum Msg {
                 val = val.replace(
                         "~name~",
                         ((Container) inv.getHolder())
-                                .getLocation()
-                                .getBlock()
-                                .getType()
-                                .name() + " @" + ((Container) inv.getHolder()).getLocation()
-                );
+                                        .getLocation()
+                                        .getBlock()
+                                        .getType()
+                                        .name() + " @" + ((Container) inv.getHolder()).getLocation());
             } else if (inv.getHolder() instanceof DoubleChest) {
                 val = val.replace(
                         "~name~",
-                        ((DoubleChest) inv.getHolder()).getLocation().getBlock().getType().name() + " @" + inv
-                                .getLocation()
-                                .toString()
-                );
+                        ((DoubleChest) inv.getHolder())
+                                        .getLocation()
+                                        .getBlock()
+                                        .getType()
+                                        .name() + " @" + inv.getLocation().toString());
             } else if (inv.getHolder() instanceof Player) {
-                val = val.replace("~name~", ((Player) inv.getHolder()).getName() + " @" + inv.getLocation().toString());
+                val = val.replace(
+                        "~name~",
+                        ((Player) inv.getHolder()).getName() + " @"
+                                + inv.getLocation().toString());
             } else {
                 LOGGER.error(
                         "IllegalStack was supposed to send a message detailing an inventory but could not determine its type!  Please contact dNiym at the IllegalStack discord or on Spigot with this message: {} ",
-                        obj.toString()
-                );
+                        obj.toString());
             }
         }
-
 
         val = val.replace("~item~", is.getType().name());
         val = val.replace("~amount~", "" + is.getAmount());
@@ -471,7 +473,6 @@ public enum Msg {
         val = val.replace("~size~", "" + size);
         val = val.replace("~name~", p.getName());
 
-
         return ChatColor.translateAlternateColorCodes('&', val);
     }
 
@@ -493,5 +494,4 @@ public enum Msg {
         val = val.replace("~lost~", "" + lostItems);
         return ChatColor.translateAlternateColorCodes('&', val);
     }
-
 }

@@ -1,5 +1,6 @@
 package main.java.me.dniym.utils;
 
+import java.util.HashSet;
 import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
@@ -19,8 +20,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
-
-import java.util.HashSet;
 
 public class NBTStuff {
 
@@ -47,7 +46,7 @@ public class NBTStuff {
 
     public static ItemStack updateTimeStamp(ItemStack item, Protections prot) {
         if (hasSpigotNBT() && item.hasItemMeta()) {
-            //use the new built in methods.
+            // use the new built in methods.
 
             ItemMeta im = item.getItemMeta();
 
@@ -70,7 +69,7 @@ public class NBTStuff {
 
     public static ItemStack checkTimestamp(ItemStack item, Protections prot) {
         if (hasSpigotNBT()) {
-            //use the new built in methods.
+            // use the new built in methods.
             if (item.hasItemMeta()) {
                 ItemMeta im = item.getItemMeta();
 
@@ -78,7 +77,7 @@ public class NBTStuff {
                 NamespacedKey key = new NamespacedKey(IllegalStack.getPlugin(), "timestamp");
                 if (data.has(key, PersistentDataType.LONG)) {
                     Long Timestamp = data.get(key, PersistentDataType.LONG);
-                    if (System.currentTimeMillis() >= Timestamp) { //timestamp expired reset it
+                    if (System.currentTimeMillis() >= Timestamp) { // timestamp expired reset it
                         data.set(key, PersistentDataType.LONG, System.currentTimeMillis() + 4500L);
                         item.setItemMeta(im);
                     } else {
@@ -86,7 +85,6 @@ public class NBTStuff {
                         return null;
                     }
                 }
-
             }
         } else if (IllegalStack.isNbtAPI()) {
             item = NBTApiStuff.checkTimestampLegacy(item);
@@ -99,7 +97,6 @@ public class NBTStuff {
 
     public static boolean hasSpigotNBT() {
         return fListener.getInstance().is115() || fListener.getInstance().is114();
-
     }
 
     public static boolean isProCosmetics(ItemStack is, Protections prot) {
@@ -153,8 +150,6 @@ public class NBTStuff {
         }
 
         return NBTApiStuff.isBadShulkerLegacy(is);
-
-
     }
 
     public static boolean hasBadCustomData(ItemStack is) {
@@ -168,7 +163,6 @@ public class NBTStuff {
             return NBTApiStuff.hasBadCustomDataLegacy(is);
         }
 
-
         return false;
     }
 
@@ -181,10 +175,11 @@ public class NBTStuff {
             if (is.hasItemMeta() && is.getItemMeta() instanceof Damageable) {
                 Damageable dmg = (Damageable) is.getItemMeta();
                 if (dmg.getDamage() > is.getType().getMaxDurability()) {
-                    fListener.getLog().append(Msg.IllegalStackDurability.getValue(p, is), Protections.FixNegativeDurability);
+                    fListener
+                            .getLog()
+                            .append(Msg.IllegalStackDurability.getValue(p, is), Protections.FixNegativeDurability);
                     dmg.setDamage(is.getType().getMaxDurability());
                     is.setItemMeta((ItemMeta) dmg);
-
                 }
             }
         }
@@ -192,9 +187,8 @@ public class NBTStuff {
 
     public static void checkForBadCustomData(ItemStack is, Player p, boolean sendToPlayer) {
 
-    	if(!is.hasItemMeta())
-    		return;
-    	
+        if (!is.hasItemMeta()) return;
+
         ItemMeta im = is.getItemMeta();
 
         if (IllegalStack.isHasAttribAPI() && im.hasAttributeModifiers()) {
@@ -210,10 +204,11 @@ public class NBTStuff {
             if (sendToPlayer) {
                 p.sendMessage(Msg.CustomAttribsRemoved.getValue(p, is, attribs.toString()));
             } else {
-                fListener.getLog().append(
-                        Msg.CustomAttribsRemoved.getValue(p, is, attribs.toString()),
-                        Protections.RemoveCustomAttributes
-                );
+                fListener
+                        .getLog()
+                        .append(
+                                Msg.CustomAttribsRemoved.getValue(p, is, attribs.toString()),
+                                Protections.RemoveCustomAttributes);
             }
             for (Attribute remove : toRemove) {
                 im.removeAttributeModifier(remove);
@@ -232,10 +227,9 @@ public class NBTStuff {
         } else {
             Msg.StaffNoNBTAPI.getValue(Protections.RemoveCustomAttributes.name());
         }
-
     }
 
-    //should only ever be used on 1.15+ servers no need for legacy
+    // should only ever be used on 1.15+ servers no need for legacy
     public static void addNBTTag(Entity entity, String value) {
         if (hasSpigotNBT()) {
             PersistentDataContainer data = entity.getPersistentDataContainer();
@@ -246,7 +240,7 @@ public class NBTStuff {
         }
     }
 
-    //should only ever be used on 1.15+ servers no need for legacy
+    // should only ever be used on 1.15+ servers no need for legacy
     public static boolean hasNbtTag(Entity entity, String tag) {
         if (entity == null) {
             return false;
@@ -255,7 +249,5 @@ public class NBTStuff {
         PersistentDataContainer data = entity.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(IllegalStack.getPlugin(), tag);
         return data.has(key, PersistentDataType.STRING);
-
     }
-
 }

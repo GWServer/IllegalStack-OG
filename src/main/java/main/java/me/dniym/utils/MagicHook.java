@@ -25,7 +25,5 @@ public class MagicHook {
             return;
         }
         magicApi = ((MagicAPI) magicPlugin);
-
     }
-
 }

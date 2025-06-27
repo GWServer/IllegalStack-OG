@@ -14,7 +14,6 @@ public class Listener116 implements Listener {
     public Listener116(IllegalStack plugin) {
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-
     }
 
     @EventHandler
@@ -38,8 +37,6 @@ public class Listener116 implements Listener {
     public void onEntityDeath(EntityDeathEvent e) {
         if (Protections.PreventPiglinDupe.isEnabled() && e.getEntity() instanceof Piglin) {
             e.getDrops().clear();
-
         }
     }
-
 }

@@ -2,12 +2,10 @@ package main.java.me.dniym.timers;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-
 import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.util.TrackedProjectile;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 
 public class syncTimer implements Runnable {
 
@@ -25,7 +23,8 @@ public class syncTimer implements Runnable {
     @Override
     public void run() {
 
-        if (!IllegalStack.isIsHybridEnvironment() && IllegalStack.isPaperServer()
+        if (!IllegalStack.isIsHybridEnvironment()
+                && IllegalStack.isPaperServer()
                 && IllegalStack.getMajorServerVersion() >= 16) {
             if (IllegalStack.isDisable() || Bukkit.getServer().isStopping()) {
                 return;
@@ -39,7 +38,6 @@ public class syncTimer implements Runnable {
         if (System.currentTimeMillis() >= nextScan) {
             TrackedProjectile.manage();
         }
-
     }
 
     public static void removeEntity(Entity ent) {
@@ -53,6 +51,4 @@ public class syncTimer implements Runnable {
     public static void setEntitiesToRemove(Set<Entity> entitiesToRemove) {
         syncTimer.entitiesToRemove = entitiesToRemove;
     }
-
-
 }

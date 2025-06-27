@@ -17,9 +17,9 @@ public class IllegalStackAction {
             Block block,
             ItemStack itemInHand,
             Entity mount,
-            Inventory inventory
-    ) {
-        IllegalStackActionEvent event = new IllegalStackActionEvent(protection, cause, block, itemInHand, mount, inventory);
+            Inventory inventory) {
+        IllegalStackActionEvent event =
+                new IllegalStackActionEvent(protection, cause, block, itemInHand, mount, inventory);
         Bukkit.getPluginManager().callEvent(event);
 
         return !event.isCancelled();
@@ -57,6 +57,4 @@ public class IllegalStackAction {
     public static boolean isCompleted(Protections protection, ItemStack item, Inventory inventory) {
         return isCompleted(protection, null, null, item, null, inventory);
     }
-
-
 }
