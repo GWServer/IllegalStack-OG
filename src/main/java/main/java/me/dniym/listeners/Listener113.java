@@ -23,9 +23,11 @@ public class Listener113 implements Listener {
     IllegalStack plugin;
 
     public Listener113(IllegalStack illegalStack) {
+
         plugin = illegalStack;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         LOGGER.info("Enabling 1.13+ Checks");
+
     }
 
     @EventHandler
@@ -36,49 +38,58 @@ public class Listener113 implements Listener {
             CreatureSpawner cs = e.getSpawner();
             EntityType et = e.getEntityType();
             if (et != null && Protections.ResetSpawnersOfTypeOnSpawn.isWhitelisted(et)) {
+
                 e.setCancelled(true);
                 EntityType oldType = cs.getSpawnedType();
                 cs.setSpawnedType(EntityType.PIG);
                 cs.setBlockData(cs.getBlockData());
                 cs.update(true);
-                fListener
-                        .getLog()
-                        .append(
-                                Msg.StaffMsgSpawnerOnSpawnReset.getValue(oldType.name(), e.getLocation()),
-                                Protections.ResetSpawnersOfTypeOnSpawn);
+                fListener.getLog().append(Msg.StaffMsgSpawnerOnSpawnReset.getValue(oldType.name(), e.getLocation()),
+                        Protections.ResetSpawnersOfTypeOnSpawn);
+
             }
+
         }
+
     }
 
     @EventHandler
     public void spawnerChangeCheck(PlayerInteractEvent event) {
+
         if (Protections.PreventSpawnEggsOnSpawners.isEnabled(event.getPlayer())) {
 
             Player plr = event.getPlayer();
             ItemStack is = plr.getInventory().getItemInMainHand();
 
             if (is == null) {
+
                 is = plr.getInventory().getItemInOffHand();
+
             }
 
             if (is != null && is.getType().name().toLowerCase().contains("spawn_egg")) {
+
                 if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
                     Block blk = event.getClickedBlock();
                     if (blk.getType() == Material.SPAWNER && !event.getPlayer().isOp()) {
+
                         plr.sendMessage(Msg.PlayerSpawnEggBlock.getValue());
                         event.setCancelled(true);
 
                     } else if (blk.getType() == Material.SPAWNER) {
-                        fListener
-                                .getLog()
-                                .append(
-                                        Msg.StaffMsgChangedSpawnerType.getValue(
-                                                plr, is.getType().name()),
-                                        Protections.PreventSpawnEggsOnSpawners);
+
+                        fListener.getLog().append(Msg.StaffMsgChangedSpawnerType.getValue(plr, is.getType().name()),
+                                Protections.PreventSpawnEggsOnSpawners);
+
                     }
+
                 }
+
             }
+
         }
+
     }
+
 }

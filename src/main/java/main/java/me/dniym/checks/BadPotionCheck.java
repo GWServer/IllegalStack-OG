@@ -19,85 +19,95 @@ import org.jetbrains.annotations.NotNull;
 public class BadPotionCheck {
 
     public static void checkPotion(ItemStack is, Player p) {
-        if (!is.hasItemMeta()) return;
+
+        if (!is.hasItemMeta())
+            return;
         ItemMeta im = is.getItemMeta();
         if (Protections.PreventInvalidPotions.isEnabled() && im instanceof PotionMeta) {
-            if (Protections.AllowBypass.isEnabled() && p.hasPermission("illegalstack.enchantbypass")) return;
+
+            if (Protections.AllowBypass.isEnabled() && p.hasPermission("illegalstack.enchantbypass"))
+                return;
 
             if (IllegalStack.isHasMCMMO()
-                    && NBTStuff.hasNbtTag("IllegalStack", is, "mcmmoitem", Protections.PreventInvalidPotions)) return;
+                    && NBTStuff.hasNbtTag("IllegalStack", is, "mcmmoitem", Protections.PreventInvalidPotions))
+                return;
 
             PotionMeta potion = (PotionMeta) is.getItemMeta();
             PotionData pd = potion.getBasePotionData();
             if (pd.getType() == PotionType.UNCRAFTABLE
-                    || (potion.hasCustomEffects() && !potion.getCustomEffects().isEmpty())) {
+                    || (potion.hasCustomEffects() && !potion.getCustomEffects().isEmpty()))
+            {
 
-                if (pd.getType() == PotionType.UNCRAFTABLE
-                        && potion.getCustomEffects().isEmpty()) return;
+                if (pd.getType() == PotionType.UNCRAFTABLE && potion.getCustomEffects().isEmpty())
+                    return;
 
                 p.getInventory().remove(is);
                 StringBuilder efx = new StringBuilder();
                 for (PotionEffect ce : potion.getCustomEffects()) {
-                    efx.append(ce.getType().getName())
-                            .append(" amplifier: ")
-                            .append(ce.getAmplifier())
-                            .append(" duration: ")
-                            .append(ce.getDuration())
-                            .append(",");
+
+                    efx.append(ce.getType().getName()).append(" amplifier: ").append(ce.getAmplifier())
+                            .append(" duration: ").append(ce.getDuration()).append(",");
+
                 }
-                fListener
-                        .getLog()
-                        .append(
-                                Msg.InvalidPotionRemoved.getValue(p, efx.toString()),
-                                Protections.PreventInvalidPotions);
+
+                fListener.getLog().append(Msg.InvalidPotionRemoved.getValue(p, efx.toString()),
+                        Protections.PreventInvalidPotions);
+
             }
+
         }
+
     }
 
     public static boolean isInvalidPotion(@NotNull Projectile proj) {
 
         if (proj instanceof ThrownPotion) {
+
             ThrownPotion tp = (ThrownPotion) proj;
             Player p = null;
-            if (proj.getShooter() instanceof Player) p = ((Player) proj.getShooter());
+            if (proj.getShooter() instanceof Player)
+                p = ((Player) proj.getShooter());
 
             if (p != null && Protections.AllowBypass.isEnabled() && p.hasPermission("illegalstack.enchantbypass"))
                 return false;
 
             PotionMeta potion = null;
 
-            if (IllegalStack.isPaperServer()) potion = (PotionMeta) tp.getPotionMeta();
-            else potion = (PotionMeta) tp.getItem().getItemMeta();
+            if (IllegalStack.isPaperServer())
+                potion = (PotionMeta) tp.getPotionMeta();
+            else
+                potion = (PotionMeta) tp.getItem().getItemMeta();
 
             PotionData pd = potion.getBasePotionData();
 
             PotionType pt = null;
 
             if (pd.getType() == PotionType.UNCRAFTABLE
-                    || (potion.hasCustomEffects() && !potion.getCustomEffects().isEmpty())) {
+                    || (potion.hasCustomEffects() && !potion.getCustomEffects().isEmpty()))
+            {
 
-                if (pd.getType() == PotionType.UNCRAFTABLE
-                        && potion.getCustomEffects().isEmpty()) return false;
+                if (pd.getType() == PotionType.UNCRAFTABLE && potion.getCustomEffects().isEmpty())
+                    return false;
 
                 // p.getInventory().remove(is);
                 StringBuilder efx = new StringBuilder();
                 for (PotionEffect ce : potion.getCustomEffects()) {
-                    efx.append(ce.getType().getName())
-                            .append(" amplifier: ")
-                            .append(ce.getAmplifier())
-                            .append(" duration: ")
-                            .append(ce.getDuration())
-                            .append(",");
+
+                    efx.append(ce.getType().getName()).append(" amplifier: ").append(ce.getAmplifier())
+                            .append(" duration: ").append(ce.getDuration()).append(",");
+
                 }
 
-                fListener
-                        .getLog()
-                        .append(
-                                Msg.InvalidThrownPotionRemoved.getValue(p, efx.toString()),
-                                Protections.PreventInvalidPotions);
+                fListener.getLog().append(Msg.InvalidThrownPotionRemoved.getValue(p, efx.toString()),
+                        Protections.PreventInvalidPotions);
                 return true;
+
             }
+
         }
+
         return false;
+
     }
+
 }

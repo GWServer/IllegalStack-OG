@@ -12,18 +12,26 @@ public class MagicHook {
     public static boolean isMagicItem(ItemStack is) {
 
         if (magicApi == null) {
+
             getApi();
+
         }
 
         return magicApi.isBrush(is) || magicApi.isSpell(is) || magicApi.isUpgrade(is) || magicApi.isWand(is);
+
     }
 
     private static void getApi() {
 
         Plugin magicPlugin = Bukkit.getPluginManager().getPlugin("Magic");
         if (!(magicPlugin instanceof MagicAPI)) {
+
             return;
+
         }
+
         magicApi = ((MagicAPI) magicPlugin);
+
     }
+
 }

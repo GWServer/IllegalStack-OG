@@ -19,74 +19,98 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class BadAttributeCheck {
 
     public static void CheckStorageInventory(CraftingInventory inventory, Player player) {
+
         if (Protections.RemoveCustomAttributes.isEnabled(inventory) && IllegalStack.hasStorage()) {
+
             if (Protections.AllowBypass.isEnabled() && player.hasPermission("illegalstack.enchantbypass")) {
+
                 return;
+
             }
+
             for (ItemStack itemStack : inventory.getStorageContents()) {
+
                 if (itemStack != null && itemStack.getType() != Material.AIR && NBTStuff.hasBadCustomData(itemStack)) {
-                    fListener
-                            .getLog()
-                            .append2(Msg.GenericItemRemoval.getValue(
-                                    itemStack, Protections.RemoveCustomAttributes, player, "Crafting Inventory"));
+
+                    fListener.getLog().append2(Msg.GenericItemRemoval.getValue(itemStack,
+                            Protections.RemoveCustomAttributes, player, "Crafting Inventory"));
 
                     inventory.removeItem(itemStack);
+
                 }
+
             }
+
         }
+
     }
 
     public static boolean hasBadAttributes(ItemStack is, Object obj) {
+
         if (!Protections.RemoveCustomAttributes.isEnabled(obj)) {
+
             return false;
+
         }
+
         return is != null && is.getType() != Material.AIR && checkForBadCustomData(is, obj);
+
     }
 
     public static boolean checkForBadCustomData(ItemStack itemStack, Object obj) {
+
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (IllegalStack.isHasAttribAPI()) {
+
             if (itemMeta.hasAttributeModifiers()) {
+
                 StringBuilder attribs = new StringBuilder();
                 HashSet<Attribute> toRemove = new HashSet<>();
                 for (Attribute a : itemMeta.getAttributeModifiers().keySet()) {
 
                     for (AttributeModifier st : itemMeta.getAttributeModifiers(a)) {
-                        attribs.append(" ")
-                                .append(st.getName())
-                                .append(" value: ")
-                                .append(st.getAmount());
+
+                        attribs.append(" ").append(st.getName()).append(" value: ").append(st.getAmount());
+
                     }
+
                     toRemove.add(a);
+
                 }
 
-                fListener
-                        .getLog()
-                        .append(
-                                Msg.CustomAttribsRemoved3.getValue(itemStack, obj, attribs),
-                                Protections.RemoveCustomAttributes);
+                fListener.getLog().append(Msg.CustomAttribsRemoved3.getValue(itemStack, obj, attribs),
+                        Protections.RemoveCustomAttributes);
 
                 for (Attribute remove : toRemove) {
+
                     itemMeta.removeAttributeModifier(remove);
+
                 }
 
                 for (ItemFlag iFlag : itemMeta.getItemFlags()) {
+
                     itemMeta.removeItemFlags(iFlag);
+
                 }
 
                 itemStack.setItemMeta(itemMeta);
                 return true;
+
             }
+
         } else if (IllegalStack.isNbtAPI()) {
+
             return NBTApiStuff.checkForBadCustomDataLegacy(itemStack, obj);
 
         } else {
-            fListener
-                    .getLog()
-                    .append(
-                            Msg.StaffNoNBTAPI.getValue(Protections.RemoveCustomAttributes.name()),
-                            Protections.RemoveCustomAttributes);
+
+            fListener.getLog().append(Msg.StaffNoNBTAPI.getValue(Protections.RemoveCustomAttributes.name()),
+                    Protections.RemoveCustomAttributes);
+
         }
+
         return false;
+
     }
+
 }

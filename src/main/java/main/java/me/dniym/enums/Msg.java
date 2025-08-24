@@ -18,16 +18,15 @@ import org.bukkit.inventory.ItemStack;
 
 public enum Msg {
 
-    // @  Location of offense
+    // @ Location of offense
     // ~name~ name of player or entity
     // ~contents~ contents of an item frame
     // ~removedblocks~ blocked removed
-    // ~author~    book author
-    // ~blockType  block type
+    // ~author~ book author
+    // ~blockType block type
     // ~item~
 
-    PluginPrefix("[IllegalStack] -"),
-    PluginTeleportText(ChatColor.GOLD + "Click to teleport here"),
+    PluginPrefix("[IllegalStack] -"), PluginTeleportText(ChatColor.GOLD + "Click to teleport here"),
 
     ChestRemoved("removed a chest from a ~entity~ @"),
     ChestPrevented("prevented ~player~ from putting a chest on a ~entity~ @"),
@@ -145,8 +144,7 @@ public enum Msg {
     StaffBadShulkerInWorld(
             "Removed a dropped shulker box with an excessive amount of items in it (~size~) from the world: @"),
     StaffNoItem("You must be holding an item in your main hand to force fix it's enchantment!"),
-    StaffNoEnchants("This item has no enchants to fix!"),
-    StaffEnchantFixed("Corrected ~amount~ enchants on ~item~"),
+    StaffNoEnchants("This item has no enchants to fix!"), StaffEnchantFixed("Corrected ~amount~ enchants on ~item~"),
     StaffNoNBTAPI(
             "NBT-Api was not found on your server and is needed for ~prot~ since it is enabled! Please download and install it from:  https://www.spigotmc.org/resources/nbt-api.7939/"),
     StaffEnchantNotFixed("IllegalStack did not detect any invalid enchantments on this item."),
@@ -165,10 +163,13 @@ public enum Msg {
     private String value;
 
     Msg(String val) {
+
         this.setValue(val);
+
     }
 
     public String getValue(String variable) {
+
         String val = value;
         val = val.replace("~perm~", variable);
         val = val.replace("~prot~", variable);
@@ -179,9 +180,11 @@ public enum Msg {
         val = val.replace("@", "@" + variable);
         val = val.replace("~value~", variable);
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Location location, String types) {
+
         String val = value;
         val = val.replace("@", "@ " + location.toString());
         val = val.replace("~removedblocks~", types);
@@ -189,22 +192,28 @@ public enum Msg {
         val = val.replace("~item~", types);
         val = val.replace("~name~", types);
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(ItemStack is, Protections prot, Player plr, String source) {
+
         String val = value;
 
         val = val.replace("~item~", is.getType().name());
         val = val.replace("~protection~", prot.getDisplayName());
         val = val.replace("~source~", source);
         if (plr != null) {
+
             val = plr.getName() + " - " + val;
+
         }
 
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Player player, String displayName) {
+
         String val = value;
         val = val.replace("@", "@ " + player.getLocation());
         val = val.replace("~item~", displayName);
@@ -214,42 +223,52 @@ public enum Msg {
         val = val.replace("~block~", displayName);
         val = val.replace("~effects~", displayName);
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(HumanEntity le, String value) {
+
         String val = value;
 
         val = val.replace("~author~", value);
         val = val.replace("~name~", le.getName());
         return val;
+
     }
 
     public String getValue(Player p, Location loc) {
+
         String val = value;
 
         val = val.replace("~player~", p.getName());
         val = val.replace("@", "@ " + loc.toString());
         return val;
+
     }
 
     public String getValue(String source, Location loc) {
+
         String val = value;
         val = val.replace("~type~", source);
         val = val.replace("~player~", source);
         val = val.replace("@", "@ " + loc.toString());
         return val;
+
     }
 
     public String getValue(Player p, Integer count, Location loc) {
+
         String val = value;
 
         val = val.replace("~player~", p.getName());
         val = val.replace("@", "@ " + loc.toString());
         val = val.replace("~count~", count.toString());
         return val;
+
     }
 
     public String getValue(Player p, Entity ent) {
+
         String val = value;
 
         val = val.replace("~name~", p.getName());
@@ -258,29 +277,38 @@ public enum Msg {
         val = val.replace("~vehicle~", ent.getType().name());
         val = val.replace("@", "@ " + ent.getLocation());
         return val;
+
     }
 
     public String getValue(Entity ent1, Entity ent2) {
+
         String val = value;
 
         if (ent1 instanceof Player) {
+
             val = val.replace("~entity~", ent1.getName());
+
         } else {
+
             val = val.replace("~entity~", ent1.getType().name());
+
         }
 
         val = val.replace("~vehicle~", ent2.getType().name());
         val = val.replace("@", "@ " + ent1.getLocation());
         return val;
+
     }
 
     public String getValue(Location loc, ItemStack is) {
+
         String val = value;
 
         val = val.replace("@", "@ " + loc.toString());
         val = val.replace("~item~", is.getType().name());
         val = val.replace("~amount~", "" + is.getAmount());
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Object obj, ItemStack is, Enchantment en) {
@@ -289,50 +317,84 @@ public enum Msg {
 
         val = val.replace("~item~", is.getType().name());
         if (en == null) {
+
             val = val.replace("~enchant~", "");
+
         } else {
+
             val = val.replace("~enchant~", en.getName());
             val = val.replace("~lvl~", is.getEnchantmentLevel(en) + "");
+
         }
+
         if (obj instanceof BlockState) {
-            val = val.replace(
-                    "~player~", "a " + ((BlockState) obj).getBlock().getType().name() + "'s inventory");
+
+            val = val.replace("~player~", "a " + ((BlockState) obj).getBlock().getType().name() + "'s inventory");
+
         } else if (obj instanceof Player) {
+
             val = val.replace("~player~", ((Player) obj).getName());
+
         } else if (obj instanceof Inventory) {
+
             val = val.replace("~player~", ((Inventory) obj).getType().name() + " - ");
+
         } else if (obj instanceof Location) {
+
             val = val.replace("~player~", "a shulker box");
+
         } else if (obj instanceof Container) {
+
             val = val.replace("~player~", ((Container) obj).getType().name());
+
         }
 
         Location loc = null;
 
         if (obj instanceof BlockState) {
+
             loc = ((BlockState) obj).getLocation();
+
         }
+
         if (obj instanceof Player) {
+
             loc = ((Player) obj).getLocation();
+
         } else if (obj instanceof Block) {
+
             loc = ((Block) obj).getLocation();
+
         } else if (obj instanceof Inventory) {
+
             loc = ((Inventory) obj).getLocation();
+
         } else if (obj instanceof Location) {
+
             loc = ((Location) obj);
+
         } else if (obj instanceof Container) {
+
             loc = ((Container) obj).getLocation();
+
         }
 
         if (loc != null) {
+
             val = val.replace("@", "@ " + loc);
+
         } else {
+
             val = val.replace("@", "@ UNKNOWN ");
+
         }
+
         return val;
+
     }
 
     public String getValue(Player p, ItemStack is, Enchantment en) {
+
         String val = value;
 
         val = val.replace("~item~", is.getType().name());
@@ -341,35 +403,50 @@ public enum Msg {
         val = val.replace("~player~", p.getName());
         val = val.replace("@", "@ " + p.getLocation());
         return val;
+
     }
 
     public String getValue(Player p, EntityType et) {
+
         String val = value;
 
         val = val.replace("@", "@ " + p.getLocation());
         val = val.replace("~type~", et.name());
         val = val.replace("~name~", p.getName());
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Object obj, ItemStack is) {
+
         if (obj instanceof Inventory) {
+
             if (((Inventory) obj).getHolder() instanceof Player) {
+
                 Inventory inv = (Inventory) obj;
                 return getValue((Player) inv.getHolder(), is);
+
             } else {
+
                 return getValue(((Inventory) obj).getLocation(), is);
+
             }
+
         } else if (obj instanceof Container) {
+
             return getValue(((Container) obj), is);
+
         }
+
         LOGGER.error(
                 "An unknown object {} was passed to IllegalStack during a logging operation please report this to dNiym at the spigot forums or on the IllegalStack Discord.",
                 obj.toString());
         return "???";
+
     }
 
     public String getValue(Container c, ItemStack is) {
+
         String val = value;
 
         val = val.replace("@", "@ " + c.getLocation());
@@ -377,9 +454,11 @@ public enum Msg {
         val = val.replace("~name~", c.getType().name());
         val = val.replace("~amount~", "" + is.getAmount());
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Player p, ItemStack is) {
+
         String val = value;
 
         val = val.replace("@", "@ " + p.getLocation());
@@ -388,43 +467,44 @@ public enum Msg {
         val = val.replace("~amount~", "" + is.getAmount());
 
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(ItemStack is, Object obj, StringBuilder list) {
+
         String val = value;
 
         if (obj instanceof Player) {
+
             val = val.replace("@", "@ " + ((Player) obj).getLocation());
             val = val.replace("~name~", ((Player) obj).getName());
+
         } else if (obj instanceof Inventory) {
+
             Inventory inv = null;
             inv = (Inventory) obj;
             if (inv.getHolder() instanceof Container) {
-                val = val.replace(
-                        "~name~",
-                        ((Container) inv.getHolder())
-                                        .getLocation()
-                                        .getBlock()
-                                        .getType()
-                                        .name() + " @" + ((Container) inv.getHolder()).getLocation());
+
+                val = val.replace("~name~", ((Container) inv.getHolder()).getLocation().getBlock().getType().name()
+                        + " @" + ((Container) inv.getHolder()).getLocation());
+
             } else if (inv.getHolder() instanceof DoubleChest) {
-                val = val.replace(
-                        "~name~",
-                        ((DoubleChest) inv.getHolder())
-                                        .getLocation()
-                                        .getBlock()
-                                        .getType()
-                                        .name() + " @" + inv.getLocation().toString());
+
+                val = val.replace("~name~", ((DoubleChest) inv.getHolder()).getLocation().getBlock().getType().name()
+                        + " @" + inv.getLocation().toString());
+
             } else if (inv.getHolder() instanceof Player) {
-                val = val.replace(
-                        "~name~",
-                        ((Player) inv.getHolder()).getName() + " @"
-                                + inv.getLocation().toString());
+
+                val = val.replace("~name~", ((Player) inv.getHolder()).getName() + " @" + inv.getLocation().toString());
+
             } else {
+
                 LOGGER.error(
                         "IllegalStack was supposed to send a message detailing an inventory but could not determine its type!  Please contact dNiym at the IllegalStack discord or on Spigot with this message: {} ",
                         obj.toString());
+
             }
+
         }
 
         val = val.replace("~item~", is.getType().name());
@@ -432,9 +512,11 @@ public enum Msg {
         val = val.replace("~attributes~", list);
 
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Player p, ItemStack is, String list) {
+
         String val = value;
 
         val = val.replace("@", "@ " + p.getLocation());
@@ -443,30 +525,40 @@ public enum Msg {
         val = val.replace("~amount~", "" + is.getAmount());
         val = val.replace("~attributes~", list);
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getConfigVal() {
+
         return ChatColor.translateAlternateColorCodes('&', value);
+
     }
 
     public String getValue() {
+
         return value;
+
     }
 
     public void setValue(String value) {
+
         this.value = value;
+
     }
 
     public String getValue(Protections p, String name, String status) {
+
         String val = value;
 
         val = val.replace("~protection~", p.name());
         val = val.replace("~name~", name);
         val = val.replace("~status~", "" + status);
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Player p, int size) {
+
         String val = value;
 
         val = val.replace("@", "@ " + p.getLocation());
@@ -474,17 +566,21 @@ public enum Msg {
         val = val.replace("~name~", p.getName());
 
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Location loc, int size) {
+
         String val = value;
 
         val = val.replace("@", "@ " + loc.toString());
         val = val.replace("~size~", "" + size);
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
 
     public String getValue(Player p, ItemStack is, int lostItems) {
+
         String val = value;
 
         val = val.replace("@", "@ " + p.getLocation());
@@ -493,5 +589,7 @@ public enum Msg {
         val = val.replace("~amount~", "" + is.getAmount());
         val = val.replace("~lost~", "" + lostItems);
         return ChatColor.translateAlternateColorCodes('&', val);
+
     }
+
 }

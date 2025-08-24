@@ -1,84 +1,124 @@
+/* ------------------------------ Plugins ------------------------------ */
 plugins {
-    id("java")
-    id("java-library")
-    id("com.diffplug.spotless") version "7.0.4"
-    id("com.gradleup.shadow") version "8.3.6"
-    eclipse
+    id("java") // Import Java plugin.
+    id("java-library") // Import Java Library plugin.
+    id("com.diffplug.spotless") version "7.0.4" // Import Spotless plugin.
+    id("com.gradleup.shadow") version "8.3.6" // Import Shadow plugin.
+    id("checkstyle") // Import Checkstyle plugin.
+    eclipse // Import Eclipse plugin.
+    kotlin("jvm") version "2.1.21" // Import Kotlin JVM plugin.
 }
 
+/* --------------------------- JDK / Kotlin ---------------------------- */
+java {
+    sourceCompatibility = JavaVersion.VERSION_17 // Compile with JDK 17 compatibility.
+    toolchain { // Select Java toolchain.
+        languageVersion.set(JavaLanguageVersion.of(17)) // Use JDK 17.
+        vendor.set(JvmVendorSpec.GRAAL_VM) // Use GraalVM CE.
+    }
+}
+
+kotlin { jvmToolchain(17) }
+
+/* ----------------------------- Metadata ------------------------------ */
+
+version = "2.9.13" // Declare plugin version (will be in .jar).
+
+group = "net.trueog.illegalstack-og" // Declare bundle identifier.
+
+val apiVersion = "1.19" // Declare minecraft server target version.
+
+/* ----------------------------- Resources ----------------------------- */
+tasks.named<ProcessResources>("processResources") {
+    val props = mapOf("version" to version, "apiVersion" to apiVersion)
+    inputs.properties(props) // Indicates to rerun if version changes.
+    filesMatching("plugin.yml") { expand(props) }
+    from("LICENSE") { into("/") } // Bundle licenses into jarfiles.
+}
+
+/* ---------------------------- Repos ---------------------------------- */
 repositories {
-    mavenCentral()
-    gradlePluginPortal()
+    mavenCentral() // Import the Maven Central Maven Repository.
+    gradlePluginPortal() // Import the Gradle Plugin Portal Maven Repository.
     maven {
-        name = "OSS Sonatype"
         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
+    } // Import the OSS Sonatype Maven Repository.
+    maven { url = uri("https://repo.papermc.io/repository/maven-public/") } // Import the PaperMC Maven Repository.
     maven {
-        name = "PaperMC"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
-    maven {
-        name = "ProtocolLib"
         url = uri("https://repo.dmulloy2.net/nexus/repository/public/")
-    }
-    maven {
-        name = "Magic"
-        url = uri("https://maven.elmakers.com/repository/")
-    }
-    maven {
-        name = "CodeMC"
-        url = uri("https://repo.codemc.org/repository/maven-public/")
-    }
-    maven {
-        name = "JitPack"
-        url = uri("https://jitpack.io")
-    }
+    } // Import the ProtocolLib Maven Repository.
+    maven { url = uri("https://maven.elmakers.com/repository/") } // Import the Magic plugin Maven Repository.
+    maven { url = uri("https://repo.codemc.org/repository/maven-public/") } // Import the CodeMC Maven Repository.
+    maven { url = uri("https://jitpack.io") } // Import the Jitpack Maven Repository.
 }
 
+/* ---------------------- Java project deps ---------------------------- */
 dependencies {
-    compileOnly("dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-    compileOnly("com.elmakers.mine.bukkit:MagicAPI:10.2")
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.8.0")
-    compileOnly("com.github.TheBusyBiscuit:Slimefun4:RC-30") { isTransitive = false }
-    compileOnly("io.netty:netty-all:4.1.110.Final") {
+    compileOnly("dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT") // Declare Folia API to be packaged.
+    compileOnly(files("libs/ProtocolLib-5.0.jar")) // Import Legacy ProtocolLib API.
+    compileOnly("com.elmakers.mine.bukkit:MagicAPI:10.2") // Import Magic API.
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.8.0") // Import Item NBT API.
+    compileOnly("com.github.TheBusyBiscuit:Slimefun4:RC-30") { isTransitive = false } // Import SlimeFun4.
+    compileOnly("io.netty:netty-all:4.1.110.Final") { // Import netty API.
         because(
             "The version aligns with the version used by Minecraft itself." +
                 "The minecraft server ships netty as well, so we don't need to include it in the jar."
         )
     }
-    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.1.217") { isTransitive = false }
-    compileOnly("fr.minuskube.inv:smart-invs:1.2.7")
-    compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0")
+    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.1.217") { isTransitive = false } // Import mcMMO API.
+    compileOnly("fr.minuskube.inv:smart-invs:1.2.7") // Import SmartInvs API.
+    compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0") // Import ShopGUI API.
 }
 
-the<JavaPluginExtension>().toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
-
-configurations.all { attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 17) }
-
-tasks.build {
-    dependsOn(tasks.spotlessApply)
-    dependsOn(tasks.shadowJar)
+/* ---------------------- Reproducible jars ---------------------------- */
+tasks.withType<AbstractArchiveTask>().configureEach { // Ensure reproducible .jars
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
 }
 
-tasks.compileJava.configure { options.release.set(17) }
-
-version = "2.9.13"
-
-val pluginVersion = version.toString()
-
-tasks.named<Copy>("processResources") {
-    inputs.property("version", pluginVersion)
-    filesMatching("plugin.yml") { expand(mapOf("version" to pluginVersion)) }
+/* ----------------------------- Shadow -------------------------------- */
+tasks.shadowJar {
+    exclude("io.github.miniplaceholders.*") // Exclude the MiniPlaceholders package from being shadowed.
+    archiveClassifier.set("") // Use empty string instead of null.
+    minimize()
 }
 
+tasks.jar { archiveClassifier.set("part") } // Applies to root jarfile only.
+
+tasks.build { dependsOn(tasks.spotlessApply, tasks.shadowJar) } // Build depends on spotless and shadow.
+
+/* --------------------------- Javac opts ------------------------------- */
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-parameters") // Enable reflection for java code.
+    options.isFork = true // Run javac in its own process.
+    options.compilerArgs.add("-Xlint:deprecation") // Trigger deprecation warning messages.
+    options.encoding = "UTF-8" // Use UTF-8 file encoding.
+}
+
+/* ----------------------------- Auto Formatting ------------------------ */
 spotless {
     java {
-        removeUnusedImports()
-        palantirJavaFormat()
+        eclipse().configFile("config/formatter/eclipse-java-formatter.xml") // Eclipse java formatting.
+        leadingTabsToSpaces() // Convert leftover leading tabs to spaces.
+        removeUnusedImports() // Remove imports that aren't being called.
     }
     kotlinGradle {
-        ktfmt().kotlinlangStyle().configure { it.setMaxWidth(120) }
-        target("build.gradle.kts", "settings.gradle.kts")
+        ktfmt().kotlinlangStyle().configure { it.setMaxWidth(120) } // JetBrains Kotlin formatting.
+        target("build.gradle.kts", "settings.gradle.kts") // Gradle files to format.
     }
+}
+
+checkstyle {
+    toolVersion = "10.18.1" // Declare checkstyle version to use.
+    configFile = file("config/checkstyle/checkstyle.xml") // Point checkstyle to config file.
+    isIgnoreFailures = true // Don't fail the build if checkstyle does not pass.
+    isShowViolations = true // Show the violations in any IDE with the checkstyle plugin.
+}
+
+tasks.named("compileJava") {
+    dependsOn("spotlessApply") // Run spotless before compiling with the JDK.
+}
+
+tasks.named("spotlessCheck") {
+    dependsOn("spotlessApply") // Run spotless before checking if spotless ran.
 }
