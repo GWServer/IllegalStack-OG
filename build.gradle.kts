@@ -109,10 +109,17 @@ spotless {
 }
 
 checkstyle {
-    toolVersion = "10.18.1" // Declare checkstyle version to use.
-    configFile = file("config/checkstyle/checkstyle.xml") // Point checkstyle to config file.
-    isIgnoreFailures = true // Don't fail the build if checkstyle does not pass.
-    isShowViolations = true // Show the violations in any IDE with the checkstyle plugin.
+    toolVersion = "10.18.1"
+    config = resources.text.fromFile(file("config/checkstyle/checkstyle.xml"))
+    isIgnoreFailures = true
+    isShowViolations = true
+    configProperties["basedir"] = rootProject.projectDir.absolutePath
+}
+
+tasks.withType<Checkstyle>().configureEach {
+    configDirectory.set(layout.projectDirectory.dir("config/checkstyle"))
+    inputs.file("config/checkstyle/checkstyle.xml")
+    classpath = files()
 }
 
 tasks.named("compileJava") {
