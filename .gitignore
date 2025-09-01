@@ -3,22 +3,6 @@
 *.sh
 *.prefs
 
-### Maven ###
-/mvn
-/target/lib
-/target/maven-archiver
-/target/classes
-/target/maven-status
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-out/
-
 ### Java ###
 *.class
 
@@ -128,7 +112,6 @@ local.properties
 # STS (Spring Tool Suite)
 .springBeans
 /target/
-checkstyle.xml
 classes/
 *.bat
 docs/
