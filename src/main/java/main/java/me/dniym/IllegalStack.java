@@ -1022,67 +1022,7 @@ public class IllegalStack extends JavaPlugin {
 
     private void loadConfig() {
 
-        File conf = new File(getDataFolder(), "config.yml");
-        try {
-
-            plugin.getConfig().load(conf);
-
-        } catch (FileNotFoundException e) {
-
-            getLogger(
-                    "Configuration File Not Found! /plugins/IllegalStack/config.yml - Creating a new one with default values.");
-            FileConfiguration config = this.getConfig();
-            try {
-
-                config.save(conf);
-
-            } catch (IOException e1) {
-
-                getLogger("failed to save config!" + e1.getMessage());
-
-            }
-
-            writeConfig();
-
-        } catch (IOException | InvalidConfigurationException e) {
-
-            e.printStackTrace();
-
-        }
-
-        if (getConfig().getString("ConfigVersion") == null) { // server is running an old config version, should
-                                                              // probably save it.
-
-            File confOld = new File(getDataFolder(), "config.OLD");
-            FileConfiguration config = this.getConfig();
-
-            conf.renameTo(confOld);
-
-            try {
-
-                config.set("Settings", null);
-                config.save(conf);
-
-            } catch (IOException e1) {
-
-                e1.printStackTrace();
-
-            }
-
-            getLogger(
-                    "You are upgrading from an older version, I apologize but we need to regenerate your Config.yml file.  Your old settings have been saved in /plugins/IllegalStack/config.OLD");
-            try {
-
-                conf.createNewFile();
-                writeConfig();
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-
-            }
-
-        }
+        this.saveDefaultConfig();
 
         Protections.update();
 

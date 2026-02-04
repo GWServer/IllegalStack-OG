@@ -1,0 +1,178 @@
+ConfigVersion: '2.0'  # [INFO] Internal config version. Do not change manually.
+
+Exploits:
+  MineCart:
+    MinecartBlockWhiteList: [STONE_CUTTER]  # [ACTIVE] Blocks that won't trigger minecart glitch removal. Leave empty for strict behavior.
+    PreventMinecartGlitch: true  # [ACTIVE] Fixes various minecart-related glitches.
+    RemoveExistingGlitchedMinecarts: false  # [ACTIVE] Cleans up old glitched minecarts if true. Temporary measure due to large performance impact.
+    PreventHeadInsideBlocks: false  # [ACTIVE] Prevents player's head clipping through blocks while in minecart.
+
+  Minecart:
+    AlsoPreventHeadInside:
+    - COMPOSTER  # [ACTIVE] Extends head-inside-block protection to these blocks.
+
+  Enchants:
+    RemoveUnbreakableFlag: true  # [ACTIVE] Strips Unbreakable tag from items.
+    OnlyFunctionInWorlds: []  # [ACTIVE] Limits enchant scan to listed worlds. Empty = all.
+    AllowBypass: false  # [ACTIVE] Enables permission bypass for enchant enforcement.
+    EnchantedItemWhitelist: []  # [ACTIVE] Only these items are scanned. Empty = all.
+    FixIllegalEnchants: true  # [ACTIVE] Fixes over-level enchants.
+    DestroyIllegallyEnchantedItemsInstead: false  # [ACTIVE] Destroys instead of fixing items.
+    RemoveCustomAttributes: true  # [ACTIVE] Removes attribute modifiers like +100 attack damage.
+    CustomEnchantOverride: []  # [ACTIVE] Custom allow-list of enchantments to ignore.
+
+  PortalDupe:
+    NetherWhiteList: []  # [ACTIVE] List of entities allowed through Nether portal.
+    BlockNonPlayersInEndPortal: false  # [ACTIVE] Prevents entities from entering End portals.
+    EndWhiteListMode: false  # [ACTIVE] Interprets EndWhiteList as a whitelist.
+    NotifyBlockedPortalAttempts: true  # [ACTIVE] Staff get notified if entity blocked from portal.
+    EndWhiteList: []  # [ACTIVE] Entities allowed through End portal.
+    NetherWhiteListMode: false  # [ACTIVE] Interprets NetherWhiteList as a whitelist.
+    BlockNonPlayersInNetherPortal: false  # [ACTIVE] Prevents entities from entering Nether portal.
+
+  Nether:
+    BlockBuildingAboveNether: true  # [ACTIVE] Prevents placing blocks above Y-level.
+    NetherYLevel: 128  # [ACTIVE] Y-threshold used by Nether ceiling checks.
+    ExcludeNetherWorldFromHeightCheck: []  # [ACTIVE] World exclusion for Nether roof checks.
+    KillPlayersBelowNether: false  # [UNUSED] No effect in 1.19.4 (below worldbedrock enforcement removed).
+    BlockPlayersAboveNether: true  # [ACTIVE] Prevents player from staying above Nether ceiling.
+    EnsureSafeTeleportLocationIfAboveCeiling: true  # [ACTIVE] Finds safe location when teleporting player off roof.
+
+  Other:
+    PreventItemSwapLagExploit: true  # [ACTIVE] Blocks item swap-based lag machines.
+    PreventBedExplosions: false  # [ACTIVE] Prevents bed explosions in Nether/End.
+    PreventNestedShulkers: true  # [ACTIVE] Prevents shulker-in-shulker dupe setups.
+    PreventCommandsInBed: false  # [ACTIVE] Blocks command usage from bed GUI.
+    PreventMinecartsInBoats: true  # [ACTIVE] Fixes minecart-in-boat duplication.
+    PreventRailDupe: false  # [ACTIVE] Prevents powered rail duplication.
+    PreventEndPortalDestruction: true  # [LEGACY] No effect in modern versions.
+    PreventBedrockDestruction: true  # [LEGACY] No effect in modern versions.
+    PreventHoppersToUnloadedChunks: true  # [ACTIVE] Stops hoppers interacting across chunk borders.
+    PreventInvalidPotions: true  # [ACTIVE] Removes glitch potions with invalid NBT.
+
+  3rdParty:
+    BlockCMIShulkerStacking: false  # [ACTIVE] Blocks shulker opening exploit if using CMI.
+
+  1_14_Exploits:
+    Traders:
+      BlockVillagerTradeCheesing: true  # [ACTIVE] Prevents cycling trades via workstation break.
+      VillagerRestockTime: 10  # [ACTIVE] Forces minimum delay before villager restock.
+      ZombieVillagerTransformChance: 50  # [ACTIVE] Controls zombification chance (0-100).
+
+  1_13_Exploits:
+    Entities:
+      ProjectileDespawnDelay: 22  # [ACTIVE] Ticks before projectiles despawn to prevent spam.
+      PreventProjectileExploit2: false  # [INACTIVE] Secondary projectile dupe fix.
+
+  NetherPortal:
+    PreventPortalTrap: true  # [ACTIVE] Blocks portals with no safe destination.
+
+  OverStack:
+    GroupStack: []  # [ACTIVE] Per-group allow-list for overstacked items.
+    AllowStack: [] # [ACTIVE] Items allowed to override stack limits.
+    PreventOverStackedItemInHoppers: false  # [ACTIVE] Removes overstacked items when moved by hopper.
+    StackWhiteListMode: false  # [ACTIVE] Treat AllowStack as whitelist.
+    FixOverstackedItemInstead: true  # [ACTIVE] Cuts stack to max instead of removing it.
+    RemoveItemsOfType: []  # [ACTIVE] Items in this list are removed completely.
+    RemoveOverstackedItems: true  # [ACTIVE] Core overstack enforcement toggle. Must be true for FixOverstackedItemInstead to function.
+
+  Looting:
+    PreventLootingExploit: true  # [ACTIVE] Fixes XP/orb looting abuse.
+
+  FishMod:
+    WarnPlayerThenKickInsteadOfNotify: false  # [ACTIVE] False = notify staff. True = warn and kick.
+    WatchForAutoFishMod: true  # [ACTIVE] Monitors auto-fishing pattern.
+    MaxFishToNotifyStaffThenBlock: 10  # [ACTIVE] Number of fish before staff alert + block.
+    MaxFishAllowedBeforeKick: 32  # [ACTIVE] Number of fish before auto-kick.
+
+  RecordDupe: true  # [LEGACY] Disables record duplication trick.
+
+  Teleport:
+    PearlPhasing: false  # [ACTIVE] Blocks pearl phase-through-walls. true-og/AntiPearlGlitch-OG does this better.
+
+  TNTDupe:
+    PreventIndirectTNTPowerDupe: false  # [ACTIVE] Stops indirect redstone TNT duplication.
+
+  BookExploit:
+    DisableBookWriting: false  # [ACTIVE] Disables Book & Quill editing.
+
+  EndGateway:
+    PreventEndGatewayCrashExploit: true  # [LEGACY] Prevents crash exploit with gateway coords.
+
+  1_15_Exploits:
+    Dupes:
+      PreventTripwireDupe: true  # [ACTIVE] Prevents door/tripwire duplication.
+      PreventStringDupe: true  # [ACTIVE] Prevents string duplication.
+
+  SignExploit:
+    DestroyBadSignsOnChunkLoad: false  # [LEGACY] Deletes signs with illegal NBT.
+
+  RNGEnchant:
+    PreventRNGEnchant: true  # [ACTIVE] Prevents enchant table seed manipulation.
+
+  DropperDupe:
+    BlockLoopedDroppers: false  # [ACTIVE] Stops repeat dropper abuse.
+
+  NegativeDurability: true  # [ACTIVE] Fixes or removes items with < 0 durability.
+
+  Fishing:
+    KickForAutoClickerFishing: true  # [ACTIVE] Detects and kicks auto-clicker fishers.
+
+Misc:
+  LogOffensesInSeparateFile: true  # [ACTIVE] Writes exploit logs to separate file.
+  InGameOffenseNotifications: true  # [ACTIVE] Staff see alerts in chat.
+  BreakMachinesInsteadOfDroppingItems: true  # [ACTIVE] Removes machine blocks without drops.
+  Spawners:
+    PreventSpawnEggsOnSpawners: false  # [ACTIVE] Blocks using eggs on spawners.
+  DisableInWorlds: []  # [ACTIVE] List of worlds where IllegalStack is disabled.
+  ItemScanTimer: 5  # [ACTIVE] Delay (ticks) between item scans.
+  NotifyNearbyPlayers: true  # [ACTIVE] Alert nearby players when exploit blocked.
+
+UserRequested:
+  ItemRemoval:
+    BlockEnchantingInstead: true  # [ACTIVE] Prevents enchanting flagged items.
+    ItemNamesToRemove: [anal, coon, cunt, dick, dildo, dyke, faggot, gipsy, goyim, gypsy, jizz, kike, nigger, orgasm, penis, porn, pussy, rape, retard, semen, vagina]  # [ACTIVE] Items with these names are removed.
+    BlockRepairsInstead: true  # [ACTIVE] Prevents repair of flagged items.
+    NameLoreStrictMatchMode: true  # [ACTIVE] Uses exact match instead of contains.
+    RemoveItemsMatchingName: false  # [ACTIVE] Deletes items matching name/lore.
+    ItemLoresToRemove: [anal, coon, cunt, dick, dildo, dyke, faggot, gipsy, goyim, gypsy, jizz, kike, nigger, orgasm, penis, porn, pussy, rape, retard, semen, vagina]  # [ACTIVE] Items with these lore strings are removed.
+
+  Obscure:
+    Misc:
+      RemoveAllRenamedItems: false  # [ACTIVE] Deletes all renamed items.
+    HackedShulker:
+      CheckGroundForBadShulkerAtLogin: false  # [ACTIVE] Scan for malicious dropped shulkers. Temporary measure due to large performance impact.
+      DestroyInvalidShulkers: true  # [ACTIVE] Deletes crash shulkers.
+    DisableCraftingRecipes: []  # [ACTIVE] Prevents crafting listed items.
+    HopperCheck:
+      IgnoreAllHopperChecks: false  # [ACTIVE] Turns off all hopper-related protections.
+    BlockBadItemsFromCreativeTab: true  # [ACTIVE] Blocks creative-mode inventory exploit.
+    IgnoreAllShulkerPlaceChecks: false  # [ACTIVE] Allows illegal shulker placement.
+
+  Spawners:
+    ResetSpawnersOfType: []  # [ACTIVE] Changes spawner drop type to pig when mined.
+    ResetSpawnersOfTypeOnSpawn: []  # [ACTIVE] Changes spawner to pig after it spawns.
+    SpawnerReset: false  # [ACTIVE] Enables above spawner reset logic.
+
+  NetherDamage:
+    DamageAmount: 5  # [ACTIVE] Damage dealt above nether roof.
+    DamagePlayersAboveNether: true  # [ACTIVE] Inflicts damage to players on roof.
+    DamageDelay: 2  # [ACTIVE] Time between damage ticks.
+
+  Mobs:
+    PreventZombieItemPickup: false  # [ACTIVE] Prevents zombies picking up gear.
+    PreventVexTrapping: true  # [ACTIVE] Prevents vex-based dupe/grief exploits.
+
+  Cobble:
+    PreventCobbleGenerators: false  # [ACTIVE] Blocks water+lava cobble gen.
+
+  Misc:
+    NotifyInsteadOfBlock: []  # [ACTIVE] Treat listed protections as notify-only.
+
+Exploit:
+  LagMachines:
+    End Crystal: true  # [ACTIVE] Blocks lag machines using end crystals.
+    ArmorStand: true  # [ACTIVE] Prevents armor stand spam lag.
+
+  Teleport:
+    CorrectionNotify: true  # [ACTIVE] Notify player when location is corrected.

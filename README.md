@@ -8,10 +8,12 @@ A fork of IllegalStack maintained by [TrueOG Network](https://true-og.net). Ille
 
 - Disabled config updates.
 
-- Updated gradle from 8.1.1 to 8.8.
+- Builds with TrueOG Network's config file, including detailed in-line documentation.
+
+- Updated gradle from 8.1.1 to 8.14.3.
 
 ## Building this project
 
 Gradle is the recommended way to build the project. Use `./gradlew clean build` in the main project directory to build the 
 project.
-The output is located at `/build/libs/IllegalStack.jar`.
+The output is located at `/build/libs/IllegalStack<version>.jar`.
