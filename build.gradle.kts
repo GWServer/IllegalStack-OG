@@ -57,7 +57,7 @@ dependencies {
     compileOnly("dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT") // Declare Folia API to be packaged.
     compileOnly(files("libs/ProtocolLib-5.0.jar")) // Import Legacy ProtocolLib API.
     compileOnly("com.elmakers.mine.bukkit:MagicAPI:10.2") // Import Magic API.
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.8.0") // Import Item NBT API.
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.14.1") // Import Item NBT API.
     compileOnly("com.github.TheBusyBiscuit:Slimefun4:RC-30") { isTransitive = false } // Import SlimeFun4.
     compileOnly("io.netty:netty-all:4.1.110.Final") { // Import netty API.
         because(

@@ -4,7 +4,7 @@ import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.NBTListCompound;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
 import main.java.me.dniym.listeners.fListener;
@@ -79,7 +79,7 @@ public class NBTApiStuff {
 
         NBTCompound tag = nbtent.getCompound("Offers");
         LOGGER.info("offers-> {} - {}", tag.asNBTString(), tag.getType("Recipes"));
-        for (NBTListCompound s : nbtent.getCompound("Offers").getCompoundList("Recipes")) {
+        for (ReadWriteNBT s : nbtent.getCompound("Offers").getCompoundList("Recipes")) {
 
             if (s.getInteger("specialPrice") < -8) {
 
