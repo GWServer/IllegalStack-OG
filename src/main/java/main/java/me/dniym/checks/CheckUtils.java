@@ -139,6 +139,17 @@ public class CheckUtils {
 
     public static boolean CheckEntireInventory(Inventory inv) {
 
+        boolean checkRemoveTypes = !Protections.RemoveItemTypes.getTxtSet().isEmpty();
+        boolean checkEnchants = Protections.FixIllegalEnchantmentLevels.isEnabled();
+        boolean checkAttributes = Protections.RemoveCustomAttributes.isEnabled();
+        boolean checkOverstack = Protections.RemoveOverstackedItems.isEnabled();
+
+        if (!checkRemoveTypes && !checkEnchants && !checkAttributes && !checkOverstack) {
+
+            return false;
+
+        }
+
         for (ItemStack is : inv.getContents()) {
 
             if (is == null) {
@@ -147,19 +158,19 @@ public class CheckUtils {
 
             }
 
-            if (RemoveItemTypesCheck.shouldRemove(is, inv)) {
+            if (checkRemoveTypes && RemoveItemTypesCheck.shouldRemove(is, inv)) {
 
                 return true;
 
-            } else if (IllegalEnchantCheck.isIllegallyEnchanted(is, inv)) {
+            } else if (checkEnchants && IllegalEnchantCheck.isIllegallyEnchanted(is, inv)) {
 
                 return true;
 
-            } else if (BadAttributeCheck.hasBadAttributes(is, inv)) {
+            } else if (checkAttributes && BadAttributeCheck.hasBadAttributes(is, inv)) {
 
                 return true;
 
-            } else if (OverstackedItemCheck.CheckContainer(is, inv)) {
+            } else if (checkOverstack && OverstackedItemCheck.CheckContainer(is, inv)) {
 
                 return true;
 
@@ -167,7 +178,7 @@ public class CheckUtils {
 
         }
 
-        if (!fListener.is18() && IllegalStack.hasStorage()) {
+        if (checkOverstack && !fListener.is18() && IllegalStack.hasStorage()) {
 
             for (ItemStack is : inv.getStorageContents()) {
 

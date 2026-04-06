@@ -1090,28 +1090,6 @@ public class fListener implements Listener {
 
         }
 
-        if (CheckUtils.CheckEntireInventory(e.getSource())) {
-
-            e.setCancelled(true);
-            Scheduler.runTaskLater(this.plugin, () -> {
-
-                if (e.getSource().getHolder() instanceof DoubleChest) {
-
-                    e.getSource().getHolder().getInventory().remove(e.getItem());
-
-                } else if (e.getSource().getHolder().getInventory() instanceof BlockState) {
-
-                    BlockState bs = (BlockState) e.getSource().getHolder();
-                    bs.getBlock().breakNaturally();
-
-                }
-
-            }, 2, e.getSource().getLocation());
-
-            return;
-
-        }
-
         if (!Protections.DisableInWorlds.getTxtSet().isEmpty()) {
 
             HopperMinecart hm = null;
@@ -1162,6 +1140,28 @@ public class fListener implements Listener {
                 return;
 
             }
+
+        }
+
+        if (CheckUtils.CheckEntireInventory(e.getSource())) {
+
+            e.setCancelled(true);
+            Scheduler.runTaskLater(this.plugin, () -> {
+
+                if (e.getSource().getHolder() instanceof DoubleChest) {
+
+                    e.getSource().getHolder().getInventory().remove(e.getItem());
+
+                } else if (e.getSource().getHolder().getInventory() instanceof BlockState) {
+
+                    BlockState bs = (BlockState) e.getSource().getHolder();
+                    bs.getBlock().breakNaturally();
+
+                }
+
+            }, 2, e.getSource().getLocation());
+
+            return;
 
         }
 

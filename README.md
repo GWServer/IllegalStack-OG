@@ -12,6 +12,11 @@ A fork of IllegalStack maintained by [TrueOG Network](https://true-og.net). Ille
 
 - Updated gradle from 8.1.1 to 8.14.3.
 
+- Optimized hopper transfer event handler (`onHopperXfer`) to reduce CPU overhead:
+  - `CheckEntireInventory` now skips `RemoveItemTypesCheck` when `RemoveItemsOfType` is empty.
+  - `CheckEntireInventory` early-returns when none of its sub-checks are enabled.
+  - Moved `DisableInWorlds` check before `CheckEntireInventory` so whitelisted worlds skip the expensive inventory scan.
+
 ## Building this project
 
 Gradle is the recommended way to build the project. Use `./gradlew clean build` in the main project directory to build the 
