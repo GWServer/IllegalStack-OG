@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import main.java.me.dniym.commands.IllegalStackCommand;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
@@ -67,6 +71,8 @@ public class IllegalStack extends JavaPlugin {
     private static boolean hasIds = false;
     private static Material lbBlock = null;
 
+    private static final Set<UUID> exemptPlayers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
     private static String version = "";
     private Scheduler.ScheduledTask ScanTimer = null;
     private Scheduler.ScheduledTask SignTimer = null;
@@ -78,6 +84,35 @@ public class IllegalStack extends JavaPlugin {
     public static IllegalStack getPlugin() {
 
         return plugin;
+
+    }
+
+    /**
+     * Exempt a player from async timer-based item checks (unbreakable flag removal,
+     * attribute removal, potion validation). Thread-safe. Intended for use by
+     * minigame plugins that create custom items which should not be modified.
+     */
+    public static void addExemptPlayer(UUID uuid) {
+
+        exemptPlayers.add(uuid);
+
+    }
+
+    /**
+     * Remove a player's exemption from async timer-based item checks.
+     */
+    public static void removeExemptPlayer(UUID uuid) {
+
+        exemptPlayers.remove(uuid);
+
+    }
+
+    /**
+     * Check if a player is exempt from async timer-based item checks.
+     */
+    public static boolean isExempt(UUID uuid) {
+
+        return exemptPlayers.contains(uuid);
 
     }
 

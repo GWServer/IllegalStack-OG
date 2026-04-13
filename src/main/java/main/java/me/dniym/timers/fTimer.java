@@ -960,6 +960,12 @@ public class fTimer implements Runnable {
 
                                     }
 
+                                    if (IllegalStack.isExempt(p.getUniqueId())) {
+
+                                        continue;
+
+                                    }
+
                                     fListener.getLog().append2(Msg.UnbreakableItemCleared.getValue(p, is));
                                     im.setUnbreakable(false);
                                     is.setItemMeta(im);
@@ -978,13 +984,26 @@ public class fTimer implements Runnable {
 
                                 }
 
+                                if (IllegalStack.isExempt(p.getUniqueId())) {
+
+                                    continue;
+
+                                }
+
                                 // NBTStuff.checkForBadCustomData(is, p, false);
                                 BadAttributeCheck.checkForBadCustomData(is, p);
 
                             }
 
-                            if (Protections.PreventInvalidPotions.isEnabled())
-                                BadPotionCheck.checkPotion(is, p);
+                            if (Protections.PreventInvalidPotions.isEnabled()) {
+
+                                if (!IllegalStack.isExempt(p.getUniqueId())) {
+
+                                    BadPotionCheck.checkPotion(is, p);
+
+                                }
+
+                            }
 
                         }
 
