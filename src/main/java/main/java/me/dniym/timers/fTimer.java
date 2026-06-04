@@ -1105,26 +1105,30 @@ public class fTimer implements Runnable {
 
                                 }
 
-                                for (Enchantment en : replace) {
-
-                                    is.removeEnchantment(en);
-
-                                }
-
-                                p.updateInventory();
-                                Scheduler.runTaskLater(this.plugin, () -> {
+                                if (!replace.isEmpty()) {
 
                                     for (Enchantment en : replace) {
 
-                                        if (en.canEnchantItem(is)) {
-
-                                            is.addEnchantment(en, en.getMaxLevel());
-
-                                        }
+                                        is.removeEnchantment(en);
 
                                     }
 
-                                }, 4, p);
+                                    p.updateInventory();
+                                    Scheduler.runTaskLater(this.plugin, () -> {
+
+                                        for (Enchantment en : replace) {
+
+                                            if (en.canEnchantItem(is)) {
+
+                                                is.addEnchantment(en, en.getMaxLevel());
+
+                                            }
+
+                                        }
+
+                                    }, 4, p);
+
+                                }
 
                             }
 
