@@ -1,6 +1,5 @@
 package main.java.me.dniym.utils;
 
-import java.util.HashSet;
 import main.java.me.dniym.IllegalStack;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
@@ -216,19 +215,7 @@ public class NBTStuff {
 
     public static boolean hasBadCustomData(ItemStack is) {
 
-        ItemMeta im = is.getItemMeta();
-
-        if (IllegalStack.isHasAttribAPI() && is.hasItemMeta() && im.hasAttributeModifiers()) {
-
-            return true;
-
-        } else if (IllegalStack.isNbtAPI()) {
-
-            return NBTApiStuff.hasBadCustomDataLegacy(is);
-
-        }
-
-        return false;
+        return main.java.me.dniym.checks.BadAttributeCheck.hasNonDefaultAttributeModifiers(is);
 
     }
 
@@ -269,17 +256,27 @@ public class NBTStuff {
 
         if (IllegalStack.isHasAttribAPI() && im.hasAttributeModifiers()) {
 
+            java.util.Set<java.util.UUID> defaultUuids = main.java.me.dniym.checks.BadAttributeCheck
+                    .collectDefaultModifierUuidsPublic(is.getType());
+            com.google.common.collect.Multimap<Attribute, AttributeModifier> mods = im.getAttributeModifiers();
+
             StringBuilder attribs = new StringBuilder();
-            HashSet<Attribute> toRemove = new HashSet<>();
-            for (Attribute a : im.getAttributeModifiers().keySet()) {
+            boolean anyCustom = false;
+            for (java.util.Map.Entry<Attribute, AttributeModifier> entry : mods.entries()) {
 
-                for (AttributeModifier st : im.getAttributeModifiers(a)) {
+                AttributeModifier mod = entry.getValue();
+                if (!defaultUuids.contains(mod.getUniqueId())) {
 
-                    attribs.append(" ").append(st.getName()).append(" value: ").append(st.getAmount());
+                    anyCustom = true;
+                    attribs.append(" ").append(mod.getName()).append(" value: ").append(mod.getAmount());
 
                 }
 
-                toRemove.add(a);
+            }
+
+            if (!anyCustom) {
+
+                return;
 
             }
 
@@ -294,9 +291,14 @@ public class NBTStuff {
 
             }
 
-            for (Attribute remove : toRemove) {
+            for (java.util.Map.Entry<Attribute, AttributeModifier> entry : mods.entries()) {
 
-                im.removeAttributeModifier(remove);
+                AttributeModifier mod = entry.getValue();
+                if (!defaultUuids.contains(mod.getUniqueId())) {
+
+                    im.removeAttributeModifier(entry.getKey(), mod);
+
+                }
 
             }
 
