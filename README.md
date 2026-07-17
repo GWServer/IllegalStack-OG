@@ -14,11 +14,15 @@ A fork of IllegalStack maintained by [TrueOG Network](https://true-og.net). Ille
 
 - Optimized hopper transfer event handler (`onHopperXfer`) to reduce CPU overhead:
   - `CheckEntireInventory` now skips `RemoveItemTypesCheck` when `RemoveItemsOfType` is empty.
+
   - `CheckEntireInventory` early-returns when none of its sub-checks are enabled.
+
   - Moved `DisableInWorlds` check before `CheckEntireInventory` so whitelisted worlds skip the expensive inventory scan.
 
-## Building this project
+- Fixed dyed leather armor getting removed unintentionally.
 
-Gradle is the recommended way to build the project. Use `./gradlew clean build` in the main project directory to build the 
-project.
-The output is located at `/build/libs/IllegalStack<version>.jar`.
+## Building
+
+> ./gradlew clean build eclipse
+
+The usable jar is located at `/build/libs/IllegalStack<version>.jar`.
