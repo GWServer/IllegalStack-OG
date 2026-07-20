@@ -14,7 +14,6 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17 // Compile with JDK 17 compatibility.
     toolchain { // Select Java toolchain.
         languageVersion.set(JavaLanguageVersion.of(17)) // Use JDK 17.
-        vendor.set(JvmVendorSpec.GRAAL_VM) // Use GraalVM CE.
     }
 }
 
