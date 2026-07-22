@@ -1058,6 +1058,9 @@ public class IllegalStack extends JavaPlugin {
     private void loadConfig() {
 
         this.saveDefaultConfig();
+        // saveDefaultConfig() does not refresh Bukkit's cached configuration on /istack
+        // reload.
+        this.reloadConfig();
 
         Protections.update();
 
