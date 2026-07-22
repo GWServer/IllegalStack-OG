@@ -7,7 +7,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import java.util.HashMap;
 import java.util.UUID;
 import main.java.me.dniym.IllegalStack;
-import main.java.me.dniym.checks.BadAttributeCheck;
+import main.java.me.dniym.checks.CreativeItemCheck;
 import main.java.me.dniym.enums.Msg;
 import main.java.me.dniym.enums.Protections;
 import main.java.me.dniym.timers.fTimer;
@@ -20,7 +20,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.Plugin;
 
 public class pLisbListener {
@@ -53,14 +52,18 @@ public class pLisbListener {
 
                     try {
 
-                        ItemStack stack = event.getPacket().getItemModifier().readSafely(0);
-                        if (stack != null && stack.hasItemMeta() && !isVanillaLeatherArmor(stack)) {
+                        final ItemStack stack = event.getPacket().getItemModifier().readSafely(0);
+                        if (CreativeItemCheck.hasUnsafePayload(stack)) {
 
-                            stack = new ItemStack(Material.AIR);
                             final Player player = event.getPlayer();
-                            Scheduler.runTaskLater(plugin, player::updateInventory, 5L, player);
+                            Scheduler.runTaskLater(plugin, () -> {
+
+                                player.updateInventory();
+                                fListener.getLog().append(Msg.StaffMsgCreativeBlock.getValue(player.getName()),
+                                        Protections.BlockBadItemsFromCreativeTab);
+
+                            }, 5L, player);
                             event.setCancelled(true);
-                            Msg.StaffMsgCreativeBlock.getValue(event.getPlayer().getName());
 
                         }
 
@@ -162,13 +165,6 @@ public class pLisbListener {
                     });
 
         }
-
-    }
-
-    private static boolean isVanillaLeatherArmor(ItemStack stack) {
-
-        return stack.getItemMeta() instanceof LeatherArmorMeta
-                && !BadAttributeCheck.hasNonDefaultAttributeModifiers(stack);
 
     }
 

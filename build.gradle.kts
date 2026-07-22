@@ -21,7 +21,7 @@ kotlin { jvmToolchain(17) }
 
 /* ----------------------------- Metadata ------------------------------ */
 
-version = "2.9.13" // Declare plugin version (will be in .jar).
+version = "2.9.15-SNAPSHOT" // Declare plugin version (will be in .jar).
 
 group = "net.trueog.illegalstack-og" // Declare bundle identifier.
 
@@ -67,7 +67,15 @@ dependencies {
     compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.1.217") { isTransitive = false } // Import mcMMO API.
     compileOnly("fr.minuskube.inv:smart-invs:1.2.7") // Import SmartInvs API.
     compileOnly("com.github.brcdev-minecraft:shopgui-api:3.0.0") // Import ShopGUI API.
+
+    testImplementation("dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT")
+    testImplementation(platform("org.junit:junit-bom:5.13.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
+tasks.test { useJUnitPlatform() }
 
 /* ---------------------- Reproducible jars ---------------------------- */
 tasks.withType<AbstractArchiveTask>().configureEach { // Ensure reproducible .jars
