@@ -22,7 +22,7 @@ kotlin { jvmToolchain(17) }
 
 /* ----------------------------- Metadata ------------------------------ */
 
-version = "2.9.15-SNAPSHOT" // Declare plugin version (will be in .jar).
+version = "2.9.15" // Declare plugin version (will be in .jar).
 
 group = "net.trueog.illegalstack-og" // Declare bundle identifier.
 
