@@ -1256,7 +1256,7 @@ public class IllegalStack extends JavaPlugin {
 
         if (whitelisted.length() > 0) {
 
-            getLogger("Items matching the following names will be removed from players inventories: " + whitelisted);
+            getLogger("Loaded " + Protections.ItemNamesToRemove.getTxtSet().size() + " configured item name filters.");
 
         }
 
@@ -1269,7 +1269,7 @@ public class IllegalStack extends JavaPlugin {
 
         if (whitelisted.length() > 0) {
 
-            getLogger("Items matching the following lore will be removed from players inventories: " + whitelisted);
+            getLogger("Loaded " + Protections.ItemLoresToRemove.getTxtSet().size() + " configured item lore filters.");
 
         }
 
